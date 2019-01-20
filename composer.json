@@ -1,0 +1,77 @@
+{
+    "name":                 "splash/shopify",
+    "description":          "Splash Shopify API Connector (Embedded)",
+
+    "type":                 "symfony-bundle",
+    "license":              "MIT",
+    "minimum-stability":    "dev",
+    "prefer-stable":        true,
+
+    "authors": [
+        {
+            "name":"Splash Sync",
+            "email":"contact@splashsync.com"
+        },
+        {
+            "name": "BadPixxel",
+            "email": "eshop.bpaquier@gmail.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": { 
+            "Splash\\Connectors\\Shopify\\":     "src/"
+        }
+    },
+    
+    "autoload-dev": {
+        "classmap": [ "tests/Kernel.php" ],
+        "files":    [ 
+            "vendor/splash/phpcore/inc/Splash.Inc.php",
+            "vendor/splash/php-bundle/src/Tests/KernelTestCase.php"
+        ],
+        "psr-4": { 
+            "Splash\\Connectors\\Shopify\\Test\\":     "tests/"
+        }        
+    },
+    
+    
+    "require": {
+        "php":                                          "^7.1",
+        "splash/php-bundle":                            "*",
+        "slince/shopify-api-php":                       "^2.2",
+        "nategood/httpful":                             "^0.2"
+    },
+    
+    "require-dev": {
+        "splash/php-bundle":                            "dev-master",
+        
+        "symfony/symfony":                              "~3.4",
+        "symfony/monolog-bundle":                       "*",
+        "symfony/phpunit-bridge":                       "*",
+        "symfony/browser-kit":                          "*", 
+        
+        "doctrine/doctrine-bundle":                     "^1.6",
+        "doctrine/orm":                                 "^2.5",
+        
+        "phpunit/phpunit":                              ">7",
+        
+        "composer/composer":                            "^1.5",
+        "j13k/yaml-lint":                               "^1.1",
+        "jakub-onderka/php-parallel-lint":              "^1.0",
+        "phpmd/phpmd":                                  "^2.6",
+        "phpro/grumphp":                                "^0.14.0",
+        "sclable/xml-lint":                             "^0.2.4",
+        "sebastian/phpcpd":                             ">3.0",
+        "seld/jsonlint":                                "^1.7",
+        "sensiolabs/security-checker":                  "^5.0",
+        "squizlabs/php_codesniffer":                    "^3.2",
+        "friendsofphp/php-cs-fixer":                    "^2.10",
+        
+        "escapestudios/symfony2-coding-standard":       "^3.4",
+        "phpstan/phpstan-symfony":                      "^0.10",
+        "phpstan/phpstan-doctrine":                     "^0.10",
+        "phpstan/phpstan-phpunit":                      "^0.10",
+        "phpstan/phpstan-shim":                         "^0.10"
+    }
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit
+    backupGlobals               = "false"
+    backupStaticAttributes      = "false"
+    colors                      = "true"
+    convertErrorsToExceptions   = "true"
+    convertNoticesToExceptions  = "true"
+    convertWarningsToExceptions = "true"
+    processIsolation            = "false"
+    stopOnFailure               = "true"
+    bootstrap                   = "vendor/autoload.php" 
+    verbose                     = "true"
+    timeoutForLargeTests        = "10"  
+>
+
+    <testsuites>
+        <testsuite name="All">
+            <directory>vendor/splash/phpcore/Tests/*</directory>
+            <directory>vendor/splash/php-bundle/tests/*</directory>
+            <directory>tests/Controller</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>tests/Controller</directory>
+            <directory>vendor/splash/phpcore</directory>
+            <directory>vendor/splash/php-bundle</directory>
+            <exclude>
+                <directory>vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <php>
+        <server name="KERNEL_CLASS" value="Kernel" />
+        <env    name="SYMFONY_DEPRECATION_HELPER" value="disabled" />
+        <server name="SERVER_NAME" value="http://localhost:8000"/>        
+        <const  name="SPLASH_DEBUG" value="true" />
+        <server name="SPLASH_TRAVIS" value="true" />
+    </php>
+    
+</phpunit>
