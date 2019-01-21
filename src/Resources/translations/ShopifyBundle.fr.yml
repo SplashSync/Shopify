@@ -1,0 +1,32 @@
+
+## Node Variables 
+var:
+    url:
+        label:  Domaine
+        desc:   "Adresse de la boutique"
+        
+    location:
+        label:  Stock par défaut
+        desc:   "Le stock Shopify que vous voulez synchroniser avec Splash."
+        
+    token:
+        label:  Token Publique
+        desc:   "La clé d'API Shopify nous permets d'accéder à votre compte."
+        
+## Node Profile
+profile:
+    connection:
+        title:  Connexion API
+    card:   
+        title:  Shopify API
+        label:  Connectez votre boutique Shopify pour synchroniser vos données métier
+
+## Node Api Actions
+admin:
+    selftest:   Configuration du Connecteur Shopify
+    connect:    Connexion a l'API Shopify V3  
+    webhooks:
+        label:  Configuration des WebHooks
+        desc:   Détecte et Configure les WebHooks pour Splash Sync
+        msg:    Configuration des WebHooks Réussie
+        err:    La Configuration des WebHooks a échouée

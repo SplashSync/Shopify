@@ -1,0 +1,33 @@
+
+## Node Variables 
+var:
+    url:
+        label:  Shop Url
+        desc:   "Public Url of your Shop"
+        
+    location:
+        label:  Default Stock
+        desc:   "The Shopify stock Location you want to synchronize with Splash."
+
+    token:
+        label:  Public API Token
+        desc:   "API Token provide full access to your account, so keep it safe."
+        
+## Node Profile
+profile:
+    connection:
+        title:  API Connection
+    card:   
+        title:  Shopify API 
+        label:  Connect your Shopify Stores to Sync all Business Data with Splash
+
+## Node Api Actions
+admin:
+    selftest:   Shopify Connector Configuration
+    connect:    Connect to Shopify API    
+    webhooks:
+        label:  Update of WebHooks
+        desc:   Detect & Update Splash Sync WebHooks Configuration
+        msg:    WebHook Configuration Updated
+        err:    Update of WebHooks Configuration Failed
+      
