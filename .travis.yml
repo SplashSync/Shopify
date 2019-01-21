@@ -1,0 +1,95 @@
+       
+################################################################################
+# Define Test Matrix
+matrix:
+    include:      
+#        # Symfony 3.4 Branch
+#        - php: 7.1
+#        - php: 7.2
+#        # Symfony 4.0 Branch       
+#        - php: 7.2
+#          env: SF_VERSION="4.0.*"      
+        # Symfony 4.2 Branch       
+        - php: 7.2
+          env: SF_VERSION="4.2.*"  
+        
+    allow_failures:
+        - env: SF_VERSION="4.2.*"       
+    fast_finish: true
+
+################################################################################
+# Prepare Test Environement
+before_install:
+    - echo "Configuring The Bundles"
+    - cp tests/config/parameters.yml.dist tests/config/parameters.yml
+    - echo "Configuring Folders"
+    - mkdir bin
+    - cp tests/console bin/console
+    - mkdir public
+    - cp tests/public/* public
+    - cp tests/public/.htaccess public/.htaccess
+
+################################################################################
+# GENERIC CONFIGURATION
+################################################################################
+
+################################################################################
+# Install composer dependencies,
+# Create database, schema and fixtures
+install:   
+#    # Setup MailChimp Connector
+    - sed -i -e 's/ThisIsSecretApiKey/'$SIB_API_KEY'/g' tests/config/splash.yml >/dev/null 2>&1
+    - sed -i -e 's/ThisIsSecretApiList/'$SIB_API_LIST'/g' tests/config/splash.yml >/dev/null 2>&1
+
+    # Setup Travis
+    - curl -s https://raw.githubusercontent.com/SplashSync/Php-Bundle/master/src/Resources/travis/configure.sh  | bash
+    # Setup Symfony Version if Required
+    - curl -s https://raw.githubusercontent.com/SplashSync/Php-Bundle/master/src/Resources/travis/build_symfony.sh  | bash
+    # Configure For Phpstan vs PHP Versions
+    - curl -s https://raw.githubusercontent.com/SplashSync/Php-Bundle/master/src/Resources/travis/build_grumphp.sh  | bash
+    # Install Symfony
+    - curl -s https://raw.githubusercontent.com/SplashSync/Php-Bundle/master/src/Resources/travis/install.sh  | bash
+
+################################################################################
+# Run script
+script:
+    # Execute Grump Travis Testsuite 
+    - php vendor/bin/grumphp run --testsuite=travis
+    # With PHP > 7.0 => Execute CsFixer
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} > "7.0" ]]; then php ./vendor/bin/grumphp run --testsuite=csfixer; fi    
+    # With PHP > 7.0 => Execute Phpstan 
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} > "7.0" ]]; then php ./vendor/bin/grumphp run --testsuite=phpstan; fi   
+    # Execute PhpUnit Tests 
+    - vendor/bin/phpunit
+    # Show Outdated Packages   
+    - composer outdated
+    
+    - curl http://localhost:8000/ws/splash
+
+################################################################################
+# Project language
+language: php
+# Allows use container-based infrastructure
+sudo: false
+#sudo: required
+dist: trusty
+################################################################################
+# Start mysql service
+services:
+  - mysql
+################################################################################
+# Cache composer packages so "composer install" is faster
+cache:
+    directories:
+        - $HOME/.composer/cache/files
+################################################################################
+# Define an environment variable
+env:
+    global:
+        - SYMFONY_DEPRECATIONS_HELPER=disabled
+################################################################################
+# After a build, send email notification with the build results
+notifications:
+  email:         
+    on_success: never # default: change
+    on_failure: never # default: always
