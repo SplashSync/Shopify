@@ -20,6 +20,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * Splash Shopify Connector Bundle.
  */
-class SendInBlueBundle extends Bundle
+class ShopifyBundle extends Bundle
 {
 }
