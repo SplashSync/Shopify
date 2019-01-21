@@ -19,7 +19,7 @@
         <testsuite name="All">
             <directory>vendor/splash/phpcore/Tests/*</directory>
             <directory>vendor/splash/php-bundle/tests/*</directory>
-            <directory>tests/Controller</directory>
+            <!--<directory>tests/Controller</directory>-->
         </testsuite>
     </testsuites>
 
