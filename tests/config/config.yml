@@ -1,0 +1,71 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: splash.yml }
+    
+# Framework Configuration
+framework:
+    translator:      { fallbacks: ["%locale%"] }
+    router:
+        resource:   "%kernel.root_dir%/config/routing.yml"
+    templating:
+        engines: ['twig']  
+    form:           ~
+#    session:        ~
+    test: ~
+    session:        
+        storage_id: session.storage.mock_file
+    profiler: { only_exceptions: false }
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   pdo_mysql
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: true
+
+# Monolog Configuration    
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: error
+            channels: ["!event"]
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!console"]
+
+# SETUP HTTP AUTH for WebServer
+security:
+    firewalls:
+        main:
+            http_basic: ~
+            anonymous:      true
+    providers:
+        in_memory:
+            memory:
+                users:
+                    PhpUnit: { password: PhpUnitPwd }      
+    encoders:
+        Symfony\Component\Security\Core\User\UserInterface: plaintext            
+        
+    access_control:
+        # Public Access to Soap Connector Urls
+        - { path: ^/ws/soap, role: IS_AUTHENTICATED_ANONYMOUSLY } 
+        # Protected Access to Core WebServices Urls
+        - { path: ^/ws/splash,   role: IS_AUTHENTICATED_FULLY }        

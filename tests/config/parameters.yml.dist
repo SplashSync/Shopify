@@ -1,0 +1,18 @@
+
+parameters:
+    
+    database_driver:        pdo_mysql
+    database_host:          localhost
+    database_port:          null
+    database_name:          symfony
+    database_user:          root
+    database_password: 
+        
+    kernel.secret:          ThisIsNotASecretKey
+    
+    splash_host:            http://localhost:8000
+
+    locale: en
+    locales:
+        - en
+        - fr

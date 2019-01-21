@@ -1,0 +1,17 @@
+
+################################################################################
+## Test Configuration for Splash Bundle
+splash:
+    connections:
+
+        Shopify:
+            id:                 ThisIsShopifyWsId
+            key:                ThisIsNotASecretKeyForShopify
+            name:               Serveur 1 (Shopify)
+            host:               "%splash_host%/ws/soap"
+            server_host:        "%splash_host%"
+            connector:          Shopify
+            config:  
+                WsHost:         http://localhost:8000
+                ApiKey:         ThisIsSecretApiKey
+                ApiList:        ThisIsSecretApiList
