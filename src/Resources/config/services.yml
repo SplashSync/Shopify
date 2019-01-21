@@ -1,0 +1,15 @@
+services:
+    ################################################################################
+    # SPLASH Shopify Connector Service
+    splash.connectors.shopify:
+        class: Splash\Connectors\Shopify\Services\ShopifyConnector
+        arguments:  [ "@event_dispatcher", "@logger" ]
+        tags:       
+            - { name: "splash.connector"}
+
+    ################################################################################
+    # Enables Dependency Injection in Controller Actions
+    Splash\Connectors\Shopify\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
