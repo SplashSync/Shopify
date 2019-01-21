@@ -1,0 +1,44 @@
+{% trans_default_domain "ShopifyBundle" %}
+
+<!-- Connection Block -->
+<ul class="list-unstyled">
+   
+    <li>
+        <h4 class="font-md {% if connector.selfTest %}text-success{% else %}text-danger{% endif %}">
+            <i class="fa fa-check"></i>&nbsp;{{ 'admin.selftest'| trans }}
+        </h4>
+    </li>
+    
+    <li>
+        <h4 class="font-md {% if connector.connect %}text-success{% else %}text-danger{% endif %}">
+            <i class="fa fa-check"></i>&nbsp;{{ 'admin.connect'| trans }}
+        </h4>
+    </li>
+    
+    <li>
+        {% if connector.verifyWebHooks %}
+        <h4 class="font-md text-success">
+            <i class="fa fa-check"></i>&nbsp;{{ 'admin.webhooks.msg'| trans }}
+        </h4>
+        {% else %}
+        <h4 class="font-md text-danger">
+            <i class="fa fa-times"></i>&nbsp;{{ 'admin.webhooks.err'| trans }}
+        </h4>
+        {% endif %}
+    </li>
+    
+</ul>
+    
+<a 
+    id="node-webhooks-btn" class="btn-lg btn-block btn-warning text-center" 
+    href="{{ path('splash_connector_secured_action', { 
+            "connectorName" :   connector.profile.name, 
+            "webserviceId" :    connector.WebserviceId, 
+            "action" :          "webhooks"
+        }) }}"
+    > 
+    <i class="fa fa-refresh"></i> 
+    {{ 'admin.webhooks.label' | trans }}
+</a>
+<!-- End Connection Block -->
+
