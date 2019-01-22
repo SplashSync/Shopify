@@ -32,19 +32,11 @@ trait ObjectsListTrait
     {
         //====================================================================//
         // Execute List Request
-//        $rawData = $this->Connector
-//                ->getShopifyList(
-//                    $this->getShopifyCustomer(),
-//                    (isset($params["max"]) ? $params["max"] : 0),
-//                    (isset($params["offset"]) ? $params["offset"] : 0)
-//                );
-        
         $rawData = API::list(
             'customers',
             (isset($params["max"]) ? $params["max"] : 0),
             (isset($params["offset"]) ? $params["offset"] : 0)
         );
-        
         //====================================================================//
         // Request Failled
         if (null === $rawData) {

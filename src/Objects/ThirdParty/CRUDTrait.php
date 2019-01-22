@@ -29,7 +29,7 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return mixed
+     * @return false|ArrayObject
      */
     public function load($objectId)
     {
@@ -38,13 +38,12 @@ trait CRUDTrait
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Get Customer from Api
-        $object  =   API::get('customers', $objectId, "customer");
+        $object  =   API::get('customers', $objectId, array(), "customer");
         //====================================================================//
         // Fetch Object
         if (null === $object) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Customer (".$objectId.").");
         }
-        dump($object);
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
     }
@@ -54,7 +53,7 @@ trait CRUDTrait
      *
      * @param array $List Given Object Data
      *
-     * @return object New Object
+     * @return false|ArrayObject
      */
     public function create()
     {
@@ -96,7 +95,7 @@ trait CRUDTrait
     /**
      * Update Request Object
      *
-     * @param array $needed Is This Update Needed
+     * @param bool $needed Is This Update Needed
      *
      * @return string Object Id
      */

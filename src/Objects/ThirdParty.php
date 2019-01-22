@@ -16,7 +16,6 @@
 namespace Splash\Connectors\Shopify\Objects;
 
 use Splash\Connectors\Shopify\Objects\Core\DatesTrait;
-use Splash\Connectors\Shopify\Objects\ThirdParty;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;

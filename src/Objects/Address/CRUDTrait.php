@@ -38,7 +38,7 @@ trait CRUDTrait
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Get Customer Address from Api
-        $object  =   API::get(self::getUri($objectId), null, "customer_address");
+        $object  =   API::get(self::getUri($objectId), null, array(), "customer_address");
         //====================================================================//
         // Fetch Object
         if (null === $object) {
@@ -133,7 +133,7 @@ trait CRUDTrait
         //====================================================================//
         // Delete Customer from Api
         if (null === API::delete(self::getUri($objectId))) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete Customer Address (".$objectId.").");
+            Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete Customer Address (".$objectId.").");
         }
         
         return true;
