@@ -26,55 +26,36 @@ use Symfony\Component\Form\FormBuilderInterface;
 abstract class AbstractShopifyType extends AbstractType
 {
     /**
-     * Add Remote Host Url Field.
-     *
-     * @param FormBuilderInterface $builder
-     *
-     * @return self
-     */
-    protected function addWsHost(FormBuilderInterface $builder)
-    {
-        $builder
-            ->add('WsHost', TextType::class, array(
-                'label' => 'var.url.label',
-                'help_block' => 'var.url.desc',
-                'translation_domain' => 'ShopifyBundle',
-            ))
-            ;
-        return $this;
-    }    
-    
-    /**
      * Add Warehouse Selector Field to FormBuilder
-     * 
+     *
      * @param FormBuilderInterface $builder
-     * @param array $options
-     * 
+     * @param array                $options
+     *
      * @return self
      */
     public function addWarehouseField(FormBuilderInterface $builder, array $options)
-    {        
+    {
         //==============================================================================
-        // Check Shopify Locations Lists is Available                     
-        if ( !isset($options["data"]["LocationsMap"]) || empty($options["data"]["LocationsMap"]) ) {
-            return $this;        
+        // Check Shopify Locations Lists is Available
+        if (!isset($options["data"]["LocationsMap"]) || empty($options["data"]["LocationsMap"])) {
+            return $this;
         }
         
         $builder
             //==============================================================================
-            // Shopify List Option Selector                     
+            // Shopify List Option Selector
             ->add('LocationId', ChoiceType::class, array(
                 'label'                     => "var.location.label",
                 'help_block'                => "var.location.desc",
-                'required'                  => True,
+                'required'                  => true,
                 'translation_domain'        => "ShopifyBundle",
-                'choice_translation_domain' => False,                  
+                'choice_translation_domain' => false,
                 'choices'                   => array_flip($options["data"]["LocationsMap"]),
-            ))  
+            ))
         ;
-        return $this;        
-    }     
-    
+
+        return $this;
+    }
     
     /**
      * Add Api Key Field to FormBuilder
@@ -99,6 +80,25 @@ abstract class AbstractShopifyType extends AbstractType
             ))
         ;
         
+        return $this;
+    }
+    /**
+     * Add Remote Host Url Field.
+     *
+     * @param FormBuilderInterface $builder
+     *
+     * @return self
+     */
+    protected function addWsHost(FormBuilderInterface $builder)
+    {
+        $builder
+            ->add('WsHost', TextType::class, array(
+                'label' => 'var.url.label',
+                'help_block' => 'var.url.desc',
+                'translation_domain' => 'ShopifyBundle',
+            ))
+            ;
+
         return $this;
     }
 }

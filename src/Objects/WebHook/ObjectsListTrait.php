@@ -13,13 +13,13 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\ThirdParty;
+namespace   Splash\Connectors\Shopify\Objects\WebHook;
 
 use DateTime;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
- * Shopify Customer List Functions
+ * Shopify WebHook Objects List Functions
  */
 trait ObjectsListTrait
 {
@@ -28,35 +28,35 @@ trait ObjectsListTrait
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function ObjectsList($filter = null, $params = null)
+    public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
-        // Execute List Request
-        $rawData = API::list(
-            'customers',
-            (isset($params["max"]) ? $params["max"] : 0),
-            (isset($params["offset"]) ? $params["offset"] : 0)
-        );
+        // Get WebHooks Lists from Api
+        $rawData = API::get('webhooks', null, array(), "webhooks");
+
         //====================================================================//
-        // Request Failled
-        if (null === $rawData) {
+        // Request Failed
+        if (null == $rawData) {
             return array( 'meta'    => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Compute Totals
         $response   =   array(
-            'meta'  => array('current' => count($rawData), 'total' => API::count('customers') ),
+            'meta'  => array('current' => count($rawData), 'total' => API::count('webhooks')),
         );
         //====================================================================//
         // Parse Data in response
-        /** @var array $customer */
-        foreach ($rawData as $customer) {
-            //====================================================================//
-            // Parse Meta Dates to Splash Format
-            $customer['created_at'] =   (new DateTime($customer['created_at']))->format(SPL_T_DATETIMECAST);
-            $customer['updated_at'] =   (new DateTime($customer['updated_at']))->format(SPL_T_DATETIMECAST);
-            
-            $response[]   = $customer;
+        foreach ($rawData as $webhook) {
+            $response[]   = array(
+                //====================================================================//
+                // Parse Core Data
+                'id'        =>      $webhook['id'],
+                'address'   =>      $webhook['address'],
+                'topic'     =>      $webhook['topic'],
+                //====================================================================//
+                // Parse Meta Dates to Splash Format
+                'created_at'=>      (new DateTime($webhook['created_at']))->format(SPL_T_DATETIMECAST)
+            );
         }
 
         return $response;

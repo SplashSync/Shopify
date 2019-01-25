@@ -19,8 +19,10 @@ use ArrayObject;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Form\EditFormType;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
+use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Objects\WebHook;
 use Splash\Core\SplashCore as Splash;
+use Splash\Models\Helpers\ImagesHelper;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -39,7 +41,12 @@ class ShopifyConnector extends AbstractConnector
      * @var array
      */
     protected static $objectsMap = array(
-//        "ThirdParty" => "Splash\\Connectors\\Shopify\\Objects\\ThirdParty",
+        "ThirdParty" => Objects\ThirdParty::class,
+        "Address" => Objects\Address::class,
+        "Product" => Objects\Product::class,
+        "Order" => Objects\Order::class,
+        "Invoice" => Objects\Invoice::class,
+        "WebHooks" => Objects\WebHook::class,
     );
 
     /**
@@ -61,9 +68,9 @@ class ShopifyConnector extends AbstractConnector
         if (!$this->selfTest()) {
             return false;
         }
-//        //====================================================================//
-//        // Perform Ping Test
-//        return API::ping();
+        //====================================================================//
+        // Perform Ping Test
+        return API::ping();
     }
 
     /**
@@ -76,21 +83,30 @@ class ShopifyConnector extends AbstractConnector
         if (!$this->selfTest()) {
             return false;
         }
-//        //====================================================================//
-//        // Perform Connect Test
-//        if (!API::connect()) {
-//            return false;
-//        }
-//        //====================================================================//
-//        // Get List of Available Lists
-//        if (!$this->fetchMailingLists()) {
-//            return false;
-//        }
-//        //====================================================================//
-//        // Get List of Available Members Properties
-//        if (!$this->fetchAttributesLists()) {
-//            return false;
-//        }
+        //====================================================================//
+        // Perform Connect Test
+        if (!API::connect()) {
+            return false;
+        }
+        //====================================================================//
+        // Get Shop Informations
+        if (!$this->fetchShopInformations()) {
+            return false;
+        }
+        //====================================================================//
+        // Get List of Available Countries
+        if (!$this->fetchCountriesLists()) {
+            return false;
+        }
+        //====================================================================//
+        // Get List of Available Stock Locations
+        if (!$this->fetchLocationsLists()) {
+            return false;
+        }
+     
+        //====================================================================//
+        // Update Connector Settings
+        $this->updateConfiguration();
         
         return true;
     }
@@ -100,42 +116,40 @@ class ShopifyConnector extends AbstractConnector
      */
     public function informations(ArrayObject  $informations) : ArrayObject
     {
-        $config = $this->getConfiguration();
-//        //====================================================================//
-//        // Safety Check => Verify Selftest Pass
-//        if (!$this->selfTest() || empty($config["ApiList"])) {
-//            return $informations;
-//        }
-//        //====================================================================//
-//        // Get List Detailed Informations
-//        $details  =   API::get('account');
-//        if (is_null($details)) {
+        //====================================================================//
+        // Safety Check => Verify Selftest Pass
+        if (!$this->selfTest()) {
             return $informations;
-//        }
-
+        }
+        //====================================================================//
+        // Get List Detailed Informations
+        $details  =   API::get('shop', null, array(), 'shop');
+        if (is_null($details)) {
+            return $informations;
+        }
         //====================================================================//
         // Server General Description
         $informations->shortdesc        =   "Shopify";
-        $informations->longdesc         =   "Splash Integration for Shopify's Api V3.0";
+        $informations->longdesc         =   "Splash Integration for Shopify's Rest Api";
         //====================================================================//
         // Company Informations
-        $informations->company          =   $details->companyName;
-        $informations->address          =   $details->address->street;
-        $informations->zip              =   $details->address->zipCode;
-        $informations->town             =   $details->address->city;
-        $informations->country          =   $details->address->country;
-        $informations->www              =   "www.Shopify.com";
-        $informations->email            =   $details->email;
-        $informations->phone            =   "~";
+        $informations->company          =   $details["shop_owner"];
+        $informations->address          =   $details["address1"];
+        $informations->zip              =   $details["zip"];
+        $informations->town             =   $details["city"];
+        $informations->country          =   $details["country_name"];
+        $informations->www              =   $details["domain"];
+        $informations->email            =   $details["email"];
+        $informations->phone            =   $details["phone"];
         //====================================================================//
         // Server Logo & Ico
-        $informations->icoraw           =   Splash::file()->readFileContents(dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Logo.jpg");
+        $informations->icoraw           =   Splash::file()->readFileContents(dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Icon.png");
         $informations->logourl          =   null;
-        $informations->logoraw          =   Splash::file()->readFileContents(dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Logo.jpg");
+        $informations->logoraw          =   Splash::file()->readFileContents(dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Logo.png");
         //====================================================================//
         // Server Informations
-        $informations->servertype       =   "Shopify REST Api V3";
-        $informations->serverurl        =   API::ENDPOINT;
+        $informations->servertype       =   "Shopify REST Api";
+        $informations->serverurl        =   $details["myshopify_domain"];
         //====================================================================//
         // Module Informations
         $informations->moduleauthor     =   SPLASH_AUTHOR;
@@ -171,10 +185,7 @@ class ShopifyConnector extends AbstractConnector
         
         //====================================================================//
         // Configure Rest API
-        return API::configure(
-            $config["ApiKey"],
-            isset($config["ApiList"]) ? $config["ApiList"] : null
-        );
+        return API::configure($config["WsHost"], $config["Token"]);
     }
     
     //====================================================================//
@@ -195,9 +206,21 @@ class ShopifyConnector extends AbstractConnector
         if (!$this->selfTest()) {
             return false;
         }
-        Splash::log()->err("There are No Files Reading for Shopify Up To Now!");
+        
+        //====================================================================//
+        // Encode Image Array (Without Raw)
+        $response = ImagesHelper::encodeFromUrl("Shopify Image", $filePath, $filePath);
+        if (!is_array($response) || ($response["md5"] != $fileMd5)) {
+            Splash::log()->err("Unable to read Shopify Image: " . $filePath);
 
-        return false;
+            return false;
+        }
+        
+        //====================================================================//
+        // Load Image Raw Contents form Url
+        $response["raw"] = base64_encode((string) file_get_contents($filePath));
+
+        return $response;
     }
     
     //====================================================================//
@@ -320,17 +343,35 @@ class ShopifyConnector extends AbstractConnector
             unset($webHooks["meta"]);
         }
         //====================================================================//
-        // Filter & Clean List Of WebHooks
-        foreach ($webHooks as $webHook) {
+        // Walk on WebHooks Topics
+        foreach (WebHook::getTopics() as $topic) {
+            $found  =   false;
+            
             //====================================================================//
-            // This is a Splash WebHooks
-            if (false !== strpos(trim($webHook['url']), $webHookServer)) {
-                return true;
+            // Search in WebHooks List
+            foreach ($webHooks as $webHook) {
+                //====================================================================//
+                // Check WebHook is Valid
+                if (WebHook::isValid($webHook, $webHookServer, $topic)) {
+                    $found  =   true;
+                }
             }
+            
+            //====================================================================//
+            // WebHooks is Ok
+            if ($found) {
+                continue;
+            }
+dump($webHookServer);                    
+dump($topic);                    
+dump($webHook);                    
+
+            return false;
         }
+        
         //====================================================================//
-        // Splash WebHooks was NOT Found
-        return false;
+        // All Splash WebHooks were Found
+        return true;
     }
 
     /**
@@ -375,20 +416,86 @@ class ShopifyConnector extends AbstractConnector
             unset($webHooks["meta"]);
         }
         //====================================================================//
+        // Walk on WebHooks Topics
+        foreach (WebHook::getTopics() as $topic) {
+            //====================================================================//
+            // Update Splash WebHook Configuration
+            if (false === $this->updateWebHookConfig($webHookManager, $webHooks, $webHookServer, $webHookUrl, $topic)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Get Shop Default Vat Rate
+     *
+     * @return int
+     */
+    public function getDefaultVatRate()
+    {
+        //====================================================================//
+        // Get Shop Informations
+        $storeInfos = $this->getParameter("ShopInformations");
+        $countries  = $this->getParameter("Countries");
+        //====================================================================//
+        // Safety Checks
+        if (!isset($storeInfos["country"]) || empty($storeInfos["country"]) || !is_array($countries)) {
+            return 0;
+        }
+        //====================================================================//
+        // Search for Shop Country Tax
+        foreach ($countries as $Country) {
+            if ($Country['code'] == $storeInfos["country"]) {
+                return 100 * $Country['tax'];
+            }
+        }
+        //====================================================================//
+        // Tax was not Found
+        return 0;
+    }
+    
+    /**
+     * Get Shop Default Currency
+     *
+     * @return string
+     */
+    public function getDefaultCurrency() : string
+    {
+        //====================================================================//
+        // Get Shop Informations
+        return (string) $this->getParameter("currency", "EUR", "ShopInformations");
+    }
+    
+    /**
+     * Check & Update Shopify Api Account WebHook Configuration.
+     *
+     * @param WebHook $manager    Shopify WebHook Splash Manager
+     * @param array   $webHooks   Shopify WebHooks List
+     * @param string  $serverUrl  Splash Server Url
+     * @param string  $webhookUrl Splash WebHook Url
+     * @param string  $topic      WebHook Shopify Topic
+     *
+     * @return bool
+     */
+    private function updateWebHookConfig(WebHook $manager, array $webHooks, string $serverUrl, string $webhookUrl, string $topic) : bool
+    {
+        //====================================================================//
         // Filter & Clean List Of WebHooks
         $foundWebHook   =    false;
         foreach ($webHooks as $webHook) {
             //====================================================================//
-            // This is Current Node WebHooks
-            if (trim($webHook['url']) ==  $webHookUrl) {
+            // Check WebHook is Valid
+            if (WebHook::isValid($webHook, $webhookUrl, $topic)) {
                 $foundWebHook   =   true;
 
                 continue;
             }
             //====================================================================//
             // This is a Splash WebHooks
-            if (false !== strpos(trim($webHook['url']), $webHookServer)) {
-                $webHookManager->delete($webHook['id']);
+            if (false !== strpos(trim($webHook['address']), $serverUrl)) {
+                $manager->delete($webHook['id']);
             }
         }
         //====================================================================//
@@ -398,7 +505,7 @@ class ShopifyConnector extends AbstractConnector
         }
         //====================================================================//
         // Add Splash WebHooks
-        return (false !== $webHookManager->create($webHookUrl));
+        return (false !== $manager->create($webhookUrl, $topic));
     }
     
     //====================================================================//
@@ -406,65 +513,69 @@ class ShopifyConnector extends AbstractConnector
     //====================================================================//
     
     /**
-     * Get Shopify User Lists
+     * Get Shopify Shop Countries Informations
      *
      * @return bool
      */
-    private function fetchMailingLists()
+    private function fetchShopInformations()
     {
         //====================================================================//
         // Get User Lists from Api
-        $response  =   API::get('contacts/lists');
-        if (is_null($response)) {
+        $response  =   API::get('shop', null, array(), 'shop');
+        if (!is_array($response)) {
             return false;
-        }
-        if (!isset($response->lists)) {
-            return false;
-        }
-        //====================================================================//
-        // Parse Lists to Connector Settings
-        $listIndex = array();
-        foreach ($response->lists as $listDetails) {
-            //====================================================================//
-            // Add List Index
-            $listIndex[$listDetails->id]  =   $listDetails->name;
         }
         //====================================================================//
         // Store in Connector Settings
-        $this->setParameter("ApiListsIndex", $listIndex);
-        $this->setParameter("ApiListsDetails", $response->lists);
-        //====================================================================//
-        // Update Connector Settings
-        $this->updateConfiguration();
+        $this->setParameter("ShopInformations", $response);
         
         return true;
     }
     
     /**
-     * Get Shopify User Attributes Lists
+     * Get Shopify Shop Countries Informations
      *
      * @return bool
      */
-    private function fetchAttributesLists()
+    private function fetchCountriesLists()
     {
         //====================================================================//
         // Get User Lists from Api
-        $response  =   API::get('contacts/attributes');
-        if (is_null($response)) {
-            return false;
-        }
-        // @codingStandardsIgnoreStart
-        if (!isset($response->attributes)) {
+        $response  =   API::get('countries', null, array(), 'countries');
+        if (!is_array($response)) {
             return false;
         }
         //====================================================================//
         // Store in Connector Settings
-        $this->setParameter("ContactAttributes", $response->attributes);
-        // @codingStandardsIgnoreEnd
-        //====================================================================//
-        // Update Connector Settings
-        $this->updateConfiguration();
+        $this->setParameter("Countries", $response);
+        
+        return true;
+    }
 
+    /**
+     * Get Shopify Shop Locations Informations
+     *
+     * @return bool
+     */
+    private function fetchLocationsLists()
+    {
+        //====================================================================//
+        // Get User Lists from Api
+        $response  =   API::get('locations', null, array(), 'locations');
+        if (!is_array($response)) {
+            return false;
+        }
+        //====================================================================//
+        // Store in Connector Settings
+        $locationsMap =  array();
+        foreach ($response as $location) {
+            $locationsMap[$location['id']]   =   $location['name'];
+        }
+        //====================================================================//
+        // Store in Connector Settings
+        $this->setParameter("Locations", $response);
+        $this->setParameter("LocationsMap", $locationsMap);
+        
         return true;
     }
 }
