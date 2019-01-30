@@ -82,7 +82,7 @@ class WebHooksController extends Controller
         
         //====================================================================//
         // Log Shopify Request
-        $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (is_array($data) ? $data : array()));
+        $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (is_array($this->data) ? $this->data : array()));
         
         //==============================================================================
         // Commit Changes
@@ -95,6 +95,8 @@ class WebHooksController extends Controller
      * Execute Changes Commits
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function executeCommits() : void
     {
@@ -184,8 +186,6 @@ class WebHooksController extends Controller
                 'Shopify API',
                 'Shopify Customer Address '.$comment
             );
-            
-            //dump(Objects\Address::getObjectId((string) $data['id'], (string) $address['id']));
         }
     }
     
@@ -259,11 +259,12 @@ class WebHooksController extends Controller
         
         //====================================================================//
         // Verify WebHook Type is Provided & is Valid
-        $this->topic =  $request->headers->get("X-Shopify-Topic");
-        if (empty($this->topic) || (!in_array($this->topic, Objects\WebHook::getTopics(), true))) {
+        $topic =  $request->headers->get("X-Shopify-Topic");
+        if (empty($this->topic) || is_string($this->topic) || (!in_array($this->topic, Objects\WebHook::getTopics(), true))) {
             return false;
         }
-         
+        $this->topic = $topic;
+        
         //====================================================================//
         // Store Connector for Further Usages
         $this->connector = $connector;
@@ -276,7 +277,7 @@ class WebHooksController extends Controller
      *
      * @param Request $request
      *
-     * @return array
+     * @return bool
      */
     private function extractData(Request $request)
     {

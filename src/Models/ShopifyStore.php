@@ -18,6 +18,9 @@ namespace Splash\Connectors\Shopify\Models;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 
+/**
+ * Shopify OAuth2 Store Class
+ */
 class ShopifyStore implements ResourceOwnerInterface
 {
     use ArrayAccessorTrait;
@@ -35,6 +38,11 @@ class ShopifyStore implements ResourceOwnerInterface
         $this->response = $response;
     }
 
+    /**
+     * Get Shop Id
+     *
+     * @return string
+     */
     public function getId()
     {
         return $this->getValueByKey($this->response, 'shop.id');
