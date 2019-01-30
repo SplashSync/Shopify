@@ -41,6 +41,7 @@
         "splash/php-bundle":                            "*",
         "slince/shopify-api-php":                       "^2.2",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
+        "multidimensional/oauth2-shopify":              ">1.0",
         "nategood/httpful":                             "^0.2"
     },
     
