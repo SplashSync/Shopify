@@ -155,7 +155,7 @@ class OAuth2Client extends AbstractProvider
      */
     public function checkResponse(ResponseInterface $response, $data)
     {
-        if (!empty($data['errors'])) {
+        if (is_array($data) && !empty($data['errors'])) {
             throw new IdentityProviderException($data['errors'], 0, $data);
         }
     }

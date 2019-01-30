@@ -29,7 +29,7 @@ trait CoreTrait
     {
         //====================================================================//
         // Customer
-        $this->fieldsFactory()->create(self::objects()->Encode("ThirdParty", SPL_T_ID))
+        $this->fieldsFactory()->create((string) self::objects()->Encode("ThirdParty", SPL_T_ID))
             ->Identifier("customer_id")
             ->Name("Customer")
             ->MicroData("http://schema.org/Organization", "ID")

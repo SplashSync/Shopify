@@ -50,7 +50,7 @@ trait MainTrait
             ->Name("Zip")
             ->Group($groupName)
             ->MicroData("http://schema.org/PostalAddress", "postalCode")
-            ->AddOption('maxLength', 18);
+            ->AddOption('maxLength', (string) 18);
         
         //====================================================================//
         // City Name

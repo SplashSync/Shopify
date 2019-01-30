@@ -70,9 +70,9 @@
         "friendsofphp/php-cs-fixer":                    "^2.10",
         
         "escapestudios/symfony2-coding-standard":       "^3.4",
-        "phpstan/phpstan-symfony":                      "^0.10",
-        "phpstan/phpstan-doctrine":                     "^0.10",
-        "phpstan/phpstan-phpunit":                      "^0.10",
-        "phpstan/phpstan-shim":                         "^0.10"
+        "phpstan/phpstan-symfony":                      "~0.10",
+        "phpstan/phpstan-doctrine":                     "~0.10",
+        "phpstan/phpstan-phpunit":                      "~0.10",
+        "phpstan/phpstan-shim":                         "~0.10"
     }
 }

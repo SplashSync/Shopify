@@ -82,7 +82,7 @@ trait ImagesTrait
             //====================================================================//
             // Insert Image in Output List
             $image = $this->images()->EncodeFromUrl(
-                ($shopifyImage['alt'] ? $shopifyImage['alt'] : basename(parse_url($shopifyImage['src'], PHP_URL_PATH))),
+                ($shopifyImage['alt'] ? $shopifyImage['alt'] : basename((string) parse_url($shopifyImage['src'], PHP_URL_PATH))),
                 $shopifyImage['src'],
                 $shopifyImage['src']
             );

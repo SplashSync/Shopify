@@ -82,7 +82,7 @@ class WebHooksController extends Controller
         
         //====================================================================//
         // Log Shopify Request
-        $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (is_array($this->data) ? $this->data : array()));
+        $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (isset($this->data) ? $this->data : array()));
         
         //==============================================================================
         // Commit Changes
@@ -260,7 +260,7 @@ class WebHooksController extends Controller
         //====================================================================//
         // Verify WebHook Type is Provided & is Valid
         $topic =  $request->headers->get("X-Shopify-Topic");
-        if (empty($this->topic) || is_string($this->topic) || (!in_array($this->topic, Objects\WebHook::getTopics(), true))) {
+        if (empty($topic) || !is_string($topic) || (!in_array($topic, Objects\WebHook::getTopics(), true))) {
             return false;
         }
         $this->topic = $topic;

@@ -32,7 +32,7 @@ trait CoreTrait
     {
         //====================================================================//
         // Customer Object
-        $this->fieldsFactory()->create(self::objects()->Encode("ThirdParty", SPL_T_ID))
+        $this->fieldsFactory()->create((string) self::objects()->Encode("ThirdParty", SPL_T_ID))
             ->Identifier("customer")
             ->Name("Customer");
         if ($this instanceof Invoice) {

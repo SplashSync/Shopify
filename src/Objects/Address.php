@@ -82,7 +82,7 @@ class Address extends AbstractObject
     {
         $array = explode("-", $objectId);
 
-        return is_array($array) ? $array[0] : null;
+        return isset($array[1]) ? $array[0] : null;
     }
 
     /**
@@ -96,7 +96,7 @@ class Address extends AbstractObject
     {
         $array = explode("-", $objectId);
 
-        return is_array($array) ? $array[1] : null;
+        return isset($array[1]) ? $array[1] : null;
     }
 
     /**
