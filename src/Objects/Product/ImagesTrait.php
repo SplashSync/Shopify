@@ -1,22 +1,21 @@
 <?php
 
 /*
- * This file is part of SplashSync Project.
+ *  This file is part of SplashSync Project.
  *
- * Copyright (C) Splash Sync <www.splashsync.com>
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
  */
 
 namespace Splash\Connectors\Shopify\Objects\Product;
 
 use Splash\Core\SplashCore      as Splash;
-
 use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
 
 /**
@@ -24,15 +23,92 @@ use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
  */
 trait ImagesTrait
 {
-    
     use SplashImagesTrait;
     
+//    /**
+//     *  @abstract     Write Given Fields
+//     *
+//     *  @param        string    $FieldName              Field Identifier / Name
+//     *  @param        mixed     $Data                   Field Data
+//     *
+//     *  @return         none
+//     */
+//    private function setImagesFields($FieldName,$Data)
+//    {
+//        //====================================================================//
+//        // WRITE Field
+//        switch ($FieldName)
+//        {
+//            //====================================================================//
+//            // PRODUCT IMAGES
+//            //====================================================================//
+//            case 'images':
+//                if ( $this->object->id ) {
+//                    $this->setImgArray($Data);
+//                    $this->setImgArray($Data);
+//                } else {
+//                    $this->NewImagesArray = $Data;
+//                }
+//                break;
+//
+//            default:
+//                return;
+//        }
+//        unset($this->in[$FieldName]);
+//    }
+    
     /**
-    * Build Fields using FieldFactory
-    */
+     * Return Product Image Array from Product Object Class
+     *
+     * @return void
+     */
+    public function getImgArray()
+    {
+        //====================================================================//
+        // Images List Alraedy Loaded
+        // Images List is Empty
+        if (!empty($this->out["images"]) || !is_iterable($this->object->images)) {
+            return;
+        }
+        //====================================================================//
+        // Init Images List
+        $this->out["images"] = array();
+        //====================================================================//
+        // Create Images List
+        foreach ($this->object->images as $key => $shopifyImage) {
+            //====================================================================//
+            // Touche Image with Curl (Incase first reading)
+            $this->images()->touchRemoteFile($shopifyImage['src']);
+            //====================================================================//
+            // Insert Image in Output List
+            $image = $this->images()->EncodeFromUrl(
+                ($shopifyImage['alt'] ? $shopifyImage['alt'] : basename(parse_url($shopifyImage['src'], PHP_URL_PATH))),
+                $shopifyImage['src'],
+                $shopifyImage['src']
+            );
+            //====================================================================//
+            // Init Image List Item
+            if (!isset($this->out["images"][$key])) {
+                $this->out["images"][$key] = array();
+            }
+            // Shopify Image Raw data
+            $this->out["images"][$key]["image"] = $image;
+            // Shopify Image Position
+            $this->out["images"][$key]["position"] = $shopifyImage['position'];
+            // Shopify Image Cover Flag
+            $this->out["images"][$key]["cover"] = (1 == $shopifyImage['position']);
+            // Shopify Image Visible Flag
+            $this->out["images"][$key]["visible"] = empty($shopifyImage['variant_ids'])
+                    ? true
+                    : in_array($this->variantId, $shopifyImage['variant_ids'], true);
+        }
+    }
+    
+    /**
+     * Build Fields using FieldFactory
+     */
     private function buildImagesFields()
     {
-        
         //====================================================================//
         // PRODUCT IMAGES
         //====================================================================//
@@ -76,16 +152,15 @@ trait ImagesTrait
             ->MicroData("http://schema.org/Product", "isVisibleImage")
             ->Group("Product gallery")
             ->isNotTested();
-     
     }
 
     /**
      * Read requested Field
      *
-     * @param        string $key       Input List Key
-     * @param        string $fieldName Field Identifier / Name
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
      *
-     * @return         void
+     * @return void
      */
     private function getImagesFields($key, $fieldName)
     {
@@ -100,100 +175,16 @@ trait ImagesTrait
             case 'position@images':
             case 'visible@images':
                 $this->getImgArray();
+
                 break;
-                
             default:
                 return;
         }
         
-        if (!is_null($key)) {
-            unset($this->in[$key]);
-        }
-    }
-    
-//    /**
-//     *  @abstract     Write Given Fields
-//     *
-//     *  @param        string    $FieldName              Field Identifier / Name
-//     *  @param        mixed     $Data                   Field Data
-//     *
-//     *  @return         none
-//     */
-//    private function setImagesFields($FieldName,$Data)
-//    {
-//        //====================================================================//
-//        // WRITE Field
-//        switch ($FieldName)
-//        {
-//            //====================================================================//
-//            // PRODUCT IMAGES
-//            //====================================================================//
-//            case 'images':
-//                if ( $this->object->id ) {
-//                    $this->setImgArray($Data);
-//                    $this->setImgArray($Data);
-//                } else {
-//                    $this->NewImagesArray = $Data;
-//                }
-//                break;
-//
-//            default:
-//                return;
-//        }
-//        unset($this->in[$FieldName]);
-//    }
-    
-    /**
-     * Return Product Image Array from Product Object Class
-     * 
-     * @return bool
-     */
-    public function getImgArray()
-    {
-        //====================================================================//
-        // Images List Alraedy Loaded
-        // Images List is Empty
-        if (isset($this->out["images"]) || !count($this->object->images)) {
-            return true;
-        }
-        //====================================================================//
-        // Init Images List
-        $this->out["images"] = array();
-        //====================================================================//
-        // Create Images List
-        foreach ($this->object->images as $key => $shopifyImage) 
-        {
-            //====================================================================//
-            // Touche Image with Curl (Incase first reading)
-            $this->images()->touchRemoteFile($shopifyImage['src']);
-            //====================================================================//
-            // Insert Image in Output List
-            $image = $this->images()->EncodeFromUrl(
-                ($shopifyImage['alt'] ? $shopifyImage['alt'] : basename(parse_url($shopifyImage['src'], PHP_URL_PATH))),
-                $shopifyImage['src'],
-                $shopifyImage['src']
-            );
-            //====================================================================//
-            // Init Image List Item
-            if (!isset($this->out["images"][$key])) {
-                $this->out["images"][$key] = array();
-            }
-            // Shopify Image Raw data
-            $this->out["images"][$key]["image"] = $image;
-            // Shopify Image Position
-            $this->out["images"][$key]["position"] = $shopifyImage['position'];
-            // Shopify Image Cover Flag
-            $this->out["images"][$key]["cover"] = ($shopifyImage['position'] == 1);
-            // Shopify Image Visible Flag
-            $this->out["images"][$key]["visible"] = empty($shopifyImage['variant_ids'])
-                    ? true
-                    : (bool) in_array($this->variantId, $shopifyImage['variant_ids']);
-        }
-        return true;
+        unset($this->in[$key]);
     }
          
-     
-//    /**
+    //    /**
 //    *   @abstract     Update Product Image Array from Server Data
 //    *   @param        array   $Data             Input Image List for Update
 //    */

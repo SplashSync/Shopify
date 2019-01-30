@@ -1,0 +1,300 @@
+<?php
+
+/*
+ *  This file is part of SplashSync Project.
+ *
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
+
+namespace Splash\Connectors\Shopify\Controller;
+
+use Psr\Log\LoggerInterface;
+use Splash\Bundle\Models\AbstractConnector;
+use Splash\Connectors\Shopify\Objects;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+/**
+ * Splash Shopify Connector WebHooks Controller
+ */
+class WebHooksController extends Controller
+{
+    /**
+     * @var AbstractConnector
+     */
+    private $connector;
+    
+    /**
+     * @var string
+     */
+    private $topic;
+
+    /**
+     * @var array
+     */
+    private $data;
+
+    //====================================================================//
+    //  SHOPIFY WEBHOOKS MANAGEMENT
+    //====================================================================//
+   
+    /**
+     * Execute WebHook Actions for A MailJet Node
+     *
+     * @param LoggerInterface   $logger
+     * @param Request           $request
+     * @param AbstractConnector $connector
+     *
+     * @throws BadRequestHttpException
+     *
+     * @return JsonResponse
+     */
+    public function indexAction(LoggerInterface $logger, Request $request, AbstractConnector $connector)
+    {
+        //====================================================================//
+        // For Shopify ping GET
+        if ($request->isMethod('GET')) {
+            $logger->notice(__CLASS__.'::'.__FUNCTION__.' Shopify Ping.', $request->attributes->all());
+
+            return $this->prepareResponse(200);
+        }
+        
+        //==============================================================================
+        // Safety Check
+        if (!$this->verify($request, $connector)) {
+            throw new BadRequestHttpException('Malformatted or missing data');
+        }
+        
+        //====================================================================//
+        // Read Request Parameters
+        if (!$this->extractData($request)) {
+            throw new BadRequestHttpException('Malformatted or missing data');
+        }
+        
+        //====================================================================//
+        // Log Shopify Request
+        $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (is_array($data) ? $data : array()));
+        
+        //==============================================================================
+        // Commit Changes
+        $this->executeCommits();
+        
+        return $this->prepareResponse(200);
+    }
+    
+    /**
+     * Execute Changes Commits
+     *
+     * @return void
+     */
+    private function executeCommits() : void
+    {
+        switch ($this->topic) {
+            //====================================================================//
+            // Customer & Address WebHooks
+            //====================================================================//
+            case 'customers/create':
+                $this->executeCustomerCommit($this->data, SPL_A_CREATE, "Created");
+
+                return;
+            case 'customers/update':
+            case 'customers/disable':
+            case 'customers/enable':
+                $this->executeCustomerCommit($this->data, SPL_A_UPDATE, "Updated");
+
+                return;
+            case 'customers/delete':
+                $this->executeCustomerCommit($this->data, SPL_A_DELETE, "Deleted");
+
+                return;
+            //====================================================================//
+            // Products WebHooks
+            //====================================================================//
+            case 'products/create':
+                $this->executeProductCommit($this->data, SPL_A_CREATE, "Created");
+
+                return;
+            case 'products/update':
+                $this->executeProductCommit($this->data, SPL_A_UPDATE, "Updated");
+
+                return;
+            case 'products/delete':
+                $this->executeProductCommit($this->data, SPL_A_DELETE, "Deleted");
+
+                return;
+            //====================================================================//
+            // Order & Invoices WebHooks
+            //====================================================================//
+            case 'orders/create':
+                $this->executeOrderCommit($this->data, SPL_A_CREATE, "Created");
+
+                return;
+            case 'orders/cancelled':
+            case 'orders/fulfilled':
+            case 'orders/paid':
+            case 'orders/partially_fulfilled':
+            case 'orders/updated':
+                $this->executeOrderCommit($this->data, SPL_A_UPDATE, "Updated");
+
+                return;
+            case 'orders/delete':
+                $this->executeOrderCommit($this->data, SPL_A_DELETE, "Deleted");
+
+                return;
+            default:
+                return;
+        }
+    }
+    
+    /**
+     * Execute Changes Commits for Customers
+     *
+     * @param array  $data
+     * @param string $action
+     * @param string $comment
+     *
+     * @return void
+     */
+    private function executeCustomerCommit(array $data, string $action, string $comment) : void
+    {
+        //==============================================================================
+        // Commit Change For Thirdparty
+        $this->connector->commit('ThirdParty', (string) $data['id'], $action, 'Shopify API', 'Shopify Customer '.$comment);
+        //==============================================================================
+        // Safety Check
+        if (empty($data['addresses'])) {
+            return;
+        }
+        //==============================================================================
+        // Commit Change For Thirdparty Addresses
+        foreach ($data['addresses'] as $address) {
+            $this->connector->commit(
+                'Address',
+                Objects\Address::getObjectId((string) $data['id'], (string) $address['id']),
+                $action,
+                'Shopify API',
+                'Shopify Customer Address '.$comment
+            );
+            
+            //dump(Objects\Address::getObjectId((string) $data['id'], (string) $address['id']));
+        }
+    }
+    
+    /**
+     * Execute Changes Commits fro Products
+     *
+     * @param array  $data
+     * @param string $action
+     * @param string $comment
+     *
+     * @return void
+     */
+    private function executeProductCommit(array $data, string $action, string $comment) : void
+    {
+        //==============================================================================
+        // Safety Check
+        if (empty($data['variants'])) {
+            return;
+        }
+        //==============================================================================
+        // Commit Change For Product Variants
+        foreach ($data['variants'] as $variant) {
+            $this->connector->commit(
+                'Product',
+                Objects\Product::getObjectId((string) $data['id'], (string) $variant['id']),
+                $action,
+                'Shopify API',
+                'Shopify Product '.$comment
+            );
+        }
+    }
+    
+    /**
+     * Execute Changes Commits Orders & Invoices
+     *
+     * @param array  $data
+     * @param string $action
+     * @param string $comment
+     *
+     * @return void
+     */
+    private function executeOrderCommit(array $data, string $action, string $comment) : void
+    {
+        $this->connector->commit('Order', (string) $data['id'], $action, 'Shopify API', 'Shopify Order was '.$comment);
+        $this->connector->commit('Invoice', (string) $data['id'], $action, 'Shopify API', 'Shopify Invoice was '.$comment);
+    }
+    
+    /**
+     * Verify Request Headers
+     *
+     * @param Request           $request
+     * @param AbstractConnector $connector
+     *
+     * @return bool
+     */
+    private function verify(Request $request, AbstractConnector $connector) : bool
+    {
+        //====================================================================//
+        // Verify Request is POST
+        if (!$request->isMethod('POST')) {
+            return false;
+        }
+
+        //====================================================================//
+        // Verify User Node Domain is Ok with Identifier
+        $wsHost = $connector->getParameter("WsHost");
+        $headerHost = $request->headers->get("X-Shopify-Shop-Domain");
+        if (empty($headerHost) || ($headerHost != $wsHost)) {
+            return false;
+        }
+        
+        //====================================================================//
+        // Verify WebHook Type is Provided & is Valid
+        $this->topic =  $request->headers->get("X-Shopify-Topic");
+        if (empty($this->topic) || (!in_array($this->topic, Objects\WebHook::getTopics(), true))) {
+            return false;
+        }
+         
+        //====================================================================//
+        // Store Connector for Further Usages
+        $this->connector = $connector;
+        
+        return true;
+    }
+        
+    /**
+     * Extract Data from Request
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function extractData(Request $request)
+    {
+        $this->data = $request->request->all();
+        if (empty($this->data) || !isset($this->data["id"]) || !is_scalar($this->data["id"])) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * @param int $status
+     *
+     * @return JsonResponse
+     */
+    private function prepareResponse($status)
+    {
+        return new JsonResponse(array('success' => true), $status);
+    }
+}

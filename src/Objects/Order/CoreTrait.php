@@ -16,8 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Order;
 
 use DateTime;
-use Order\Invoice;
-use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
+use Splash\Connectors\Shopify\Objects\Invoice;
 
 /**
  * Access to Orders Core Fields
@@ -26,6 +25,8 @@ trait CoreTrait
 {
     /**
      * Build Core Fields using FieldFactory
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function buildCoreFields()
     {
@@ -34,7 +35,7 @@ trait CoreTrait
         $this->fieldsFactory()->create(self::objects()->Encode("ThirdParty", SPL_T_ID))
             ->Identifier("customer")
             ->Name("Customer");
-        if ($this instanceof Order\Invoice) {
+        if ($this instanceof Invoice) {
             $this->fieldsFactory()->MicroData("http://schema.org/Invoice", "customer");
         } else {
             $this->fieldsFactory()->MicroData("http://schema.org/Organization", "ID");
@@ -46,8 +47,7 @@ trait CoreTrait
             ->Identifier("email")
             ->Name("Customer Email")
             ->MicroData("http://schema.org/ContactPoint", "email")
-            ->isReadOnly()
-                ;
+            ->isReadOnly();
         
         //====================================================================//
         // Reference
@@ -93,16 +93,17 @@ trait CoreTrait
             case 'customer':
                 if (isset($this->object->customer)) {
                     $this->out[$fieldName] = self::objects()->Encode("ThirdParty", $this->object->customer['id']);
-                } else {
-                    $this->out[$fieldName] = null;
+
+                    break;
                 }
+                $this->out[$fieldName] = null;
 
                 break;
             //====================================================================//
             // Order Official Date
             case 'processed_at':
-                $Date = new DateTime($this->object->{$fieldName});
-                $this->out[$fieldName] = $Date->format(SPL_T_DATECAST);
+                $date = new DateTime($this->object->{$fieldName});
+                $this->out[$fieldName] = $date->format(SPL_T_DATECAST);
 
                 break;
             default:

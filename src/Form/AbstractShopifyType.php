@@ -75,7 +75,7 @@ abstract class AbstractShopifyType extends AbstractType
             ->add('Token', TextType::class, array(
                 'label'                     => "var.token.label",
                 'help_block'                => "var.token.desc",
-                'required'                  => true,
+                'required'                  => false,
                 'translation_domain'        => "ShopifyBundle",
             ))
         ;

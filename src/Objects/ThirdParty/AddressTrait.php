@@ -24,7 +24,7 @@ use Splash\Core\SplashCore      as Splash;
 trait AddressTrait
 {
     /**
-     * @var array
+     * @var ArrayObject
      */
     protected $address;
         
@@ -112,6 +112,8 @@ trait AddressTrait
      * @param string $fieldName Field Identifier / Name
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getAddressFields($key, $fieldName)
     {

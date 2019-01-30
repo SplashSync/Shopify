@@ -15,15 +15,17 @@
 
 namespace Splash\Connectors\Shopify\DependencyInjection;
 
+use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * Loads and manages bundle configuration
  */
-class ShopifyExtension extends Extension
+class ShopifyExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -34,5 +36,20 @@ class ShopifyExtension extends Extension
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        //====================================================================//
+        // CONFIGURE Splash OAuth2 Shopify Client
+        $container->prependExtensionConfig(
+            "knpu_oauth2_client",
+            array(
+                "clients" => array("shopify" => OAuth2Client::getConfig()),
+            )
+        );
     }
 }

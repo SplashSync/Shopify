@@ -15,9 +15,9 @@
 
 namespace Splash\Connectors\Shopify\Objects\WebHook;
 
+use ArrayObject;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Core\SplashCore      as Splash;
-use ArrayObject;
 
 /**
  * Shopify WebHook CRUD Functions
@@ -29,7 +29,7 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return false|ArrayObject
+     * @return ArrayObject|false
      */
     public function load($objectId)
     {
@@ -55,7 +55,7 @@ trait CRUDTrait
      * @param string $url
      * @param string $topic
      *
-     * @return false|stdClass New Object
+     * @return ArrayObject|false New Object
      */
     public function create(string $url = null, string $topic = null)
     {
@@ -171,8 +171,8 @@ trait CRUDTrait
             "webhook" => array(
                 'address' => $webhookUrl,
                 'topic' => $webhookTopic,
-                'format' => 'json'
-            )
+                'format' => 'json',
+            ),
         );
     }
 }

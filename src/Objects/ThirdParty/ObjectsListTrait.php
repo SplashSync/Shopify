@@ -28,7 +28,7 @@ trait ObjectsListTrait
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function ObjectsList($filter = null, $params = null)
+    public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
         // Execute List Request

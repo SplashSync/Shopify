@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace   Splash\Connectors\Shopify\Objects\Order;
 
@@ -27,13 +23,12 @@ use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
  */
 trait ObjectsListTrait
 {
-    
     /**
      * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function ObjectsList($filter = null, $params = null)
+    public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
         // Prepare Parameters
@@ -42,26 +37,26 @@ trait ObjectsListTrait
             $query = array(
                 "status"    => "any",
                 'limit'    =>   $params["max"],
-                'page'     =>   (1 + (int) ($params["offset"] / $params["max"]))
+                'page'     =>   (1 + (int) ($params["offset"] / $params["max"])),
             );
-        }        
+        }
         //====================================================================//
         // Execute Products List Request
         $rawData = API::get('orders', null, $query, 'orders');
         //====================================================================//
         // Request Failled
         if (null === $rawData) {
-            return array( 'meta'    => ['current' => 0, 'total' => 0]);
+            return array( 'meta'    => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Compute Totals
-        $Response   =   array(
-            'meta'  => ['current' => count($rawData), 'total' => API::count('orders')],
+        $response   =   array(
+            'meta'  => array('current' => count($rawData), 'total' => API::count('orders')),
         );
         //====================================================================//
         // Parse Data in response
         foreach ($rawData as $order) {
-            $Response[]   = array(
+            $response[]   = array(
                 'id'                        =>      $order['id'],
                 'name'                      =>      $order['name'],
                 'created_at'                =>      (new DateTime($order['created_at']))->format(SPL_T_DATETIMECAST),
@@ -70,6 +65,6 @@ trait ObjectsListTrait
             );
         }
 
-        return $Response;
+        return $response;
     }
 }

@@ -15,8 +15,11 @@
 
 namespace Splash\Connectors\Shopify\Controller;
 
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Local\ActionsTrait;
+use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,47 +34,76 @@ use Symfony\Component\Translation\Translator;
 class ActionsController extends Controller
 {
     use ActionsTrait;
-    
+
+    //==============================================================================
+    // OAUTH2 AUTHENTIFICATION
+    //==============================================================================
+
     /**
      * Update User Connector WebHooks List
      *
-     * @param Request           $request
+     * @param ClientRegistry    $registry
      * @param AbstractConnector $connector
      *
      * @return Response
-     */    
-    public function registerAction(Request $request, AbstractConnector $connector)
+     */
+    public function oauthAction(ClientRegistry $registry, AbstractConnector $connector)
     {
         //==============================================================================
-        // Reload User Node Id From Session
-        $NodeId = $request->getSession()->get("oauth2_shopify_id");
-
+        // Load Shopify OAuth2 Client
+        $client = $registry->getClient("shopify");
+        //==============================================================================
+        // Safety Check
+        if (!($client->getOAuth2Provider() instanceof OAuth2Client)) {
+            return self::getDefaultResponse();
+        }
+        //==============================================================================
+        // Configure Shopify OAuth2 Client
+        $client->getOAuth2Provider()->configure($connector);
         
         //==============================================================================
-        // Create Shopify OAuth Client
-        $Client    =   $this->Node->getConnector()->getOAuth2Client($this->Node);
+        // Do Shopify OAuth2 Authentification
+        return $client->redirect();
+    }
+    
+    /**
+     * Register Connector App Token
+     *
+     * @param ClientRegistry    $registry
+     * @param AbstractConnector $connector
+     *
+     * @return Response
+     */
+    public function registerAction(ClientRegistry $registry, AbstractConnector $connector)
+    {
+        //==============================================================================
+        // Load Shopify OAuth2 Client
+        $client = $registry->getClient("shopify");
+        //==============================================================================
+        // Safety Check
+        if (!($client->getOAuth2Provider() instanceof OAuth2Client)) {
+            return self::getDefaultResponse();
+        }
+        //==============================================================================
+        // Configure Shopify OAuth2 Client
+        $client->getOAuth2Provider()->configure($connector);
         
         try {
             //==============================================================================
-            // Get Access Token
-            $Token  =   $Client->getAccessToken();
-            //==============================================================================
-            // We have an access token, which we may use in authenticated
-            // requests against the service provider's API.
-            $this->Node->setSetting("Token", $Token->getToken());
-            $this->Node->setDeclared();
-            //==============================================================================
-            // Persist Node
-            $this->getDoctrine()->getManager()->flush();
+            // Now update Connector Configuration
+            $connector->setParameter("Token", $client->getAccessToken());
+            $connector->updateConfiguration();
         } catch (IdentityProviderException $e) {
             return new Response($e->getMessage(), 400);
         }
         
-        //==============================================================================
-        // Redirect to Node Show Page
-        return $this->redirectToRoute("connectors_shopify_update_webhooks", ["NodeId" => $NodeId]);
-    }    
+        return self::getDefaultResponse();
+    }
     
+    //==============================================================================
+    // WEBHOOKS CONFIGURATION
+    //==============================================================================
+            
     /**
      * Update User Connector WebHooks List
      *

@@ -82,7 +82,7 @@ trait CoreTrait
                 if (isset($this->object['default_address']['company']) && !empty($this->object['default_address']['company'])) {
                     $this->out[$fieldName]  =   $this->object['default_address']['company'];
                 }
-                $this->out[$fieldName]  =  "Shopify (" . $this->object->id . ")";
+                $this->out[$fieldName]  =  "Shopify (".$this->object->id.")";
 
                 break;
             default:

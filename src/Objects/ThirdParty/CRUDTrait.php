@@ -29,7 +29,7 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return false|ArrayObject
+     * @return ArrayObject|false
      */
     public function load($objectId)
     {
@@ -51,9 +51,7 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @param array $List Given Object Data
-     *
-     * @return false|ArrayObject
+     * @return ArrayObject|false
      */
     public function create()
     {
@@ -97,9 +95,9 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return string Object Id
+     * @return false|string
      */
-    public function Update($needed)
+    public function update($needed)
     {
         //====================================================================//
         // Stack Trace
@@ -109,7 +107,7 @@ trait CRUDTrait
         }
         //====================================================================//
         // Update Customer from Api
-        if (null === API::put('customers/' . $this->object->id, array("customer" => $this->object))) {
+        if (null === API::put('customers/'.$this->object->id, array("customer" => $this->object))) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Customer (".$this->object->id.").");
         }
         
@@ -130,7 +128,7 @@ trait CRUDTrait
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Delete Customer from Api
-        if (null === API::delete('customers/' . $objectId)) {
+        if (null === API::delete('customers/'.$objectId)) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete Customer (".$objectId.").");
         }
         

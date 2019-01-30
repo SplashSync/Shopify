@@ -15,7 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Test\Controller;
 
-use Splash\Connectors\Shopify\Objects\ThirdParty;
+use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Tests\Tools\TestCase;
 
@@ -35,70 +35,74 @@ class S01WebHookTest extends TestCase
     {
         //====================================================================//
         // Load Connector
-        $connector = $this->getConnector("Shopify");
+        $connector = $this->getConnector("shopify");
         $this->assertInstanceOf(ShopifyConnector::class, $connector);
-        
+
         //====================================================================//
-        // Ping Action -> POST -> KO
-        $this->assertPublicActionWorks($connector, null, array("email" => "example@example.com"), "POST");
+        // Ping Action -> GET -> OK
+        $this->assertPublicActionWorks($connector, null, array(), "GET");
         $this->assertEquals(self::PING_RESPONSE, $this->getResponseContents());
-        
+
         //====================================================================//
         // Ping Action -> POST -> KO
         $this->assertPublicActionFail($connector, null, array(), "POST");
-        //====================================================================//
-        // Ping Action -> GET -> KO
-        $this->assertPublicActionFail($connector, null, array(), "GET");
         //====================================================================//
         // Ping Action -> PUT -> KO
         $this->assertPublicActionFail($connector, null, array(), "PUT");
+        //====================================================================//
+        // Ping Action -> DELETE -> KO
+        $this->assertPublicActionFail($connector, null, array(), "DELETE");
     }
 
-    /**
-     * Test WebHook with Errors
-     */
-    public function testWebhookErrors()
-    {
-        //====================================================================//
-        // Load Connector
-        $connector = $this->getConnector("Shopify");
-        $this->assertInstanceOf(ShopifyConnector::class, $connector);
-
-        //====================================================================//
-        // Empty Contents
-        //====================================================================//
-
-        $this->assertPublicActionFail($connector, null, array(), "POST");
-        
-        //====================================================================//
-        // EVENT BUT NO EMAIL
-        //====================================================================//
-
-        $this->assertPublicActionFail($connector, null, array("event" => "unsubscribed"), "POST");
-
-        //====================================================================//
-        // EMAIOL BUT NO EVENT
-        //====================================================================//
-
-        $this->assertPublicActionFail($connector, null, array("email" => self::FAKE_EMAIL), "POST");
-    }
-
+//    /**
+//     * Test WebHook with Errors
+//     */
+//    public function testWebhookErrors()
+//    {
+//        //====================================================================//
+//        // Load Connector
+//        $connector = $this->getConnector("Shopify");
+//        $this->assertInstanceOf(ShopifyConnector::class, $connector);
+//
+//        //====================================================================//
+//        // Empty Contents
+//        //====================================================================//
+//
+//        $this->assertPublicActionFail($connector, null, array(), "POST");
+//
+//        //====================================================================//
+//        // EVENT BUT NO EMAIL
+//        //====================================================================//
+//
+//        $this->assertPublicActionFail($connector, null, array("event" => "unsubscribed"), "POST");
+//
+//        //====================================================================//
+//        // EMAIOL BUT NO EVENT
+//        //====================================================================//
+//
+//        $this->assertPublicActionFail($connector, null, array("email" => self::FAKE_EMAIL), "POST");
+//    }
+//
     /**
      * Test WebHook Member Updates
      *
      * @dataProvider webHooksInputsProvider
      *
+     * @param string $topic
      * @param array  $data
      * @param string $objectType
      * @param string $action
      * @param string $objectId
      */
-    public function testWebhookRequest(array $data, string $objectType, string $action, string $objectId)
+    public function testWebhookRequest(string $topic, array $data, string $objectType, string $action, string $objectId)
     {
         //====================================================================//
         // Load Connector
-        $connector = $this->getConnector("Shopify");
+        $connector = $this->getConnector("shopify");
         $this->assertInstanceOf(ShopifyConnector::class, $connector);
+        //====================================================================//
+        // Setup Client
+        $this->configure($connector, $topic);
         
         //====================================================================//
         // Prepare Request
@@ -106,15 +110,14 @@ class S01WebHookTest extends TestCase
 //            array("mj_list_id" => $connector->getParameter("ApiList")),
 //            $data
 //        );
-        $post = $data;
+//        $post = $data;
+        //dump($data);
+        //dump($objectId);
 
         //====================================================================//
         // Touch Url
-        $this->assertPublicActionWorks($connector, null, $post, "POST");
-        $this->assertEquals(
-            json_encode(array("success" => true)),
-            $this->getResponseContents()
-        );
+        $this->assertPublicActionWorks($connector, null, $data, "POST");
+        $this->assertEquals(self::PING_RESPONSE, $this->getResponseContents());
 
         //====================================================================//
         // Verify Response
@@ -130,44 +133,121 @@ class S01WebHookTest extends TestCase
     {
         $hooks = array();
         
-        //====================================================================//
-        // Generate Subscribe Events
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             //====================================================================//
-            // Generate Random Contact Email
-            $randEmail = uniqid().self::FAKE_EMAIL;
+            // Add ThirdParty WebHook Test
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_CREATE, "customers/create", uniqid());
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/update", uniqid());
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/disable", uniqid());
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/enable", uniqid());
+            
             //====================================================================//
-            // Add WebHook Test
-            $hooks[] = array(
-                array(
-                    "event" => "unsubscribed",
-                    "email" => $randEmail,
-                ),
-                self::MEMBER,
-                SPL_A_UPDATE,
-                ThirdParty::encodeContactId($randEmail),
-            );
+            // Add Address WebHook Test
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_CREATE, "customers/create", uniqid(), uniqid());
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/update", uniqid(), uniqid());
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/disable", uniqid(), uniqid());
+            $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/enable", uniqid(), uniqid());
+            
+            //====================================================================//
+            // Add Product WebHook Test
+            $hooks[] = self::getProductWebHook(SPL_A_CREATE, "products/create", uniqid());
+            $hooks[] = self::getProductWebHook(SPL_A_UPDATE, "products/update", uniqid());
+            $hooks[] = self::getProductWebHook(SPL_A_DELETE, "products/delete", uniqid());
+
+            //====================================================================//
+            // Add Order & Invoices WebHook Test
+            $hooks[] = self::getInvoiceWebHook(SPL_A_CREATE, "orders/create", uniqid());
+            $hooks[] = self::getInvoiceWebHook(SPL_A_UPDATE, "orders/cancelled", uniqid());
+            $hooks[] = self::getInvoiceWebHook(SPL_A_UPDATE, "orders/fulfilled", uniqid());
+            $hooks[] = self::getInvoiceWebHook(SPL_A_UPDATE, "orders/paid", uniqid());
+            $hooks[] = self::getInvoiceWebHook(SPL_A_UPDATE, "orders/partially_fulfilled", uniqid());
+            $hooks[] = self::getInvoiceWebHook(SPL_A_UPDATE, "orders/updated", uniqid());
+            $hooks[] = self::getInvoiceWebHook(SPL_A_DELETE, "orders/delete", uniqid());
         }
-        
-        //====================================================================//
-        // Generate Add To List Events
-        for ($i = 0; $i < 10; $i++) {
-            //====================================================================//
-            // Generate Random Contact Email
-            $randEmail = uniqid().self::FAKE_EMAIL;
-            //====================================================================//
-            // Add WebHook Test
-            $hooks[] = array(
-                array(
-                    "event" => "listAddition",
-                    "email" => $randEmail,
-                ),
-                self::MEMBER,
-                SPL_A_UPDATE,
-                ThirdParty::encodeContactId($randEmail),
-            );
-        }
-        
+
         return $hooks;
+    }
+    
+    /**
+     * Configure Client Headers for Shopify Requests
+     *
+     * @param ShopifyConnector $connector
+     * @param string           $topic
+     */
+    private function configure(ShopifyConnector $connector, string $topic)
+    {
+        $this->getClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $connector->getParameter("WsHost"));
+        $this->getClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
+    }
+    
+    /**
+     * Generate Fake ThirdParty Inputs for WebHook Requets
+     *
+     * @param string $action
+     * @param string $eventName
+     * @param string $thirdparty
+     * @param string $address
+     *
+     * @return array
+     */
+    private static function getThirdPartyWebHook(string $action, string $eventName, string $thirdparty, string $address = null) : array
+    {
+        return array(
+            $eventName,
+            array(
+                "id" => $thirdparty,
+                "addresses" => is_null($address) ? array() : array(array("id" => $address)),
+            ),
+            is_null($address) ? "ThirdParty" : "Address",
+            $action,
+            is_null($address) ? $thirdparty : Objects\Address::getObjectId($thirdparty, $address),
+        );
+    }
+    
+    /**
+     * Generate Fake Product Inputs for WebHook Requets
+     *
+     * @param string $action
+     * @param string $eventName
+     * @param string $variant
+     *
+     * @return array
+     */
+    private static function getProductWebHook(string $action, string $eventName, string $variant) : array
+    {
+        $product = uniqid();
+        
+        return array(
+            $eventName,
+            array(
+                "id" => $product,
+                "variants" => array(array("id" => $variant)),
+            ),
+            "Product",
+            $action,
+            Objects\Product::getObjectId($product, $variant),
+        );
+    }
+    
+    /**
+     * Generate Fake Order & Invoice Inputs for WebHook Requets
+     *
+     * @param string $action
+     * @param string $eventName
+     * @param string $invoice
+     *
+     * @return array
+     */
+    private static function getInvoiceWebHook(string $action, string $eventName, string $invoice) : array
+    {
+        return array(
+            $eventName,
+            array(
+                "id" => $invoice,
+            ),
+            "Invoice",
+            $action,
+            $invoice,
+        );
     }
 }

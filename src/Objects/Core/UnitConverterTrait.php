@@ -73,5 +73,4 @@ trait UnitConverterTrait
 
         return $this;
     }
-    
 }

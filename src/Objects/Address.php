@@ -62,13 +62,13 @@ class Address extends AbstractObject
     protected $connector;
     
     /**
-     * Class Contructor
+     * Class Constructor
      *
-     * @param ShopifyConnector $Connector
+     * @param ShopifyConnector $connector
      */
-    public function __construct(ShopifyConnector $Connector = null)
+    public function __construct(ShopifyConnector $connector)
     {
-        $this->connector  =   $Connector;
+        $this->connector  =   $connector;
     }
     
     /**
@@ -80,9 +80,9 @@ class Address extends AbstractObject
      */
     public static function getCustomerId(string $objectId) : ?string
     {
-        $Array = explode("-", $objectId);
+        $array = explode("-", $objectId);
 
-        return is_array($Array) ? $Array[0] : null;
+        return is_array($array) ? $array[0] : null;
     }
 
     /**
@@ -94,9 +94,9 @@ class Address extends AbstractObject
      */
     public static function getAddressId(string $objectId) : ?string
     {
-        $Array = explode("-", $objectId);
+        $array = explode("-", $objectId);
 
-        return is_array($Array) ? $Array[1] : null;
+        return is_array($array) ? $array[1] : null;
     }
 
     /**

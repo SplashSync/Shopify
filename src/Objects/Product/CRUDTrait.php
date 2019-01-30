@@ -1,40 +1,35 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace Splash\Connectors\Shopify\Objects\Product;
 
 use ArrayObject;
-use Splash\Core\SplashCore      as Splash;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
+use Splash\Core\SplashCore      as Splash;
 
 /**
  * Shopify Product CRUD Functions
  */
 trait CRUDTrait
 {
-    
     /**
      * Load Request Object
      *
-     * @param       string $objectId Object id
+     * @param string $objectId Object id
      *
-     * @return      false|ArrayObject
+     * @return ArrayObject|false
      */
     public function load($objectId)
     {
@@ -58,6 +53,7 @@ trait CRUDTrait
         foreach ($object['variants'] as $variant) {
             if ($variant['id'] == $this->variantId) {
                 $this->variant = new ArrayObject($variant, ArrayObject::ARRAY_AS_PROPS);
+
                 break;
             }
         }
@@ -68,7 +64,7 @@ trait CRUDTrait
         }
         //====================================================================//
         // Unset Variants to Avoid Erazing Data
-        unset($object['variants']);        
+        unset($object['variants']);
         //====================================================================//
         // Return Product
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
@@ -77,11 +73,9 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @param       array $List Given Object Data
-     *
-     * @return      object     New Object
+     * @return ArrayObject|false
      */
-    public function Create()
+    public function create()
     {
         //====================================================================//
         // Stack Trace
@@ -92,44 +86,42 @@ trait CRUDTrait
             return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "Product Title");
         }
         //====================================================================//
-        // Create New Product
-        $this->object   =   new ArrayObject([ "id" => null ], ArrayObject::ARRAY_AS_PROPS);
-        $this->setSimple("title", $this->in["title"]);
-        
-        $Response   =   $this->Connector->createShopifyObject($this->getShopifyProduct(), $this->object);
-        if (!$Response) {
-            return false;
+        // Create New Product from Api
+        $response  =   API::post("products", array("title" => $this->in["title"]), "product");
+        if (null === $response) {
+            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Product (".$this->in["title"].").");
         }
-        $NewProduct =   new ArrayObject($Response, ArrayObject::ARRAY_AS_PROPS);
+        
+        $this->object =   new ArrayObject($response, ArrayObject::ARRAY_AS_PROPS);
                 
         //====================================================================//
         // Store New Ids
-        $this->ProductId = $NewProduct->id;
-        $this->Variant   = end($NewProduct->variants);
-        $this->VariantId = !empty($this->Variant) ? $this->Variant->id : null;
+        $this->productId = $this->object->id;
+        $this->variant   = end($this->object->variants);
+        $this->variantId = !empty($this->variant) ? $this->variant->id : null;
         
         //====================================================================//
         // Default Setup for New Product Variant
         $this->setSimple("inventory_management", "shopify", "Variant");
 
-        return $NewProduct;
+        return $this->object;
     }
     
     /**
      * Update Request Object
      *
-     * @param       bool $needed Is This Update Needed
+     * @param bool $needed Is This Update Needed
      *
-     * @return      string      Object Id
+     * @return false|string
      */
-    public function Update($needed)
+    public function update($needed)
     {
         //====================================================================//
         // Stack Trace
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Encode Object Id
-        $objectId = $this->getObjectId($this->productId, $this->variantId);       
+        $objectId = $this->getObjectId($this->productId, $this->variantId);
         
         //====================================================================//
         // Update Product Variant from Api
@@ -137,15 +129,16 @@ trait CRUDTrait
             $this->object->variants = array($this->variant);
             if (null === API::put(self::getUri($this->productId), array("product" => $this->object))) {
                 return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant (".$objectId.").");
-            }        
+            }
         }
 
         //====================================================================//
         // Update Inventory Level
         if ($this->isToUpdate("inventory")) {
-            if (null === API::post('inventory_levels/set', $this->getNewInventorylevel())) {
+            $newInventorylevel = $this->getNewInventorylevel();
+            if (is_null($newInventorylevel) || (null === API::post('inventory_levels/set', $newInventorylevel))) {
                 return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant Stock (".$objectId.").");
-            }                
+            }
         }
         
         return $objectId;
@@ -154,19 +147,19 @@ trait CRUDTrait
     /**
      * Delete requested Object
      *
-     * @param       int $objectId Object Id
+     * @param null|string $objectId Object Id
      *
-     * @return      bool
+     * @return bool
      */
-    public function Delete($objectId = null)
+    public function delete($objectId = null)
     {
         //====================================================================//
         // Stack Trace
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Explode Storage Id
-        $this->productId = self::getProductId($objectId);
-        $this->variantId = self::getVariantId($objectId);
+        $this->productId = self::getProductId((string) $objectId);
+        $this->variantId = self::getVariantId((string) $objectId);
         //====================================================================//
         // Delete Product Variant from Api
         if (null === API::delete(self::getUri($this->productId, $this->variantId))) {
@@ -181,16 +174,16 @@ trait CRUDTrait
      *
      * @param string $productId
      * @param string $variantId
-     * 
+     *
      * @return string
      */
     private static function getUri(string $productId = null, string $variantId = null) : string
     {
-        $baseUri = 'products/' . $productId;
-        if(!is_null($variantId)) {
-            $baseUri.=  "/variants/".$variantId;
+        $baseUri = 'products/'.$productId;
+        if (!is_null($variantId)) {
+            $baseUri .= "/variants/".$variantId;
         }
 
         return $baseUri;
-    }    
+    }
 }

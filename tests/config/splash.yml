@@ -12,8 +12,11 @@ splash:
             server_host:        "%splash_host%"
             connector:          shopify
             config:  
-                WsHost:         ThisIsShopUrl
-                Token:          ThisIsSecretToken
-                LocationId:     ThisIsLocationId
+#                WsHost:         ThisIsShopUrl
+#                Token:          ThisIsSecretToken
+#                LocationId:     ThisIsLocationId
 
 
+                WsHost:         api-connector.myshopify.com
+                Token:          7c4486d3f0cbb62522f09350546d84a1
+                LocationId:     5734826037

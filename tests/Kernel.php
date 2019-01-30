@@ -46,6 +46,10 @@ class Kernel extends BaseKernel
         $bundles[] = new Splash\Bundle\SplashBundle();
 
         //==============================================================================
+        // oAuth Management Bundles
+        $bundles[] = new KnpU\OAuth2ClientBundle\KnpUOAuth2ClientBundle();
+        
+        //==============================================================================
         // SPLASH CONNECTORS BUNDLE
         $bundles[] = new Splash\Connectors\Shopify\ShopifyBundle();
         

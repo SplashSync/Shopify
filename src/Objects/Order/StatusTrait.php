@@ -46,6 +46,8 @@ trait StatusTrait
      * @param string $fieldName Field Identifier / Name
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     protected function getStatusFields($key, $fieldName)
     {

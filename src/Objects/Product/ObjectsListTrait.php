@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace   Splash\Connectors\Shopify\Objects\Product;
 
@@ -27,13 +23,12 @@ use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
  */
 trait ObjectsListTrait
 {
-    
     /**
      * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function ObjectsList($filter = null, $params = null)
+    public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
         // Prepare Parameters
@@ -41,16 +36,16 @@ trait ObjectsListTrait
         if (isset($params["max"]) && ($params["max"] > 0) && isset($params["offset"]) && ($params["offset"] >= 0)) {
             $query = array(
                 'limit'    =>   $params["max"],
-                'page'     =>   (1 + (int) ($params["offset"] / $params["max"]))
+                'page'     =>   (1 + (int) ($params["offset"] / $params["max"])),
             );
-        }        
+        }
         //====================================================================//
         // Execute Products List Request
-        $rawData = API::get('products', null, $query, 'products');     
+        $rawData = API::get('products', null, $query, 'products');
         //====================================================================//
         // Request Failed
-        if ($rawData == false) {
-            return array( 'meta'    => ['current' => 0, 'total' => 0]);
+        if (false == $rawData) {
+            return array( 'meta'    => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Parse Data in response
@@ -74,7 +69,7 @@ trait ObjectsListTrait
         $response["meta"] = array(
             'current' => count($response),
             'total' => API::count('products'),
-                );
+        );
         
         return $response;
     }

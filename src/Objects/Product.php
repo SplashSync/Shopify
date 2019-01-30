@@ -1,38 +1,34 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace Splash\Connectors\Shopify\Objects;
 
-use Splash\Core\SplashCore      as Splash;
-
+use ArrayObject;
+use Splash\Bundle\Models\AbstractStandaloneObject;
+use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\Objects\IntelParserTrait;
 use Splash\Models\Objects\SimpleFieldsTrait;
 
-use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Splash\Bundle\Models\AbstractStandaloneObject;
-
 /**
  * Shopify Implementation of Products
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Product extends AbstractStandaloneObject
 {
-    
     // Splash Php Core Traits
     use IntelParserTrait;
     use SimpleFieldsTrait;
@@ -78,6 +74,8 @@ class Product extends AbstractStandaloneObject
      * Object Synchronistion Limitations
      *
      * This Flags are Used by Splash Server to Prevent Unexpected Operations on Remote Server
+     *
+     * @codingStandardsIgnoreStart
      */
     protected static $ALLOW_PUSH_CREATED         =  true;        // Allow Creation Of New Local Objects
     protected static $ALLOW_PUSH_UPDATED         =  true;        // Allow Update Of Existing Local Objects
@@ -93,29 +91,36 @@ class Product extends AbstractStandaloneObject
     protected static $ENABLE_PULL_CREATED       =  true;         // Enable Import Of New Local Objects
     protected static $ENABLE_PULL_UPDATED       =  true;         // Enable Import of Updates of Local Objects when Modified Localy
     protected static $ENABLE_PULL_DELETED       =  true;         // Enable Delete Of Remotes Objects when Deleted Localy
-    
+ 
     /**
+     * @codingStandardsIgnoreEnd
+     *
      * @var ShopifyConnector
      */
-    protected $connector  =   null;
-    
-    public function __construct(ShopifyConnector $Connector = null)
-    {
-        $this->connector  =   $Connector;
-    }
+    protected $connector;
     
     //====================================================================//
     // General Class Variables
     //====================================================================//
-    protected $productId      = null;       // Shopify Product Id
-    protected $variantId      = null;       // Shopify Product Variant Id
+    protected $productId;       // Shopify Product Id
+    protected $variantId;       // Shopify Product Variant Id
     
     /**
      * Shopify Product Variant Object
-     * 
+     *
      * @var ArrayObject
      */
-    protected $variant; 
+    protected $variant;
+    
+    /**
+     * Class Constructor
+     *
+     * @param ShopifyConnector $connector
+     */
+    public function __construct(ShopifyConnector $connector)
+    {
+        $this->connector  =   $connector;
+    }
     
     /**
      * Extract Base Product Id from Splash Product Id
@@ -123,12 +128,12 @@ class Product extends AbstractStandaloneObject
      * @param string $objectId
      *
      * @return null|string
-     */    
+     */
     public static function getProductId(string $objectId) : ?string
     {
-        $Array = explode("-", $objectId);
+        $array = explode("-", $objectId);
 
-        return is_array($Array) ? $Array[0] : null;
+        return is_array($array) ? $array[0] : null;
     }
 
     /**
@@ -137,12 +142,12 @@ class Product extends AbstractStandaloneObject
      * @param string $objectId
      *
      * @return null|string
-     */    
+     */
     public static function getVariantId(string $objectId) : ?string
     {
-        $Array = explode("-", $objectId);
+        $array = explode("-", $objectId);
 
-        return is_array($Array) ? $Array[1] : null;
+        return is_array($array) ? $array[1] : null;
     }
 
     /**

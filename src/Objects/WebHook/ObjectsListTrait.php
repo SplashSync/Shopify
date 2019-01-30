@@ -55,7 +55,7 @@ trait ObjectsListTrait
                 'topic'     =>      $webhook['topic'],
                 //====================================================================//
                 // Parse Meta Dates to Splash Format
-                'created_at'=>      (new DateTime($webhook['created_at']))->format(SPL_T_DATETIMECAST)
+                'created_at' =>     (new DateTime($webhook['created_at']))->format(SPL_T_DATETIMECAST),
             );
         }
 

@@ -67,9 +67,9 @@ class WebHook extends AbstractStandaloneObject
     /**
      * Check if WebHook Has Requested Parameters.
      *
-     * @param   array $webHook Shopify WebHook Object
-     * @param   string      $url     Splash WebHook Url
-     * @param   string      $topic   WebHook Shopify Topic
+     * @param array  $webHook Shopify WebHook Object
+     * @param string $url     Splash WebHook Url
+     * @param string $topic   WebHook Shopify Topic
      *
      * @return bool
      */
@@ -79,10 +79,10 @@ class WebHook extends AbstractStandaloneObject
         // This is a Splash WebHooks
         if (false === strpos(trim($webHook['address']), $url)) {
             return false;
-        }        
+        }
         //====================================================================//
         // Check Topic
-        if (!in_array($webHook['topic'], array_keys(static::$topics))) {
+        if (!in_array($webHook['topic'], array_keys(static::$topics), true)) {
             return false;
         }
         if ((null !== $topic) && ($webHook['topic'] != $topic)) {
@@ -90,5 +90,5 @@ class WebHook extends AbstractStandaloneObject
         }
 
         return true;
-    }    
+    }
 }

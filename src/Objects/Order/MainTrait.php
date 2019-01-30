@@ -128,9 +128,10 @@ trait MainTrait
                 if ($this->object->closed_at) {
                     $date = new DateTime($this->object->closed_at);
                     $this->out[$fieldName] = $date->format(SPL_T_DATECAST);
-                } else {
-                    $this->out[$fieldName] = null;
+                    
+                    break;
                 }
+                $this->out[$fieldName] = null;
 
                 break;
             //====================================================================//
@@ -154,45 +155,47 @@ trait MainTrait
     /**
      * Read requested Field
      *
-     * @param string $Key       Input List Key
-     * @param string $FieldName Field Identifier / Name
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getStatesFields($Key, $FieldName)
+    protected function getStatesFields($key, $fieldName)
     {
         //====================================================================//
         // READ Fields
-        switch ($FieldName) {
+        switch ($fieldName) {
             //====================================================================//
             // ORDER STATUS
             //====================================================================//
 
             case 'isdraft':
                 // Darft Orders are not Visible from API
-                $this->out[$FieldName]  = (bool) !$this->object->confirmed;
+                $this->out[$fieldName]  = !$this->object->confirmed;
 
                 break;
             case 'iscanceled':
-                $this->out[$FieldName]  = ("restocked" == $this->object->fulfillment_status)   ?   true:false;
+                $this->out[$fieldName]  = ("restocked" == $this->object->fulfillment_status)   ?   true:false;
 
                 break;
             case 'isvalidated':
-                $this->out[$FieldName]  = ($this->object->confirmed)   ?   true:false;
+                $this->out[$fieldName]  = ($this->object->confirmed)   ?   true:false;
 
                 break;
             case 'isclosed':
-                $this->out[$FieldName]  = ("fulfilled" == $this->object->fulfillment_status)   ?   true:false;
+                $this->out[$fieldName]  = ("fulfilled" == $this->object->fulfillment_status)   ?   true:false;
 
                 break;
             case 'financial_status':
-                $this->out[$FieldName]  = ("paid" == $this->object->financial_status)    ?   true:false;
+                $this->out[$fieldName]  = ("paid" == $this->object->financial_status)    ?   true:false;
 
                 break;
             default:
                 return;
         }
         
-        unset($this->in[$Key]);
+        unset($this->in[$key]);
     }
 }

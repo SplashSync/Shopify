@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace Splash\Connectors\Shopify\Objects\Order;
 
@@ -24,82 +20,80 @@ namespace Splash\Connectors\Shopify\Objects\Order;
  */
 trait ItemsTrait
 {
-
     /**
      * Build Address Fields using FieldFactory
      */
     protected function buildItemsFields()
     {
-        
         //====================================================================//
         // Order Line Description
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("title")
-                ->InList("lines")
-                ->Name("Description")
-                ->Group("Items")
-                ->MicroData("http://schema.org/partOfInvoice", "description")
-                ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Identifier("title")
+            ->InList("lines")
+            ->Name("Description")
+            ->Group("Items")
+            ->MicroData("http://schema.org/partOfInvoice", "description")
+            ->Association("title@lines", "quantity@lines", "price@lines");
 
         //====================================================================//
         // Order Line Product Identifier
         $this->fieldsFactory()->create(self::objects()->Encode("Product", SPL_T_ID))
-                ->Identifier("product_id")
-                ->InList("lines")
-                ->Name("Product")
-                ->Group("Items")
-                ->MicroData("http://schema.org/Product", "productID")
-                ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Identifier("product_id")
+            ->InList("lines")
+            ->Name("Product")
+            ->Group("Items")
+            ->MicroData("http://schema.org/Product", "productID")
+            ->Association("title@lines", "quantity@lines", "price@lines");
 
         //====================================================================//
         // Order Line Quantity
         $this->fieldsFactory()->create(SPL_T_INT)
-                ->Identifier("quantity")
-                ->InList("lines")
-                ->Name("Quantity")
-                ->Group("Items")
-                ->MicroData("http://schema.org/QuantitativeValue", "value")
-                ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Identifier("quantity")
+            ->InList("lines")
+            ->Name("Quantity")
+            ->Group("Items")
+            ->MicroData("http://schema.org/QuantitativeValue", "value")
+            ->Association("title@lines", "quantity@lines", "price@lines");
 
         //====================================================================//
         // Order Line Discount
         $this->fieldsFactory()->create(SPL_T_DOUBLE)
-                ->Identifier("discount")
-                ->InList("lines")
-                ->Name("Discount %")
-                ->Group("Items")
-                ->MicroData("http://schema.org/Order", "discount")
-                ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Identifier("discount")
+            ->InList("lines")
+            ->Name("Discount %")
+            ->Group("Items")
+            ->MicroData("http://schema.org/Order", "discount")
+            ->Association("title@lines", "quantity@lines", "price@lines");
 
         //====================================================================//
         // Order Line Unit Price
         $this->fieldsFactory()->create(SPL_T_PRICE)
-                ->Identifier("price")
-                ->InList("lines")
-                ->Name("Unit Price")
-                ->Group("Items")
-                ->MicroData("http://schema.org/PriceSpecification", "price")
-                ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Identifier("price")
+            ->InList("lines")
+            ->Name("Unit Price")
+            ->Group("Items")
+            ->MicroData("http://schema.org/PriceSpecification", "price")
+            ->Association("title@lines", "quantity@lines", "price@lines");
 
         //====================================================================//
         // Order Line Tax Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("tax_name")
-                ->InList("lines")
-                ->Name("VAT Tax Code")
-                ->Group("Items")
-                ->MicroData("http://schema.org/PriceSpecification", "valueAddedTaxName")
-                ->Association("title@lines", "quantity@lines", "price@lines")
+            ->Identifier("tax_name")
+            ->InList("lines")
+            ->Name("VAT Tax Code")
+            ->Group("Items")
+            ->MicroData("http://schema.org/PriceSpecification", "valueAddedTaxName")
+            ->Association("title@lines", "quantity@lines", "price@lines")
                 ;
     }
     
     /**
      * Read requested Field
      *
-     * @param        string $key       Input List Key
-     * @param        string $fieldName Field Identifier / Name
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
      *
-     * @return         void
+     * @return void
      */
     protected function getItemsFields($key, $fieldName)
     {
@@ -148,10 +142,10 @@ trait ItemsTrait
     /**
      * Read requested Field
      *
-     * @param        object $line      Line Data Object
-     * @param        string $fieldName Field Identifier / Name
+     * @param array  $line      Line Data Object
+     * @param string $fieldName Field Identifier / Name
      *
-     * @return         void
+     * @return null|array|bool|float|int|string
      */
     private function getItemField($line, $fieldName)
     {
@@ -162,17 +156,14 @@ trait ItemsTrait
             // Order Line Description
             case 'title@lines':
                 return  $line['title']." - ".$line['variant_title'];
-                
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
                 return ($line['product_id']) ? self::objects()->Encode("Product", $line['product_id']) : null;
-                
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
                 return (int) $line['quantity'];
-                
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -193,12 +184,10 @@ trait ItemsTrait
             // Order Line Discount Percentile
             case "discount@lines":
                 return  (float) $this->getItemDiscount($line);
-                
             //====================================================================//
             // Order Line Tax Name
             case 'tax_name@lines':
                 return  $this->getItemVatName($line);
-                
             default:
                 return null;
         }
@@ -207,10 +196,10 @@ trait ItemsTrait
     /**
      * Read requested Field
      *
-     * @param        object $line      Line Data Object
-     * @param        string $fieldName Field Identifier / Name
+     * @param array  $line      Line Data Object
+     * @param string $fieldName Field Identifier / Name
      *
-     * @return         void
+     * @return null|float|array|int|string-float
      */
     private function getShippingField($line, $fieldName)
     {
@@ -221,17 +210,14 @@ trait ItemsTrait
             // Order Line Description
             case 'title@lines':
                 return  $line['title'];
-                
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
                 return null;
-                
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
-                return (int) 1;
-                
+                return 1;
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -252,13 +238,10 @@ trait ItemsTrait
             // Order Line Discount Percentile
             case "discount@lines":
                 return  (float) $this->getItemDiscount($line);
-                
-                    
             //====================================================================//
             // Order Line Tax Name
             case 'tax_name@lines':
                 return  $this->getItemVatName($line);
-                
             default:
                 return null;
         }
@@ -267,26 +250,26 @@ trait ItemsTrait
     /**
      * Compute Item Total Tax Rate
      *
-     * @param   stdObject $Line
+     * @param array $line
      *
-     * @return  int
+     * @return float|int
      */
-    private function getItemVatRate($Line)
+    private function getItemVatRate($line)
     {
         //====================================================================//
         // Line not Taxable
-        if (isset($Line['taxable']) && !$Line['taxable']) {
+        if (isset($line['taxable']) && !$line['taxable']) {
             return 0;
         }
         //====================================================================//
         // No Taxes Lines
-        if (empty($Line['tax_lines'])) {
+        if (empty($line['tax_lines'])) {
             return 0;
         }
         //====================================================================//
         // Sum Applied VAT Rates
         $vatRate = 0;
-        foreach ($Line['tax_lines'] as $tax) {
+        foreach ($line['tax_lines'] as $tax) {
             $vatRate += (100 * $tax['rate']);
         }
 
@@ -296,9 +279,9 @@ trait ItemsTrait
     /**
      * Get Name of First Applied Tax Rate
      *
-     * @param   stdObject $line
+     * @param array $line
      *
-     * @return  string
+     * @return null|string
      */
     private function getItemVatName($line)
     {
@@ -324,29 +307,29 @@ trait ItemsTrait
     /**
      * Get Discount Percetile Applied
      *
-     * @param   stdObject $Line
+     * @param array $line
      *
-     * @return  string
+     * @return float|int
      */
-    private function getItemDiscount($Line)
+    private function getItemDiscount($line)
     {
         //====================================================================//
         // Line has no Discounts
-        if (!isset($Line['discount_amounts']) || empty($Line['discount_amounts'])) {
+        if (!isset($line['discount_amounts']) || empty($line['discount_amounts'])) {
             return 0;
         }
         //====================================================================//
         // Sum Discounts Ammounts
         $amount = 0;
-        foreach ($Line['discount_amounts'] as $Discount) {
-            $amount += $Discount['amount'];
+        foreach ($line['discount_amounts'] as $discount) {
+            $amount += $discount['amount'];
         }
         //====================================================================//
         // If Quantity is defined => Devide
-        if (isset($Line['quantity'])) {
-            $amount = $amount / $Line['quantity'];
+        if (isset($line['quantity'])) {
+            $amount = $amount / $line['quantity'];
         }
         
-        return 100 * ($amount / $Line['price']);
+        return 100 * ($amount / $line['price']);
     }
 }

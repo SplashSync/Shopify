@@ -21,8 +21,8 @@ namespace Splash\Connectors\Shopify\Objects\WebHook;
 trait CoreTrait
 {
     /**
-     * Shopify WebHooks Names used by Splash 
-     * 
+     * Shopify WebHooks Names used by Splash
+     *
      * @var array
      */
     protected static $topics = array(
@@ -50,13 +50,13 @@ trait CoreTrait
 
     /**
      * WebHook Requets Dat Format
-     * 
+     *
      * @var array
      */
     protected static $format = array(
         "json" => "Json Data Format",
         "xml" => "Xml Data Format",
-    );    
+    );
     
     /**
      * Get List of Required WebHooks Topics
@@ -66,7 +66,7 @@ trait CoreTrait
     public static function getTopics() : array
     {
         return array_keys(static::$topics);
-    }     
+    }
     
     /**
      * Build Core Fields using FieldFactory
@@ -96,7 +96,6 @@ trait CoreTrait
             ->Identifier("format")
             ->Name("Data Format")
             ->addChoices(static::$format);
-        
     }
 
     /**

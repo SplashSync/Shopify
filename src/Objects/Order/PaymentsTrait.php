@@ -1,16 +1,16 @@
 <?php
 
 /*
- * This file is part of SplashSync Project.
+ *  This file is part of SplashSync Project.
  *
- * Copyright (C) Splash Sync <www.splashsync.com>
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
  */
 
 namespace Splash\Connectors\Shopify\Objects\Order;
@@ -22,101 +22,95 @@ use DateTime;
  */
 trait PaymentsTrait
 {
-    
+    private $knownPaymentMethods = array(
+        "manual"                        =>      "ByBankTransferInAdvance",
+        "Bank Deposit"                  =>      "ByBankTransferInAdvance",
+        
+        "Money Order"                   =>      "CheckInAdvance",
+        
+        "PayPal Express Checkout"       =>      "PayPal",
+        "PayPal Payflow Pro"            =>      "PayPal",
+        "Alipay Global"                 =>      "PayPal",
+        "Amazon Pay"                    =>      "PayPal",
+        
+        "Cash on Delivery (COD)"        =>      "COD",
 
-    private $KnownPaymentMethods = array(
-        
-            "manual"                        =>      "ByBankTransferInAdvance",
-            "Bank Deposit"                  =>      "ByBankTransferInAdvance",
-        
-            "Money Order"                   =>      "CheckInAdvance",
-        
-            "PayPal Express Checkout"       =>      "PayPal",
-            "PayPal Payflow Pro"            =>      "PayPal",
-            "Alipay Global"                 =>      "PayPal",
-            "Amazon Pay"                    =>      "PayPal",
-        
-            "Cash on Delivery (COD)"        =>      "COD",
-
-            "Stripe"                        =>      "CreditCard",
-            "Shopify Payments"              =>      "CreditCard",
-        
+        "Stripe"                        =>      "CreditCard",
+        "Shopify Payments"              =>      "CreditCard",
     );
     
-    
     /**
-    * Build Fields using FieldFactory
-    */
+     * Build Fields using FieldFactory
+     */
     protected function buildPaymentsFields()
     {
-        
         //====================================================================//
         // Payment Line Payment Method
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-                ->Identifier("mode")
-                ->InList("payments")
-                ->Name("Payment method")
-                ->MicroData("http://schema.org/Invoice", "PaymentMethod")
-                ->Group("Payments")
-                ->isReadOnly()
+            ->Identifier("mode")
+            ->InList("payments")
+            ->Name("Payment method")
+            ->MicroData("http://schema.org/Invoice", "PaymentMethod")
+            ->Group("Payments")
+            ->isReadOnly()
                 ;
 
         //====================================================================//
         // Payment Line Date
         $this->fieldsFactory()->Create(SPL_T_DATE)
-                ->Identifier("date")
-                ->InList("payments")
-                ->Name("Date")
-                ->MicroData("http://schema.org/PaymentChargeSpecification", "validFrom")
-                ->Group("Payments")
-                ->isReadOnly()
+            ->Identifier("date")
+            ->InList("payments")
+            ->Name("Date")
+            ->MicroData("http://schema.org/PaymentChargeSpecification", "validFrom")
+            ->Group("Payments")
+            ->isReadOnly()
                 ;
 
         //====================================================================//
         // Payment Line Payment Identifier
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-                ->Identifier("number")
-                ->InList("payments")
-                ->Name("Transaction ID")
-                ->MicroData("http://schema.org/Invoice", "paymentMethodId")
-                ->Group("Payments")
-                ->isReadOnly()
+            ->Identifier("number")
+            ->InList("payments")
+            ->Name("Transaction ID")
+            ->MicroData("http://schema.org/Invoice", "paymentMethodId")
+            ->Group("Payments")
+            ->isReadOnly()
                 ;
 
         //====================================================================//
         // Payment Line Amount
         $this->fieldsFactory()->Create(SPL_T_DOUBLE)
-                ->Identifier("amount")
-                ->InList("payments")
-                ->Name("Amount")
-                ->MicroData("http://schema.org/PaymentChargeSpecification", "price")
-                ->Group("Payments")
-                ->isReadOnly()
+            ->Identifier("amount")
+            ->InList("payments")
+            ->Name("Amount")
+            ->MicroData("http://schema.org/PaymentChargeSpecification", "price")
+            ->Group("Payments")
+            ->isReadOnly()
                 ;
     }
     
     /**
      * Read requested Field
      *
-     * @param        string $key       Input List Key
-     * @param        string $fieldName Field Identifier / Name
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
      *
-     * @return         none
+     * @return void
      */
     private function getPaymentsFields($key, $fieldName)
     {
         //====================================================================//
         // Check if List field & Init List Array
-        $FieldId = self::lists()->InitOutput($this->out, "payments", $fieldName);
-        if (!$FieldId) {
+        $fieldId = self::lists()->InitOutput($this->out, "payments", $fieldName);
+        if (!$fieldId) {
             return;
         }
         //====================================================================//
         // Verify Order is Paid
-        if ($this->object->financial_status != "paid") {
+        if ("paid" != $this->object->financial_status) {
             unset($this->in[$key]);
 
-            return true;
+            return;
         }
         //====================================================================//
         // READ Fields
@@ -124,45 +118,49 @@ trait PaymentsTrait
             //====================================================================//
             // Payment Line - Payment Mode
             case 'mode@payments':
-                $Value  =   $this->getPaymentMethod();
+                $value  =   $this->getPaymentMethod();
+
                 break;
             //====================================================================//
             // Payment Line - Payment Date
             case 'date@payments':
-                $Date = new DateTime($this->object->created_at);
-                $Value  =   $Date->format(SPL_T_DATECAST);
+                $date = new DateTime($this->object->created_at);
+                $value  =   $date->format(SPL_T_DATECAST);
+
                 break;
             //====================================================================//
             // Payment Line - Payment Identification Number
             case 'number@payments':
-                $Value  =   null;
+                $value  =   null;
+
                 break;
             //====================================================================//
             // Payment Line - Payment Amount
             case 'amount@payments':
-                $Value  =   $this->object->total_price;
+                $value  =   $this->object->total_price;
+
                 break;
             default:
                 return;
         }
         //====================================================================//
         // Insert Data in List
-        self::lists()->Insert($this->out, "payments", $fieldName, 0, $Value);
+        self::lists()->Insert($this->out, "payments", $fieldName, 0, $value);
 
         unset($this->in[$key]);
     }
     
     /**
-     *  @abstract     Try To Detect Payment method Standardized Name
+     * Try To Detect Payment method Standardized Name
      *
-     *  @return       string
+     * @return string
      */
     private function getPaymentMethod()
     {
         //====================================================================//
         // Detect Payment Method Type from Default Payment "known" methods
-        if (array_key_exists($this->object->gateway, $this->KnownPaymentMethods)) {
-            return $this->KnownPaymentMethods[$this->object->gateway];
+        if (array_key_exists($this->object->gateway, $this->knownPaymentMethods)) {
+            return $this->knownPaymentMethods[$this->object->gateway];
         }
 
         return "CreditCard";

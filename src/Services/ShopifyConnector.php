@@ -42,11 +42,11 @@ class ShopifyConnector extends AbstractConnector
      */
     protected static $objectsMap = array(
         "ThirdParty" => Objects\ThirdParty::class,
-        "Address" => Objects\Address::class,
-        "Product" => Objects\Product::class,
-        "Order" => Objects\Order::class,
-        "Invoice" => Objects\Invoice::class,
-        "WebHooks" => Objects\WebHook::class,
+        //        "Address" => Objects\Address::class,
+        //        "Product" => Objects\Product::class,
+        //        "Order" => Objects\Order::class,
+        //        "Invoice" => Objects\Invoice::class,
+        //        "WebHooks" => Objects\WebHook::class,
     );
 
     /**
@@ -211,7 +211,7 @@ class ShopifyConnector extends AbstractConnector
         // Encode Image Array (Without Raw)
         $response = ImagesHelper::encodeFromUrl("Shopify Image", $filePath, $filePath);
         if (!is_array($response) || ($response["md5"] != $fileMd5)) {
-            Splash::log()->err("Unable to read Shopify Image: " . $filePath);
+            Splash::log()->err("Unable to read Shopify Image: ".$filePath);
 
             return false;
         }
@@ -294,6 +294,7 @@ class ShopifyConnector extends AbstractConnector
     public function getPublicActions() : array
     {
         return array(
+            "register" => "ShopifyBundle:Actions:register",
             "index" => "ShopifyBundle:WebHooks:index",
         );
     }
@@ -304,6 +305,7 @@ class ShopifyConnector extends AbstractConnector
     public function getSecuredActions() : array
     {
         return array(
+            "oauth" => "ShopifyBundle:Actions:oauth",
             "webhooks" => "ShopifyBundle:Actions:webhooks",
         );
     }
@@ -362,9 +364,6 @@ class ShopifyConnector extends AbstractConnector
             if ($found) {
                 continue;
             }
-dump($webHookServer);                    
-dump($topic);                    
-dump($webHook);                    
 
             return false;
         }
@@ -446,9 +445,9 @@ dump($webHook);
         }
         //====================================================================//
         // Search for Shop Country Tax
-        foreach ($countries as $Country) {
-            if ($Country['code'] == $storeInfos["country"]) {
-                return 100 * $Country['tax'];
+        foreach ($countries as $country) {
+            if ($country['code'] == $storeInfos["country"]) {
+                return 100 * $country['tax'];
             }
         }
         //====================================================================//

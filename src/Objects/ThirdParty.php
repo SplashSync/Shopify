@@ -62,8 +62,13 @@ class ThirdParty extends AbstractObject
      */
     protected $connector;
     
-    public function __construct(ShopifyConnector $Connector = null)
+    /**
+     * Class Constructor
+     *
+     * @param ShopifyConnector $connector
+     */
+    public function __construct(ShopifyConnector $connector)
     {
-        $this->connector  =   $Connector;
+        $this->connector  =   $connector;
     }
 }

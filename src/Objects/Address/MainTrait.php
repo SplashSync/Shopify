@@ -1,21 +1,17 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace Splash\Connectors\Shopify\Objects\Address;
 
@@ -26,89 +22,86 @@ use Splash\Core\SplashCore      as Splash;
  */
 trait MainTrait
 {
-
-        
     /**
      *  @abstract     Build Fields using FieldFactory
      */
     protected function buildMAinFields()
     {
-        
         $groupName = "Address";
         
         //====================================================================//
         // Addess
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("address1")
-                ->Name("Street 1")
-                ->Group($groupName)
-                ->MicroData("http://schema.org/PostalAddress", "streetAddress");
+            ->Identifier("address1")
+            ->Name("Street 1")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/PostalAddress", "streetAddress");
 
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("address2")
-                ->Name("Street 2")
-                ->Group($groupName)
-                ->MicroData("http://schema.org/PostalAddress", "streetAddress2");
+            ->Identifier("address2")
+            ->Name("Street 2")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/PostalAddress", "streetAddress2");
 
         //====================================================================//
         // Zip Code
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("zip")
-                ->Name("Zip")
-                ->Group($groupName)
-                ->MicroData("http://schema.org/PostalAddress", "postalCode")
-                ->AddOption('maxLength', 18);
+            ->Identifier("zip")
+            ->Name("Zip")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/PostalAddress", "postalCode")
+            ->AddOption('maxLength', 18);
         
         //====================================================================//
         // City Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("city")
-                ->Name("Town")
-                ->Group($groupName)
-                ->MicroData("http://schema.org/PostalAddress", "addressLocality");
+            ->Identifier("city")
+            ->Name("Town")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/PostalAddress", "addressLocality");
         
         //====================================================================//
         // Country Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("country_name")
-                ->Name("Country")
-                ->Group($groupName)
-                ->isReadOnly();
+            ->Identifier("country_name")
+            ->Name("Country")
+            ->Group($groupName)
+            ->isReadOnly();
         
         //====================================================================//
         // Country ISO Code
         $this->fieldsFactory()->create(SPL_T_COUNTRY)
-                ->Identifier("country_code")
-                ->Name("Country Code")
-                ->Group($groupName)
-                ->MicroData("http://schema.org/PostalAddress", "addressCountry");
+            ->Identifier("country_code")
+            ->Name("Country Code")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/PostalAddress", "addressCountry");
         
         //====================================================================//
         // State Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-                ->Identifier("province")
-                ->Group($groupName)
-                ->Name("State")
-                ->isReadOnly();
+            ->Identifier("province")
+            ->Group($groupName)
+            ->Name("State")
+            ->isReadOnly();
         
         //====================================================================//
         // State code
         $this->fieldsFactory()->create(SPL_T_STATE)
-                ->Identifier("province_code")
-                ->Name("State Code")
-                ->Group($groupName)
-                ->MicroData("http://schema.org/PostalAddress", "addressRegion")
-                ->isReadOnly()
-                ->isNotTested();
+            ->Identifier("province_code")
+            ->Name("State Code")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/PostalAddress", "addressRegion")
+            ->isReadOnly()
+            ->isNotTested();
     }
     
     /**
      * Read requested Field
      *
-     * @param        string $key       Input List Key
-     * @param        string $fieldName Field Identifier / Name
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
      *
-     * @return         void
+     * @return void
      */
     protected function getMainFields($key, $fieldName)
     {
@@ -126,6 +119,7 @@ trait MainTrait
             case 'country_name':
             case 'country_code':
                 $this->getSimple($fieldName);
+
                 break;
             default:
                 return;
@@ -137,10 +131,10 @@ trait MainTrait
     /**
      * Write Given Fields
      *
-     * @param        string $fieldName Field Identifier / Name
-     * @param        mixed  $fieldData      Field Data
+     * @param string $fieldName Field Identifier / Name
+     * @param mixed  $fieldData Field Data
      *
-     * @return         void
+     * @return void
      */
     protected function setMainFields($fieldName, $fieldData)
     {
@@ -156,8 +150,8 @@ trait MainTrait
             case 'country_name':
             case 'country_code':
                 $this->setSimple($fieldName, $fieldData);
+
                 break;
-            
             default:
                 return;
         }

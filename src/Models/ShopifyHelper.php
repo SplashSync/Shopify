@@ -63,7 +63,7 @@ class ShopifyHelper
         //====================================================================//
         // Configure Shopify API Client
         self::$client = new Client(self::$credential, self::$endpoint, array(
-            'metaCacheDir' => './tmp' // Metadata cache dir, required
+            'metaCacheDir' => './tmp',  // Metadata cache dir, required
         ));
        
         return true;
@@ -79,7 +79,7 @@ class ShopifyHelper
         //====================================================================//
         // Perform Ping Test
         try {
-            $response = Request::get("https://" . self::$endpoint)
+            $response = Request::get("https://".self::$endpoint)
                 ->send();
         } catch (ConnectionErrorException $ex) {
             Splash::log()->err($ex->getMessage());
@@ -104,7 +104,7 @@ class ShopifyHelper
         //====================================================================//
         // Perform Connect Test
         try {
-            self::$client->getShopManager()->get();
+            self::$client->__call("getShopManager", array())->get();
         } catch (ClientException $ex) {
             Splash::log()->err($ex->getMessage());
 
@@ -121,7 +121,7 @@ class ShopifyHelper
      *
      * @param string      $path     API REST Path
      * @param string      $objectId Shopify Object Id
-     * @param null|array  $query    Request Query
+     * @param array       $query    Request Query
      * @param null|string $resource Response Resource
      *
      * @return null|array
@@ -131,7 +131,7 @@ class ShopifyHelper
         //====================================================================//
         // Complete Url
         if (!is_null($objectId)) {
-            $path .= "/". $objectId;
+            $path .= "/".$objectId;
         }
         //====================================================================//
         // Perform Request
@@ -157,7 +157,7 @@ class ShopifyHelper
      * @param string $resource API REST Path
      * @param array  $data     Request Data
      *
-     * @return null|bool
+     * @return null|array
      */
     public static function put(string $resource, array $data): ?array
     {
@@ -249,7 +249,7 @@ class ShopifyHelper
         //====================================================================//
         // Perform Request
         try {
-            $response = self::$client->get($resource . "/search", $query);
+            $response = self::$client->get($resource."/search", $query);
         } catch (ClientException $ex) {
             Splash::log()->err($ex->getMessage());
 
@@ -272,7 +272,7 @@ class ShopifyHelper
         //====================================================================//
         // Perform Request
         try {
-            $response = self::$client->get($resource . "/count");
+            $response = self::$client->get($resource."/count");
         } catch (ClientException $ex) {
             Splash::log()->err($ex->getMessage());
 

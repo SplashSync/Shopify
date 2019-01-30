@@ -25,6 +25,8 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of Customer Orders
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Order extends AbstractObject
 {
@@ -71,9 +73,11 @@ class Order extends AbstractObject
     protected static $ICO     =  "fa fa-shopping-cart ";
     
     /**
-     *  Object Synchronistion Limitations
+     * Object Synchronistion Limitations
      *
-     *  This Flags are Used by Splash Server to Prevent Unexpected Operations on Remote Server
+     * This Flags are Used by Splash Server to Prevent Unexpected Operations on Remote Server
+     *
+     * @codingStandardsIgnoreStart
      */
     protected static $ALLOW_PUSH_CREATED         =  false;      // Allow Creation Of New Local Objects
     protected static $ALLOW_PUSH_UPDATED         =  false;      // Allow Update Of Existing Local Objects
@@ -90,17 +94,20 @@ class Order extends AbstractObject
     protected static $ENABLE_PULL_UPDATED       =  true;        // Enable Import of Updates of Local Objects when Modified Localy
     protected static $ENABLE_PULL_DELETED       =  true;        // Enable Delete Of Remotes Objects when Deleted Localy
     
-    //====================================================================//
-    // Class Constructor
-    //====================================================================//
-        
     /**
+     * @codingStandardsIgnoreEnd
+     *
      * @var ShopifyConnector
      */
     protected $connector;
     
-    public function __construct(ShopifyConnector $Connector = null)
+    /**
+     * Class Constructor
+     *
+     * @param ShopifyConnector $connector
+     */
+    public function __construct(ShopifyConnector $connector)
     {
-        $this->connector  =   $Connector;
+        $this->connector  =   $connector;
     }
 }

@@ -1,40 +1,35 @@
 <?php
-/**
- * This file is part of SplashSync Project.
+
+/*
+ *  This file is part of SplashSync Project.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- *  @author    Splash Sync <www.splashsync.com>
- *
- *  @copyright 2015-2017 Splash Sync
- *
- *  @license   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
- *
- **/
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace Splash\Connectors\Shopify\Objects\Order;
 
 use ArrayObject;
-use Splash\Core\SplashCore      as Splash;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
+use Splash\Core\SplashCore      as Splash;
 
 /**
  * Shopify Order CRUD Functions
  */
 trait CRUDTrait
 {
-    
     /**
      * Load Request Object
      *
-     * @param       string $objectId Object id
+     * @param string $objectId Object id
      *
-     * @return     false|ArrayObject
+     * @return ArrayObject|false
      */
     public function load($objectId)
     {
@@ -43,24 +38,22 @@ trait CRUDTrait
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Get Customer Order from Api
-        $object  =   API::get("orders", $objectId, array(), "order");        
+        $object  =   API::get("orders", $objectId, array(), "order");
         //====================================================================//
         // Fetch Object from Shopify
         if (null === $object) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Order/Invoice (".$objectId.").");
         }
-dump($object);
+
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**
      * Create Request Object
      *
-     * @param       array $List Given Object Data
-     *
-     * @return      object     New Object
+     * @return false
      */
-    public function Create()
+    public function create()
     {
         //====================================================================//
         // Stack Trace
@@ -72,11 +65,13 @@ dump($object);
     /**
      * Update Request Object
      *
-     * @param       array $Needed Is This Update Needed
+     * @param bool $needed Is This Update Needed
      *
-     * @return      string      Object Id
+     * @return bool Object Id
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function Update($Needed)
+    public function update($needed)
     {
         //====================================================================//
         // Stack Trace
@@ -88,11 +83,13 @@ dump($object);
     /**
      * Delete requested Object
      *
-     * @param       int $Id Object Id.  If NULL, Object needs to be created.
+     * @param string $objectId Object Id.
      *
-     * @return      bool
+     * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function Delete($Id = null)
+    public function delete($objectId = null)
     {
         //====================================================================//
         // Stack Trace
@@ -100,5 +97,4 @@ dump($object);
 
         return Splash::log()->err("Splash API Cannot Delete Shopify Orders!");
     }
-
 }

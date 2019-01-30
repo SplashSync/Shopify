@@ -29,7 +29,7 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return false|ArrayObject
+     * @return ArrayObject|false
      */
     public function load($objectId)
     {
@@ -54,7 +54,7 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @return false|ArrayObject
+     * @return ArrayObject|false
      */
     public function create()
     {
@@ -78,13 +78,13 @@ trait CRUDTrait
         //====================================================================//
         // Create Customer from Api
         $newAddress   =   API::post(
-            'customers/' . $customerId . "/addresses", 
-            array("address" => $this->object), 
+            'customers/'.$customerId."/addresses",
+            array("address" => $this->object),
             "address"
         );
         if (null === $newAddress) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Customer Address.");
-        }        
+        }
         
         return new ArrayObject($newAddress, ArrayObject::ARRAY_AS_PROPS);
     }
@@ -94,7 +94,7 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return string Object Id
+     * @return false|string Object Id
      */
     public function update($needed)
     {
@@ -121,7 +121,7 @@ trait CRUDTrait
     /**
      * Delete requested Object
      *
-     * @param int $objectId Object Id.  If NULL, Object needs to be created.
+     * @param null|string $objectId Object Id.  If NULL, Object needs to be created.
      *
      * @return bool
      */
@@ -148,8 +148,8 @@ trait CRUDTrait
      */
     private static function getUri(string $objectId = null) : string
     {
-        $baseUri = 'customers/' . self::getCustomerId($objectId);
-        $baseUri.=  "/addresses/".self::getAddressId($objectId);
+        $baseUri = 'customers/'.self::getCustomerId((string) $objectId);
+        $baseUri .= "/addresses/".self::getAddressId((string) $objectId);
 
         return $baseUri;
     }
