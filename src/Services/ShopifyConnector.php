@@ -243,7 +243,7 @@ class ShopifyConnector extends AbstractConnector
             'title'     =>      'profile.card.title',                   // Public short name
             'label'     =>      'profile.card.label',                   // Public long name
             'domain'    =>      'ShopifyBundle',                     // Translation domain for names
-            'ico'       =>      'bundles/shopify/img/Shopify-Icon.png', // Public Icon path
+            'ico'       =>      '/bundles/shopify/img/Shopify-Icon.png', // Public Icon path
             'www'       =>      'www.Shopify.com',                   // Website Url
         );
     }
