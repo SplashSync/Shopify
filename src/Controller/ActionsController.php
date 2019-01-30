@@ -15,8 +15,8 @@
 
 namespace Splash\Connectors\Shopify\Controller;
 
+use Exception;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Local\ActionsTrait;
 use Splash\Connectors\Shopify\Models\OAuth2Client;
@@ -25,6 +25,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\Translator;
 
@@ -42,12 +43,13 @@ class ActionsController extends Controller
     /**
      * Update User Connector WebHooks List
      *
+     * @param Session           $session
      * @param ClientRegistry    $registry
      * @param AbstractConnector $connector
      *
      * @return Response
      */
-    public function oauthAction(ClientRegistry $registry, AbstractConnector $connector)
+    public function oauthAction(Session $session, ClientRegistry $registry, AbstractConnector $connector)
     {
         //==============================================================================
         // Load Shopify OAuth2 Client
@@ -60,7 +62,9 @@ class ActionsController extends Controller
         //==============================================================================
         // Configure Shopify OAuth2 Client
         $client->getOAuth2Provider()->configure($connector);
-        
+        //==============================================================================
+        // Store Connector WebService Id in Session
+        $session->set("shopify_oauth2_wsid", $connector->getWebserviceId());
         //==============================================================================
         // Do Shopify OAuth2 Authentification
         return $client->redirect();
@@ -69,13 +73,24 @@ class ActionsController extends Controller
     /**
      * Register Connector App Token
      *
+     * @param Request           $request
+     * @param Session           $session
      * @param ClientRegistry    $registry
      * @param AbstractConnector $connector
      *
      * @return Response
      */
-    public function registerAction(ClientRegistry $registry, AbstractConnector $connector)
+    public function registerAction(Request $request, Session $session, ClientRegistry $registry, AbstractConnector $connector)
     {
+        //==============================================================================
+        // Get Connector WebService Id from Session
+        $webserviceId = $session->get("shopify_oauth2_wsid");
+        //====================================================================//
+        // Perform Identify Pointed Server
+        if (false === $connector->identify($webserviceId)) {
+            return self::getDefaultResponse();
+        }
+
         //==============================================================================
         // Load Shopify OAuth2 Client
         $client = $registry->getClient("shopify");
@@ -87,17 +102,31 @@ class ActionsController extends Controller
         //==============================================================================
         // Configure Shopify OAuth2 Client
         $client->getOAuth2Provider()->configure($connector);
-        
+        //==============================================================================
+        // Set Client as StateLess
+        $client->setAsStateless();
+
         try {
             //==============================================================================
+            // Get Access Token
+            $accessToken = $client->getAccessToken();
+            //==============================================================================
             // Now update Connector Configuration
-            $connector->setParameter("Token", $client->getAccessToken());
+            $connector->setParameter("Token", $accessToken->getToken());
             $connector->updateConfiguration();
-        } catch (IdentityProviderException $e) {
+        } catch (Exception $e) {
             return new Response($e->getMessage(), 400);
         }
         
-        return self::getDefaultResponse();
+        //====================================================================//
+        // Redirect Response
+        /** @var string $referer */
+        $referer = $request->headers->get('referer');
+        if (empty($referer)) {
+            return self::getDefaultResponse();
+        }
+        
+        return new RedirectResponse($referer);
     }
     
     //==============================================================================

@@ -79,10 +79,6 @@ class OAuth2Client extends AbstractProvider
         // Configure Shopify Shop Url
         $this->shop = $connector->getParameter("WsHost");
 
-        //==============================================================================
-        // Configure Shopify Shop Url
-        $this->redirectUri .= "/".$connector->getWebserviceId()."/register";
-        
         return $this;
     }
     
@@ -138,7 +134,8 @@ class OAuth2Client extends AbstractProvider
             // Access to Product Stocks Levels
             'read_inventory', 'write_inventory',
             // Access to Order, Transaction and Fulfillment.
-            'read_orders', 'write_orders', 'read_all_orders',
+            'read_orders', 'write_orders',
+            // 'read_all_orders',
         );
     }
     

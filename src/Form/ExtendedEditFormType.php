@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * Shopify Account Edit Form
  */
-class EditFormType extends AbstractShopifyType
+class ExtendedEditFormType extends AbstractShopifyType
 {
     /**
      * Build Shopify Edit Form
@@ -34,5 +34,6 @@ class EditFormType extends AbstractShopifyType
     {
         $this->addWsHost($builder);
         $this->addWarehouseField($builder, $options);
+        $this->addTokenField($builder, $options);
     }
 }

@@ -18,6 +18,7 @@ namespace Splash\Connectors\Shopify\Services;
 use ArrayObject;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Form\EditFormType;
+use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Objects\WebHook;
@@ -277,7 +278,8 @@ class ShopifyConnector extends AbstractConnector
      */
     public function getFormBuilderName() : string
     {
-        return EditFormType::class;
+        return ExtendedEditFormType::class;
+//        return $this->getParameter("Extended", false) ? ExtendedEditFormType::class : EditFormType::class;
     }
 
     /**
@@ -285,7 +287,7 @@ class ShopifyConnector extends AbstractConnector
      */
     public function getMasterAction()
     {
-        return null;
+        return "ShopifyBundle:Actions:register";
     }
     
     /**
@@ -294,7 +296,6 @@ class ShopifyConnector extends AbstractConnector
     public function getPublicActions() : array
     {
         return array(
-            "register" => "ShopifyBundle:Actions:register",
             "index" => "ShopifyBundle:WebHooks:index",
         );
     }
