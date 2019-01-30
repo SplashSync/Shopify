@@ -80,7 +80,7 @@ trait CRUDTrait
         $newAddress   =   API::post(
             'customers/'.$customerId."/addresses",
             array("address" => $this->object),
-            "address"
+            "customer_address"
         );
         if (null === $newAddress) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Customer Address.");

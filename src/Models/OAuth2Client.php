@@ -138,7 +138,7 @@ class OAuth2Client extends AbstractProvider
             // Access to Product Stocks Levels
             'read_inventory', 'write_inventory',
             // Access to Order, Transaction and Fulfillment.
-            'read_orders', 'write_orders',
+            'read_orders', 'write_orders', 'read_all_orders',
         );
     }
     
