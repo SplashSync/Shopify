@@ -44,9 +44,9 @@ class ShopifyConnector extends AbstractConnector
     protected static $objectsMap = array(
         "ThirdParty" => Objects\ThirdParty::class,
         "Address" => Objects\Address::class,
-        //        "Product" => Objects\Product::class,
-        //        "Order" => Objects\Order::class,
-        //        "Invoice" => Objects\Invoice::class,
+        "Product" => Objects\Product::class,
+        "Order" => Objects\Order::class,
+        "Invoice" => Objects\Invoice::class,
         //        "WebHooks" => Objects\WebHook::class,
     );
 
