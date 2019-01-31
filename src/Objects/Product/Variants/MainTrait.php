@@ -13,22 +13,27 @@
  *  file that was distributed with this source code.
  */
 
-namespace Splash\Connectors\Shopify\Objects\Product;
+namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
 use Splash\Models\Objects\PricesTrait as SplashPricesTrait;
 
 /**
- * Access to Product Main Fields
+ * Access to Product Variants Main Fields
  */
 trait MainTrait
 {
     use SplashPricesTrait;
-        
+
     /**
      * Build Fields using FieldFactory
      */
-    private function buildMainFields()
+    protected function buildMainFields()
     {
+        
+        //====================================================================//
+        // PRODUCT DESCRIPTIONS
+        //====================================================================//
+
         //====================================================================//
         // Reference | SKU
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
@@ -37,6 +42,15 @@ trait MainTrait
             ->Description("A unique identifier for the product variant in the shop.")
             ->isListed()
             ->MicroData("http://schema.org/Product", "model");
+
+        //====================================================================//
+        // Name with Options
+        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
+            ->Identifier("variant_title")
+            ->Name("Title with Options")
+            ->isListed()
+            ->MicroData("http://schema.org/Product", "name")
+            ->isReadOnly();
         
         //====================================================================//
         // PRICES INFORMATIONS
@@ -71,8 +85,9 @@ trait MainTrait
             ->Identifier("barcode")
             ->Name("UPC | ISBN BarCode")
             ->MicroData("http://schema.org/Product", "gtin12");
+        
     }
-
+        
     /**
      * Read requested Field
      *
@@ -81,15 +96,24 @@ trait MainTrait
      *
      * @return void
      */
-    private function getMainFields($key, $fieldName)
+    protected function getMainFields($key, $fieldName)
     {
         //====================================================================//
         // READ Fields
         switch ($fieldName) {
+            
+            //====================================================================//
+            // PRODUCT DESCRIPTIONS
+            //====================================================================//
             case 'sku':
                 $this->getSimple($fieldName, "variant");
 
                 break;
+            case 'variant_title':
+                $this->out[$fieldName] = ($this->object->title." - ".$this->variant->title);
+
+                break;
+            
             //====================================================================//
             // PRICES INFORMATIONS
             //====================================================================//
@@ -108,16 +132,18 @@ trait MainTrait
                 );
 
                 break;
-                //====================================================================//
-                // PRODUCT SPECIFICATIONS
-                //====================================================================//
+            
+            //====================================================================//
+            // PRODUCT SPECIFICATIONS
+            //====================================================================//
             case 'grams':
                 $this->getVariantWheight($fieldName);
 
                 break;
-                //====================================================================//
-                // PRODUCT BARCODES
-                //====================================================================//
+            
+            //====================================================================//
+            // PRODUCT BARCODES
+            //====================================================================//
             case 'barcode':
                 $this->getSimple($fieldName, "variant");
 
@@ -137,15 +163,20 @@ trait MainTrait
      *
      * @return void
      */
-    private function setMainFields($fieldName, $fieldData)
+    protected function setMainFields($fieldName, $fieldData)
     {
         //====================================================================//
         // WRITE Field
         switch ($fieldName) {
+            
+            //====================================================================//
+            // PRODUCT DESCRIPTIONS
+            //====================================================================//
             case 'sku':
                 $this->setSimple($fieldName, $fieldData, "variant");
 
                 break;
+            
             //====================================================================//
             // PRICES INFORMATIONS
             //====================================================================//
@@ -154,14 +185,14 @@ trait MainTrait
                 $this->setSimple('taxable', !empty(self::prices()->taxPercent($fieldData)), "variant");
 
                 break;
+            
             //====================================================================//
             // PRODUCT SPECIFICATIONS
             //====================================================================//
             case 'grams':
                 $this->setVariantWheight($fieldData);
-//                $this->setSimple($fieldName, ($fieldData * 1E3), "variant");
-//                unset($this->Variant->weight);
                 break;
+            
             //====================================================================//
             // PRODUCT BARCODES
             //====================================================================//
@@ -174,6 +205,7 @@ trait MainTrait
         }
         unset($this->in[$fieldName]);
     }
+
     
     /**
      * Get Local Vat Rate for a Product

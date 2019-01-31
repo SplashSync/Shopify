@@ -56,6 +56,7 @@ trait ObjectsListTrait
                     'id'                        =>      self::getObjectId($product['id'], $variant['id']),
                     'title'                     =>      $product['title'],
                     'variant_title'             =>      $product['title']." - ".$variant['title'],
+                    'published'                 =>      !empty($product['published_at']),
                     'sku'                       =>      $variant['sku'],
                     'price'                     =>      $variant['price'],
                     'inventory_quantity'        =>      $variant['inventory_quantity'],

@@ -13,7 +13,7 @@
  *  file that was distributed with this source code.
  */
 
-namespace Splash\Connectors\Shopify\Objects\Product;
+namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
 use Splash\Core\SplashCore      as Splash;
 
@@ -32,7 +32,7 @@ trait StockTrait
      *
      * @return null|array
      */
-    public function getNewInventorylevel()
+    protected function getNewInventorylevel()
     {
         $response                   = $this->newInventoryLevel;
         $this->newInventoryLevel    = null;
@@ -43,7 +43,7 @@ trait StockTrait
     /**
      * Build Fields using FieldFactory
      */
-    private function buildStockFields()
+    protected function buildStockFields()
     {
         //====================================================================//
         // PRODUCT STOCKS
@@ -74,7 +74,7 @@ trait StockTrait
      *
      * @return void
      */
-    private function getStockFields($key, $fieldName)
+    protected function getStockFields($key, $fieldName)
     {
         //====================================================================//
         // READ Fields
@@ -108,7 +108,7 @@ trait StockTrait
      *
      * @return void
      */
-    private function setStockFields($fieldName, $fieldData)
+    protected function setStockFields($fieldName, $fieldData)
     {
         //====================================================================//
         // WRITE Field
@@ -118,6 +118,11 @@ trait StockTrait
             //====================================================================//
 
             case 'inventory_quantity':
+                //====================================================================//
+                //  Compare Data
+                if ($this->variant->inventory_quantity == $fieldData) {
+                    break;
+                }
                 //====================================================================//
                 // Check if Product uses Stock Manager => Cancel Product Stock Update
                 if (empty($this->variant->inventory_management)) {
@@ -134,15 +139,7 @@ trait StockTrait
                     break;
                 }
                 //====================================================================//
-                //  Compare Data
-                if ($this->variant->inventory_quantity == $fieldData) {
-                    break;
-                }
-//                //====================================================================//
-//                // Update Variant Product Stock Level on Current Object (Old Style)
-//                $this->setSimple($FieldName,$Data,"Variant");
-                //====================================================================//
-                // Update Variant Product Inventory Level (New Style)
+                // Update Variant Product Inventory Level
                 $inventoryLevel  =    array(
                     "location_id"         =>  (int) $locationId,
                     "inventory_item_id"   =>  (int) $this->variant->inventory_item_id,

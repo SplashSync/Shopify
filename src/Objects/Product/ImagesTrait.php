@@ -25,6 +25,92 @@ trait ImagesTrait
 {
     use SplashImagesTrait;
     
+    /**
+     * Build Fields using FieldFactory
+     */
+    protected function buildImagesFields()
+    {
+        //====================================================================//
+        // PRODUCT IMAGES
+        //====================================================================//
+        
+        //====================================================================//
+        // Product Images List
+        $this->fieldsFactory()->Create(SPL_T_IMG)
+            ->Identifier("image")
+            ->InList("images")
+            ->Name("Image")
+            ->Group("Images")
+            ->MicroData("http://schema.org/Product", "image")
+            ->isReadOnly();
+        
+        //====================================================================//
+        // Product Images => Image Position In List
+        $this->fieldsFactory()->create(SPL_T_INT)
+            ->Identifier("position")
+            ->InList("images")
+            ->Name("Position")
+            ->Group("Images")
+            ->Description("Image Order for this Product Variant")
+            ->MicroData("http://schema.org/Product", "positionImage")
+            ->isReadOnly()
+            ->isNotTested();
+        
+        //====================================================================//
+        // Product Images => Is Cover
+        $this->fieldsFactory()->Create(SPL_T_BOOL)
+            ->Identifier("cover")
+            ->InList("images")
+            ->Name("Is Cover")
+            ->Group("Images")
+            ->MicroData("http://schema.org/Product", "isCover")
+            ->isNotTested()
+            ->isReadOnly();
+        
+        //====================================================================//
+        // Product Images => Is Visible Image
+        $this->fieldsFactory()->create(SPL_T_BOOL)
+            ->Identifier("visible")
+            ->InList("images")
+            ->Name("Visible")
+            ->Group("Images")
+            ->Description("Image is visible for this Product Variant")
+            ->MicroData("http://schema.org/Product", "isVisibleImage")
+            ->Group("Product gallery")
+            ->isReadOnly()
+            ->isNotTested();
+    }
+
+    /**
+     * Read requested Field
+     *
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
+     */
+    protected function getImagesFields($key, $fieldName)
+    {
+        //====================================================================//
+        // READ Fields
+        switch ($fieldName) {
+            //====================================================================//
+            // PRODUCT IMAGES
+            //====================================================================//
+            case 'image@images':
+            case 'cover@images':
+            case 'position@images':
+            case 'visible@images':
+                $this->getImgArray();
+
+                break;
+            default:
+                return;
+        }
+        
+        unset($this->in[$key]);
+    }
+    
 //    /**
 //     *  @abstract     Write Given Fields
 //     *
@@ -62,7 +148,7 @@ trait ImagesTrait
      *
      * @return void
      */
-    public function getImgArray()
+    private function getImgArray()
     {
         //====================================================================//
         // Images List Alraedy Loaded
@@ -102,86 +188,6 @@ trait ImagesTrait
                     ? true
                     : in_array($this->variantId, $shopifyImage['variant_ids'], true);
         }
-    }
-    
-    /**
-     * Build Fields using FieldFactory
-     */
-    private function buildImagesFields()
-    {
-        //====================================================================//
-        // PRODUCT IMAGES
-        //====================================================================//
-        
-        //====================================================================//
-        // Product Images List
-        $this->fieldsFactory()->Create(SPL_T_IMG)
-            ->Identifier("image")
-            ->InList("images")
-            ->Name("Image")
-            ->MicroData("http://schema.org/Product", "image")
-            ->isReadOnly();
-        
-        //====================================================================//
-        // Product Images => Image Position In List
-        $this->fieldsFactory()->create(SPL_T_INT)
-            ->Identifier("position")
-            ->InList("images")
-            ->Name("Position")
-            ->Description("Image Order for this Product Variant")
-            ->MicroData("http://schema.org/Product", "positionImage")
-            ->isNotTested();
-        
-        //====================================================================//
-        // Product Images => Is Cover
-        $this->fieldsFactory()->Create(SPL_T_BOOL)
-            ->Identifier("cover")
-            ->InList("images")
-            ->Name("Is Cover")
-            ->MicroData("http://schema.org/Product", "isCover")
-            ->isNotTested()
-            ->isReadOnly();
-        
-        //====================================================================//
-        // Product Images => Is Visible Image
-        $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("visible")
-            ->InList("images")
-            ->Name("Visible")
-            ->Description("Image is visible for this Product Variant")
-            ->MicroData("http://schema.org/Product", "isVisibleImage")
-            ->Group("Product gallery")
-            ->isNotTested();
-    }
-
-    /**
-     * Read requested Field
-     *
-     * @param string $key       Input List Key
-     * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
-     */
-    private function getImagesFields($key, $fieldName)
-    {
-        //====================================================================//
-        // READ Fields
-        switch ($fieldName) {
-            //====================================================================//
-            // PRODUCT IMAGES
-            //====================================================================//
-            case 'image@images':
-            case 'cover@images':
-            case 'position@images':
-            case 'visible@images':
-                $this->getImgArray();
-
-                break;
-            default:
-                return;
-        }
-        
-        unset($this->in[$key]);
     }
          
     //    /**

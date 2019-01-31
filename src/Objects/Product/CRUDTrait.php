@@ -41,33 +41,26 @@ trait CRUDTrait
         $this->productId = $this->getProductId($objectId);
         $this->variantId = $this->getVariantId($objectId);
         //====================================================================//
-        // Get Product from Api
-        $object  =   API::get(self::getUri($this->productId), null, array(), "product");
+        // Get Product from Api        
+        $product  =   API::get(self::getUri($this->productId), null, array(), "product");
         //====================================================================//
         // Fetch Object from Shopify
-        if (null === $object) {
+        if (null === $product) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Product (".$objectId.").");
         }
         //====================================================================//
-        // Identify Variant
-        foreach ($object['variants'] as $variant) {
-            if ($variant['id'] == $this->variantId) {
-                $this->variant = new ArrayObject($variant, ArrayObject::ARRAY_AS_PROPS);
-
-                break;
-            }
-        }
+        // Detect Published Flag
+        $product['published'] = !empty($product['published_at']);        
+        unset($product['published_at']);         
+        
         //====================================================================//
-        // NO Variant found => Return False
-        if (!isset($this->variant)) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Product Variant (".$objectId.").");
+        // Identify & Load Variant Infos
+        if( false == $this->loadVariant($product)) {
+            return false;
         }
-        //====================================================================//
-        // Unset Variants to Avoid Erazing Data
-        unset($object['variants']);
         //====================================================================//
         // Return Product
-        return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
+        return new ArrayObject($product, ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**
@@ -81,28 +74,41 @@ trait CRUDTrait
         // Stack Trace
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
+        // Check if Existing Variants Ids are Given
+        if (null !== $this->getParentProductId()) {
+            return $this->createVariant();
+        }
+        //====================================================================//
         // Check Title & Desc given
         if (empty($this->in["title"])) {
             return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "Product Title");
         }
         //====================================================================//
         // Create New Product from Api
-        $response  =   API::post("products", array("title" => $this->in["title"]), "product");
+        $response  =   API::post(
+                "products", 
+                array( "product" => array(
+                        "title" => $this->in["title"],
+                        "body_html" => isset($this->in["body_html"]) ? $this->in["body_html"]: ""
+                    )
+                ), 
+                "product"
+                );
         if (null === $response) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Product (".$this->in["title"].").");
         }
-        
         $this->object =   new ArrayObject($response, ArrayObject::ARRAY_AS_PROPS);
                 
         //====================================================================//
         // Store New Ids
         $this->productId = $this->object->id;
-        $this->variant   = end($this->object->variants);
+        $this->variant   = new ArrayObject(end($this->object->variants), ArrayObject::ARRAY_AS_PROPS);
+        $this->variantIndex = 0;
         $this->variantId = !empty($this->variant) ? $this->variant->id : null;
         
         //====================================================================//
         // Default Setup for New Product Variant
-        $this->setSimple("inventory_management", "shopify", "Variant");
+        $this->setSimple("inventory_management", "shopify", "variant");
 
         return $this->object;
     }
@@ -126,7 +132,7 @@ trait CRUDTrait
         //====================================================================//
         // Update Product Variant from Api
         if ($needed || $this->isToUpdate("variant")) {
-            $this->object->variants = array($this->variant);
+            $this->object->variants[$this->variantIndex] = $this->variant;
             if (null === API::put(self::getUri($this->productId), array("product" => $this->object))) {
                 return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant (".$objectId.").");
             }
