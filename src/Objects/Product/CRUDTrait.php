@@ -60,6 +60,8 @@ trait CRUDTrait
         }
         //====================================================================//
         // Return Product
+        $product["id"] = $objectId;
+
         return new ArrayObject($product, ArrayObject::ARRAY_AS_PROPS);
     }
 

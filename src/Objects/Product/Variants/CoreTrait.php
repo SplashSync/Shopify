@@ -121,7 +121,7 @@ trait CoreTrait
                     $value  =   self::objects()
                         ->encode(
                             "Product",
-                            $this->getObjectId($this->object->id, $variant['id'])
+                            $this->getObjectId((string) $this->productId, $variant['id'])
                         );
 
                     break;
