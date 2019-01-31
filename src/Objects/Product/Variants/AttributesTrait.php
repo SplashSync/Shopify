@@ -17,7 +17,6 @@ namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
 use Splash\Core\SplashCore      as Splash;
 
-
 /**
  * WooCommerce Product Variants Attributes Data Access
  */
@@ -25,13 +24,66 @@ trait AttributesTrait
 {
     /**
      * List of Available Options
+     *
      * @var array
      */
     private static $optionsList = array(
-        0 => 'option1', 
-        1 => 'option2', 
+        0 => 'option1',
+        1 => 'option2',
         2 => 'option3'
     );
+    
+    //====================================================================//
+    // Fields Writting Functions
+    //====================================================================//
+
+    /**
+     * Write Given Fields
+     *
+     * @param string $fieldName Field Identifier / Name
+     * @param mixed  $fieldData Field Data
+     *
+     * @return void
+     */
+    protected function setVariantsAttributesFields($fieldName, $fieldData)
+    {
+        //====================================================================//
+        // Safety Check
+        if ("attributes" !== $fieldName) {
+            return;
+        }
+      
+        //====================================================================//
+        // Update Products Attributes Ids
+        $index = 0;
+        foreach ($fieldData as $item) {
+            //====================================================================//
+            // Check Product Attributes is Valid & Not More than 3 Options!
+            if (!$this->isValidAttributeDefinition($item) && ($index < 3)) {
+                continue;
+            }
+
+            //====================================================================//
+            // Update Attribute Name
+            if (!isset($this->object->options[$index])) {
+                $this->object->options[$index] = array(
+                    'name' => $item["code"],
+                    'position' => $index + 1,
+                );
+            }
+            $this->object->options[$index]["name"] = $item["code"];
+            
+            //====================================================================//
+            // Update Attribute Value
+            $this->setSimple("option" . ($index + 1), $item["value"], "variant");
+
+            //====================================================================//
+            // Inc. Attribute Index
+            $index++;
+        }
+        
+        unset($this->in[$fieldName]);
+    }
     
     //====================================================================//
     // Fields Generation Functions
@@ -99,10 +151,9 @@ trait AttributesTrait
         //====================================================================//
         // READ Fields
         foreach (self::$optionsList as $code => $name) {
-            
             //====================================================================//
             // Ensure Variant Option Exists
-            if(!isset($this->variant->$name)) {
+            if (!isset($this->variant->{$name})) {
                 continue;
             }
 
@@ -111,11 +162,11 @@ trait AttributesTrait
             switch ($fieldId) {
                 case 'code':
                 case 'name':
-                    $value  =   $this->options[$code]["name"];
+                    $value  =   $this->object->options[$code]["name"];
 
                     break;
                 case 'value':
-                    $value  =   $this->variant->$name;
+                    $value  =   $this->variant->{$name};
 
                     break;
                 default:
@@ -129,60 +180,6 @@ trait AttributesTrait
         // Sort Attributes by Code
         ksort($this->out["attributes"]);
     }
-    
-
-    //====================================================================//
-    // Fields Writting Functions
-    //====================================================================//
-
-    /**
-     * Write Given Fields
-     *
-     * @param string $fieldName Field Identifier / Name
-     * @param mixed  $fieldData Field Data
-     *
-     * @return void
-     */
-    protected function setVariantsAttributesFields($fieldName, $fieldData)
-    {
-        //====================================================================//
-        // Safety Check
-        if ("attributes" !== $fieldName) {
-            return;
-        }
-      
-        //====================================================================//
-        // Update Products Attributes Ids
-        $index = 0;
-        foreach ($fieldData as $item) 
-        {
-            //====================================================================//
-            // Check Product Attributes is Valid & Not More than 3 Options!
-            if (!$this->isValidAttributeDefinition($item) && ($index < 3)) {
-                continue;
-            }
-
-            //====================================================================//
-            // Update Attribute Name
-            if(!isset($this->object->options[$index])) {
-                $this->object->options[$index] = array(
-                    'name' => $item["code"],
-                    'position' => $index + 1,
-                );
-            }
-            $this->object->options[$index]["name"] = $item["code"];
-            
-            //====================================================================//
-            // Update Attribute Value
-            $this->setSimple("option" . ($index + 1), $item["value"], "variant");
-
-            //====================================================================//
-            // Inc. Attribute Index
-            $index++;
-        }
-        
-        unset($this->in[$fieldName]);
-    }    
 
     //====================================================================//
     // CRUD Functions

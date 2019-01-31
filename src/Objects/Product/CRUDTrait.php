@@ -41,7 +41,7 @@ trait CRUDTrait
         $this->productId = $this->getProductId($objectId);
         $this->variantId = $this->getVariantId($objectId);
         //====================================================================//
-        // Get Product from Api        
+        // Get Product from Api
         $product  =   API::get(self::getUri($this->productId), null, array(), "product");
         //====================================================================//
         // Fetch Object from Shopify
@@ -50,12 +50,12 @@ trait CRUDTrait
         }
         //====================================================================//
         // Detect Published Flag
-        $product['published'] = !empty($product['published_at']);        
-        unset($product['published_at']);         
+        $product['published'] = !empty($product['published_at']);
+        unset($product['published_at']);
         
         //====================================================================//
         // Identify & Load Variant Infos
-        if( false == $this->loadVariant($product)) {
+        if (false == $this->loadVariant($product)) {
             return false;
         }
         //====================================================================//
@@ -86,14 +86,14 @@ trait CRUDTrait
         //====================================================================//
         // Create New Product from Api
         $response  =   API::post(
-                "products", 
-                array( "product" => array(
-                        "title" => $this->in["title"],
-                        "body_html" => isset($this->in["body_html"]) ? $this->in["body_html"]: ""
-                    )
-                ), 
-                "product"
-                );
+            "products",
+            array( "product" => array(
+                "title" => $this->in["title"],
+                "body_html" => isset($this->in["body_html"]) ? $this->in["body_html"]: "",
+            ),
+            ),
+            "product"
+        );
         if (null === $response) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Product (".$this->in["title"].").");
         }
@@ -127,6 +127,9 @@ trait CRUDTrait
         Splash::log()->trace(__CLASS__, __FUNCTION__);
         //====================================================================//
         // Encode Object Id
+        if ((null === $this->productId) || (null === $this->variantId)) {
+            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant (Wrong Ids).");
+        }
         $objectId = $this->getObjectId($this->productId, $this->variantId);
         
         //====================================================================//

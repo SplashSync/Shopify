@@ -15,11 +15,9 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
-use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Splash\Models\Objects\IntelParserTrait;
-use Splash\Models\Objects\SimpleFieldsTrait;
+use Splash\Models\Objects;
 
 /**
  * Shopify Implementation of Products
@@ -30,8 +28,10 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 class Product extends AbstractStandaloneObject
 {
     // Splash Php Core Traits
-    use IntelParserTrait;
-    use SimpleFieldsTrait;
+    use Objects\IntelParserTrait;
+    use Objects\SimpleFieldsTrait;
+    use Objects\ListsTrait;
+    use Objects\ObjectsTrait;
     
     // Shopify Core Traits
     use Core\DatesTrait;
@@ -41,10 +41,10 @@ class Product extends AbstractStandaloneObject
     use Product\CRUDTrait;
     use Product\ObjectsListTrait;
     use Product\CoreTrait;
-    use Product\MainTrait;
-    use Product\DescTrait;
-    use Product\StockTrait;
     use Product\ImagesTrait;
+    use Product\VariantsTrait;
+    use Product\Variants\MainTrait;
+    use Product\Variants\StockTrait;
     
     //====================================================================//
     // Object Definition Parameters
@@ -102,16 +102,7 @@ class Product extends AbstractStandaloneObject
     //====================================================================//
     // General Class Variables
     //====================================================================//
-    protected $productId;       // Shopify Product Id
-    protected $variantId;       // Shopify Product Variant Id
-    
-    /**
-     * Shopify Product Variant Object
-     *
-     * @var ArrayObject
-     */
-    protected $variant;
-    
+
     /**
      * Class Constructor
      *
@@ -120,46 +111,5 @@ class Product extends AbstractStandaloneObject
     public function __construct(ShopifyConnector $connector)
     {
         $this->connector  =   $connector;
-    }
-    
-    /**
-     * Extract Base Product Id from Splash Product Id
-     *
-     * @param string $objectId
-     *
-     * @return null|string
-     */
-    public static function getProductId(string $objectId) : ?string
-    {
-        $array = explode("-", $objectId);
-
-        return isset($array[1]) ? $array[0] : null;
-    }
-
-    /**
-     * Extract Product Variant Id from Splash Product Id
-     *
-     * @param string $objectId
-     *
-     * @return null|string
-     */
-    public static function getVariantId(string $objectId) : ?string
-    {
-        $array = explode("-", $objectId);
-
-        return isset($array[1]) ? $array[1] : null;
-    }
-
-    /**
-     * Encode Splash Address Id from Shopify Customer && Address Id
-     *
-     * @param string $productId
-     * @param string $variantId
-     *
-     * @return string
-     */
-    public static function getObjectId(string $productId, string $variantId)
-    {
-        return $productId."-".$variantId;
     }
 }

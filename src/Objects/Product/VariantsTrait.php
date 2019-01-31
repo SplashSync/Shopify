@@ -28,17 +28,17 @@ trait VariantsTrait
     
     /**
      * Shopify Product Id
-     * 
-     * @var string
+     *
+     * @var null|string
      */
     protected $productId;
 
     /**
      * Shopify Product Variant Id
-     * 
-     * @var string
+     *
+     * @var null|string
      */
-    protected $variantId;       
+    protected $variantId;
     
     /**
      * Shopify Product Variant Object
@@ -49,51 +49,10 @@ trait VariantsTrait
 
     /**
      * Shopify Product Variant Index
-     * 
-     * @var string
+     *
+     * @var int
      */
-    protected $variantIndex;       
-    
-    //====================================================================//
-    // Fields Generation Functions
-    //====================================================================//
-
-    /**
-     * Build Variation Fields using FieldFactory
-     */
-    private function buildVariationFields()
-    {
-        //====================================================================//
-        // CHILD PRODUCTS INFORMATIONS
-        //====================================================================//
-        
-//        //====================================================================//
-//        // Product Variation List - Product Link
-//        $this->fieldsFactory()->Create(self::objects()->Encode("Product", SPL_T_ID))
-//            ->Identifier("id")
-//            ->Name(__("Children"))
-//            ->InList("children")
-//            ->MicroData("http://schema.org/Product", "Variation")
-//            ->isReadOnly();
-//        
-//        //====================================================================//
-//        // Product Variation List - Product SKU
-//        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-//            ->Identifier("sku")
-//            ->Name(__("SKU"))
-//            ->InList("children")
-//            ->MicroData("http://schema.org/Product", "VariationName")
-//            ->isReadOnly();
-//        
-//        //====================================================================//
-//        // Product Variation List - Variation Attribute
-//        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-//            ->Identifier("attribute")
-//            ->Name(__("Attribute"))
-//            ->InList("children")
-//            ->MicroData("http://schema.org/Product", "VariationAttribute")
-//            ->isReadOnly();
-    }
+    protected $variantIndex;
 
     //====================================================================//
     // Product Variants Id Management
@@ -138,7 +97,48 @@ trait VariantsTrait
     public static function getObjectId(string $productId, string $variantId)
     {
         return $productId."-".$variantId;
-    }    
+    }
+    
+    //====================================================================//
+    // Fields Generation Functions
+    //====================================================================//
+
+    /**
+     * Build Variation Fields using FieldFactory
+     */
+    private function buildVariationFields()
+    {
+        //====================================================================//
+        // CHILD PRODUCTS INFORMATIONS
+        //====================================================================//
+        
+//        //====================================================================//
+//        // Product Variation List - Product Link
+//        $this->fieldsFactory()->Create(self::objects()->Encode("Product", SPL_T_ID))
+//            ->Identifier("id")
+//            ->Name(__("Children"))
+//            ->InList("children")
+//            ->MicroData("http://schema.org/Product", "Variation")
+//            ->isReadOnly();
+//
+//        //====================================================================//
+//        // Product Variation List - Product SKU
+//        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
+//            ->Identifier("sku")
+//            ->Name(__("SKU"))
+//            ->InList("children")
+//            ->MicroData("http://schema.org/Product", "VariationName")
+//            ->isReadOnly();
+//
+//        //====================================================================//
+//        // Product Variation List - Variation Attribute
+//        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
+//            ->Identifier("attribute")
+//            ->Name(__("Attribute"))
+//            ->InList("children")
+//            ->MicroData("http://schema.org/Product", "VariationAttribute")
+//            ->isReadOnly();
+    }
     
     //====================================================================//
     // Fields Reading Functions
@@ -194,6 +194,5 @@ trait VariantsTrait
 //            }
 //        }
 //        unset($this->in[$key]);
-//    }    
-    
+//    }
 }

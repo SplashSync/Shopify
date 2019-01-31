@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
 use ArrayObject;
+use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Core\SplashCore      as Splash;
 
 /**
@@ -23,12 +24,10 @@ use Splash\Core\SplashCore      as Splash;
  */
 trait CRUDTrait
 {
-
-
     /**
      * Load Product Variants Informations
      *
-     * @param ArrayObject $product Shopify Product Object
+     * @param array $product Shopify Product Object
      *
      * @return bool
      */
@@ -53,14 +52,6 @@ trait CRUDTrait
         if (!isset($this->variant)) {
             return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Product Variant (".$this->variantId.").");
         }
-        //====================================================================//
-        // Load & Unset Variants to Avoid Erazing Data
-        $this->variants = $product['variants'];
-        unset($product['variants']);        
-        //====================================================================//
-        // Load & Unset Options to Avoid Erazing Data
-        $this->options = $product['options'];
-        unset($product['options']);        
         
         return true;
     }
@@ -92,8 +83,7 @@ trait CRUDTrait
         $variant = new ArrayObject();
         $variant["inventory_management"] = "shopify";
         $index = 0;
-        foreach ($this->in["attributes"] as $item) 
-        {
+        foreach ($this->in["attributes"] as $item) {
             //====================================================================//
             // Check Product Attributes is Valid & Not More than 3 Options!
             if (!$this->isValidAttributeDefinition($item) && ($index < 3)) {
@@ -105,12 +95,12 @@ trait CRUDTrait
             //====================================================================//
             // Inc. Attribute Index
             $index++;
-        }      
+        }
         //====================================================================//
         // Create New Product from Api
         $response  =   API::post(
-                "products/" . $productId . "/variants", 
-                array("variant" => $variant), 
+                "products/" . $productId . "/variants",
+                array("variant" => $variant),
                 "product"
             );
         if (null === $response) {
@@ -118,6 +108,5 @@ trait CRUDTrait
         }
         
         return $this->load(self::getObjectId($response["product_id"], $response["id"]));
-    }    
-
+    }
 }
