@@ -140,10 +140,29 @@ trait CoreTrait
             
             self::lists()->insert($this->out, "variants", $fieldId, $index, $value);
         }
+        
         unset($this->in[$key]);
         //====================================================================//
         // Sort Attributes by Code
         ksort($this->out["variants"]);
+    }
+    
+    /**
+     * Write Given Fields
+     *
+     * @param string $fieldName Field Identifier / Name
+     * @param mixed  $fieldData Field Data
+     *
+     * @return void
+     */
+    protected function setVariantsListFields($fieldName, $fieldData)
+    {
+        //====================================================================//
+        // Safety Check
+        if ("variants" !== $fieldName) {
+            return;
+        }
+        unset($this->in[$fieldName]);
     }
         
     /**
