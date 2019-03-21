@@ -4,7 +4,7 @@
 matrix:
     include:      
         # Symfony 3.4 Branch
-        - php: 7.1
+        - php: 7.2
           env: SF_VERSION="3.4.*"  
 #        - php: 7.2
 #        # Symfony 4.0 Branch       
