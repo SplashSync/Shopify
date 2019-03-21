@@ -35,24 +35,24 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Explode Storage Id
         $this->productId = $this->getProductId($objectId);
         $this->variantId = $this->getVariantId($objectId);
         //====================================================================//
         // Get Product from Api
-        $product  =   API::get(self::getUri($this->productId), null, array(), "product");
+        $product = API::get(self::getUri($this->productId), null, array(), "product");
         //====================================================================//
         // Fetch Object from Shopify
         if (null === $product) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Product (".$objectId.").");
+            return Splash::log()->errTrace(" Unable to load Product (".$objectId.").");
         }
         //====================================================================//
         // Detect Published Flag
         $product['published'] = !empty($product['published_at']);
         unset($product['published_at']);
-        
+
         //====================================================================//
         // Identify & Load Variant Infos
         if (false == $this->loadVariant($product)) {
@@ -74,7 +74,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Check if Existing Variants Ids are Given
         if (null !== $this->getParentProductId()) {
@@ -87,7 +87,7 @@ trait CRUDTrait
         }
         //====================================================================//
         // Create New Product from Api
-        $response  =   API::post(
+        $response = API::post(
             "products",
             array( "product" => array(
                 "title" => $this->in["title"],
@@ -97,24 +97,24 @@ trait CRUDTrait
             "product"
         );
         if (null === $response) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Product (".$this->in["title"].").");
+            return Splash::log()->errTrace(" Unable to Create Product (".$this->in["title"].").");
         }
-        $this->object =   new ArrayObject($response, ArrayObject::ARRAY_AS_PROPS);
-                
+        $this->object = new ArrayObject($response, ArrayObject::ARRAY_AS_PROPS);
+
         //====================================================================//
         // Store New Ids
         $this->productId = $this->object->id;
-        $this->variant   = new ArrayObject(end($this->object->variants), ArrayObject::ARRAY_AS_PROPS);
+        $this->variant = new ArrayObject(end($this->object->variants), ArrayObject::ARRAY_AS_PROPS);
         $this->variantIndex = 0;
         $this->variantId = !empty($this->variant) ? $this->variant->id : null;
-        
+
         //====================================================================//
         // Default Setup for New Product Variant
         $this->setSimple("inventory_management", "shopify", "variant");
 
         return $this->object;
     }
-    
+
     /**
      * Update Request Object
      *
@@ -126,20 +126,20 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Encode Object Id
         if ((null === $this->productId) || (null === $this->variantId)) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant (Wrong Ids).");
+            return Splash::log()->errTrace(" Unable to Update Product Variant (Wrong Ids).");
         }
-        $objectId = $this->getObjectId($this->productId, $this->variantId);
-        
+        $objectId = $this->getObjectIdentifier();
+
         //====================================================================//
         // Update Product Variant from Api
         if ($needed || $this->isToUpdate("variant")) {
             $this->object->variants[$this->variantIndex] = $this->variant;
             if (null === API::put(self::getUri($this->productId), array("product" => $this->object))) {
-                return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant (".$objectId.").");
+                return Splash::log()->errTrace(" Unable to Update Product Variant (".$objectId.").");
             }
         }
 
@@ -148,13 +148,13 @@ trait CRUDTrait
         if ($this->isToUpdate("inventory")) {
             $newInventorylevel = $this->getNewInventorylevel();
             if (is_null($newInventorylevel) || (null === API::post('inventory_levels/set', $newInventorylevel))) {
-                return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Product Variant Stock (".$objectId.").");
+                return Splash::log()->errTrace(" Unable to Update Product Variant Stock (".$objectId.").");
             }
         }
-        
+
         return $objectId;
     }
-    
+
     /**
      * Delete requested Object
      *
@@ -166,7 +166,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Explode Storage Id
         $this->productId = self::getProductId((string) $objectId);
@@ -174,12 +174,26 @@ trait CRUDTrait
         //====================================================================//
         // Delete Product Variant from Api
         if (null === API::delete(self::getUri($this->productId, $this->variantId))) {
-            Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete Product (".$objectId.").");
+            Splash::log()->errTrace(" Unable to Delete Product (".$objectId.").");
         }
 
         return true;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectIdentifier()
+    {
+        if (!isset($this->productId) || !isset($this->variantId)) {
+            return false;
+        }
+
+        //====================================================================//
+        // Encode Object Id
+        return $this->getObjectId($this->productId, $this->variantId);
+    }
+
     /**
      * Get Object CRUD Base Uri
      *

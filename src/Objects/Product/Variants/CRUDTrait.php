@@ -35,7 +35,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Identify Variant
         foreach ($product['variants'] as $index => $variant) {
@@ -50,7 +50,7 @@ trait CRUDTrait
         //====================================================================//
         // NO Variant found => Return False
         if (!isset($this->variant)) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Product Variant (".$this->variantId.").");
+            return Splash::log()->errTrace(" Unable to load Product Variant (".$this->variantId.").");
         }
         
         return true;
@@ -65,13 +65,13 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Load Existing Parent Id
         $productId = $this->getParentProductId();
         
         if (null !== $productId) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Product Variant (".$productId.").");
+            return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
         //====================================================================//
         // Check Options are Given
@@ -104,7 +104,7 @@ trait CRUDTrait
                 "product"
             );
         if (null === $response) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Product Variant (".$productId.").");
+            return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
         
         return $this->load(self::getObjectId($response["product_id"], $response["id"]));

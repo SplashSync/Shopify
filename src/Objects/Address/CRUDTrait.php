@@ -35,14 +35,14 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Get Customer Address from Api
-        $object  =   API::get(self::getUri($objectId), null, array(), "customer_address");
+        $object = API::get(self::getUri($objectId), null, array(), "customer_address");
         //====================================================================//
         // Fetch Object
         if (null === $object) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Customer Address (".$objectId.").");
+            return Splash::log()->errTrace("Unable to load Customer Address (".$objectId.").");
         }
         //====================================================================//
         // Unset Full Name to Avoid Data Duplicates
@@ -60,7 +60,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Check Customer Name is given
         if (empty($this->in["customer_id"])) {
@@ -71,24 +71,24 @@ trait CRUDTrait
         $customerId = self::objects()->id($this->in["customer_id"]);
         //====================================================================//
         // Create New Customer Address
-        $this->object   =   new ArrayObject(array( "id" => null ), ArrayObject::ARRAY_AS_PROPS);
+        $this->object = new ArrayObject(array( "id" => null ), ArrayObject::ARRAY_AS_PROPS);
         $this->setSimple("customer_id", $customerId);
         $this->setSimple("first_name", $this->in["first_name"]);
         $this->setSimple("last_name", $this->in["last_name"]);
         //====================================================================//
         // Create Customer from Api
-        $newAddress   =   API::post(
+        $newAddress = API::post(
             'customers/'.$customerId."/addresses",
             array("address" => $this->object),
             "customer_address"
         );
         if (null === $newAddress) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Customer Address.");
+            return Splash::log()->errTrace("Unable to Create Customer Address.");
         }
-        
+
         return new ArrayObject($newAddress, ArrayObject::ARRAY_AS_PROPS);
     }
-    
+
     /**
      * Update Request Object
      *
@@ -100,7 +100,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Encode Object Id
         $objectId = $this->getObjectId($this->object->customer_id, $this->object->id);
@@ -112,12 +112,12 @@ trait CRUDTrait
         //====================================================================//
         // Update Customer Address from Api
         if (null === API::put(self::getUri($objectId), array("customer_address" => $this->object))) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Customer Address (".$objectId.").");
+            return Splash::log()->errTrace("Unable to Update Customer Address (".$objectId.").");
         }
 
         return $objectId;
     }
-    
+
     /**
      * Delete requested Object
      *
@@ -129,16 +129,30 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Delete Customer from Api
         if (null === API::delete(self::getUri($objectId))) {
-            Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete Customer Address (".$objectId.").");
+            Splash::log()->errTrace("Unable to Delete Customer Address (".$objectId.").");
         }
-        
+
         return true;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectIdentifier()
+    {
+        if (!isset($this->object->customer_id) || !isset($this->object->id)) {
+            return false;
+        }
+
+        //====================================================================//
+        // Encode Object Id
+        return $this->getObjectId($this->object->customer_id, $this->object->id);
+    }
+
     /**
      * Get Object CRUD Base Uri
      *

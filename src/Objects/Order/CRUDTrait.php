@@ -35,14 +35,14 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Get Customer Order from Api
-        $object  =   API::get("orders", $objectId, array(), "order");
+        $object = API::get("orders", $objectId, array(), "order");
         //====================================================================//
         // Fetch Object from Shopify
         if (null === $object) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Order/Invoice (".$objectId.").");
+            return Splash::log()->errTrace("Unable to load Order/Invoice (".$objectId.").");
         }
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
@@ -57,11 +57,11 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
 
         return Splash::log()->err("Splash API Cannot Create Shopify Orders!");
     }
-    
+
     /**
      * Update Request Object
      *
@@ -75,11 +75,11 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
 
         return Splash::log()->err("Splash API Cannot Update Shopify Orders!");
     }
-    
+
     /**
      * Delete requested Object
      *
@@ -93,8 +93,20 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
 
         return Splash::log()->err("Splash API Cannot Delete Shopify Orders!");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectIdentifier()
+    {
+        if (!isset($this->object->id)) {
+            return false;
+        }
+
+        return (string) $this->object->id;
     }
 }

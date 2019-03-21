@@ -34,6 +34,102 @@ trait AttributesTrait
     );
     
     //====================================================================//
+    // Fields Generation Functions
+    //====================================================================//
+
+    /**
+     * Build Attributes Fields using FieldFactory
+     */
+    protected function buildVariantsAttributesFields()
+    {
+        $groupName  = "Options";
+
+        //====================================================================//
+        // Product Variation List - Variation Attribute Code
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->Identifier("code")
+            ->Name("Code")
+            ->InList("attributes")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/Product", "VariantAttributeCode")
+            ->isNotTested();
+
+        //====================================================================//
+        // Product Variation List - Variation Attribute Name
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->Identifier("name")
+            ->Name("Name")
+            ->InList("attributes")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/Product", "VariantAttributeName")
+            ->isNotTested();
+
+        //====================================================================//
+        // Product Variation List - Variation Attribute Value
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->Identifier("value")
+            ->Name("Value")
+            ->InList("attributes")
+            ->Group($groupName)
+            ->MicroData("http://schema.org/Product", "VariantAttributeValue")
+            ->isNotTested();
+    }
+
+    //====================================================================//
+    // Fields Reading Functions
+    //====================================================================//
+
+    /**
+     * Read requested Field
+     *
+     * @param string $key       Input List Key
+     * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
+     */
+    protected function getVariantsAttributesFields($key, $fieldName)
+    {
+        //====================================================================//
+        // Check if List field & Init List Array
+        $fieldId = self::lists()->initOutput($this->out, "attributes", $fieldName);
+        if (!$fieldId) {
+            return;
+        }
+
+        //====================================================================//
+        // READ Fields
+        foreach (self::$optionsList as $code => $name) {
+            //====================================================================//
+            // Ensure Variant Option Exists
+            if (!isset($this->variant->{$name})) {
+                continue;
+            }
+
+            //====================================================================//
+            // Get Variant Infos
+            switch ($fieldId) {
+                case 'code':
+                case 'name':
+                    $value  =   $this->object->options[$code]["name"];
+
+                    break;
+                case 'value':
+                    $value  =   $this->variant->{$name};
+
+                    break;
+                default:
+                    return;
+            }
+            
+            self::lists()->insert($this->out, "attributes", $fieldId, $code, $value);
+        }
+        unset($this->in[$key]);
+        //====================================================================//
+        // Sort Attributes by Code
+        ksort($this->out["attributes"]);
+    }
+    
+    //====================================================================//
     // Fields Writting Functions
     //====================================================================//
 
@@ -83,102 +179,6 @@ trait AttributesTrait
         }
         
         unset($this->in[$fieldName]);
-    }
-    
-    //====================================================================//
-    // Fields Generation Functions
-    //====================================================================//
-
-    /**
-     * Build Attributes Fields using FieldFactory
-     */
-    private function buildVariantsAttributesFields()
-    {
-        $groupName  = "Options";
-
-        //====================================================================//
-        // Product Variation List - Variation Attribute Code
-        $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("code")
-            ->Name("Code")
-            ->InList("attributes")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/Product", "VariantAttributeCode")
-            ->isNotTested();
-
-        //====================================================================//
-        // Product Variation List - Variation Attribute Name
-        $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("name")
-            ->Name("Name")
-            ->InList("attributes")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/Product", "VariantAttributeName")
-            ->isNotTested();
-
-        //====================================================================//
-        // Product Variation List - Variation Attribute Value
-        $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("value")
-            ->Name("Value")
-            ->InList("attributes")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/Product", "VariantAttributeValue")
-            ->isNotTested();
-    }
-
-    //====================================================================//
-    // Fields Reading Functions
-    //====================================================================//
-
-    /**
-     * Read requested Field
-     *
-     * @param string $key       Input List Key
-     * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
-     */
-    private function getVariantsAttributesFields($key, $fieldName)
-    {
-        //====================================================================//
-        // Check if List field & Init List Array
-        $fieldId = self::lists()->initOutput($this->out, "attributes", $fieldName);
-        if (!$fieldId) {
-            return;
-        }
-
-        //====================================================================//
-        // READ Fields
-        foreach (self::$optionsList as $code => $name) {
-            //====================================================================//
-            // Ensure Variant Option Exists
-            if (!isset($this->variant->{$name})) {
-                continue;
-            }
-
-            //====================================================================//
-            // Get Variant Infos
-            switch ($fieldId) {
-                case 'code':
-                case 'name':
-                    $value  =   $this->object->options[$code]["name"];
-
-                    break;
-                case 'value':
-                    $value  =   $this->variant->{$name};
-
-                    break;
-                default:
-                    return;
-            }
-            
-            self::lists()->insert($this->out, "attributes", $fieldId, $code, $value);
-        }
-        unset($this->in[$key]);
-        //====================================================================//
-        // Sort Attributes by Code
-        ksort($this->out["attributes"]);
     }
 
     //====================================================================//

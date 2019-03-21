@@ -35,7 +35,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Execute Read Request
         $shWebHook = API::get("webhooks", $objectId, array(), "webhook");
@@ -43,9 +43,9 @@ trait CRUDTrait
         //====================================================================//
         // Fetch Object
         if (null == $shWebHook) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load WebHook (".$objectId.").");
+            return Splash::log()->errTrace(" Unable to load WebHook (".$objectId.").");
         }
-        
+
         return new ArrayObject($shWebHook, ArrayObject::ARRAY_AS_PROPS);
     }
 
@@ -61,8 +61,8 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
-        
+        Splash::log()->trace();
+
         //====================================================================//
         // Check WebHook Url is given
         if (empty($url) && empty($this->in["address"])) {
@@ -75,17 +75,17 @@ trait CRUDTrait
             return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "topic");
         }
         $webhookTopic = empty($topic) ? $this->in["topic"] : $topic;
-        
+
         //====================================================================//
         // Create Object
         $newWebhook = API::post('webhooks', self::getWebHooksConfiguration($webhookUrl, $webhookTopic), "webhook");
         if (is_null($newWebhook)) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create WebHook");
+            return Splash::log()->errTrace(" Unable to Create WebHook");
         }
-        
+
         return new ArrayObject($newWebhook, ArrayObject::ARRAY_AS_PROPS);
     }
-    
+
     /**
      * Update Request Object
      *
@@ -97,27 +97,27 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         if (!$needed) {
-            return (string) $this->object->id;
+            return $this->getObjectIdentifier();
         }
-        
+
         //====================================================================//
         // Update WebHook
         if (true == SPLASH_DEBUG) {
             $response = API::put(self::getUri($this->object->id), array("webhook" => $this->object));
             if (null === $response) {
-                return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update WebHook (".$this->object->id.").");
+                return Splash::log()->errTrace(" Unable to Update WebHook (".$this->object->id.").");
             }
         }
-        
+
         //====================================================================//
         // Update Not Allowed
         Splash::log()->war("ErrLocalTpl", __CLASS__, __FUNCTION__, " WebHook Update is disabled.");
-        
-        return (string) $this->object->id;
+
+        return $this->getObjectIdentifier();
     }
-    
+
     /**
      * Delete requested Object
      *
@@ -129,17 +129,29 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Delete Object
         $response = API::delete(self::getUri($objectId));
         if (null === $response) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete WebHook (".$objectId.").");
+            return Splash::log()->errTrace(" Unable to Delete WebHook (".$objectId.").");
         }
 
         return true;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectIdentifier()
+    {
+        if (!isset($this->object->id)) {
+            return false;
+        }
+
+        return (string) $this->object->id;
+    }
+
     /**
      * Get Object CRUD Uri
      *
@@ -156,7 +168,7 @@ trait CRUDTrait
 
         return $baseUri;
     }
-    
+
     /**
      * Get New WebHooks Configuration
      *

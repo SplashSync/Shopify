@@ -10,3 +10,6 @@
 /.web-server-pid
 /tests/config/parameters.yml
 /public/
+/nbproject/private/
+/nbproject/
+/src/.php_cs.cache

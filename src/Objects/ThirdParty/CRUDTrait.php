@@ -35,14 +35,14 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Get Customer from Api
-        $object  =   API::get('customers', $objectId, array(), "customer");
+        $object = API::get('customers', $objectId, array(), "customer");
         //====================================================================//
         // Fetch Object
         if (null === $object) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to load Customer (".$objectId.").");
+            return Splash::log()->errTrace(" Unable to load Customer (".$objectId.").");
         }
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
@@ -57,7 +57,7 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Check Customer Name is given
         if (empty($this->in["email"])) {
@@ -65,31 +65,31 @@ trait CRUDTrait
         }
         //====================================================================//
         // Create New Customer
-        $this->object   =   new ArrayObject(array( "id" => null ), ArrayObject::ARRAY_AS_PROPS);
+        $this->object = new ArrayObject(array( "id" => null ), ArrayObject::ARRAY_AS_PROPS);
         $this->setSimple("email", $this->in["email"]);
         //====================================================================//
         // PHPUnit => Add a Default Address
         if (!empty(Splash::input("SPLASH_TRAVIS"))) {
             $this->object->addresses = array(
                 array(
-                    "address1"      => "1 Rue des Carrieres",
-                    "city"          => "Montreal",
-                    "first_name"    => "John",
-                    "last_name"     => "Doe",
-                    "country_code"  =>  "CA",
-                    "country_name"  =>  "Canada",
+                    "address1" => "1 Rue des Carrieres",
+                    "city" => "Montreal",
+                    "first_name" => "John",
+                    "last_name" => "Doe",
+                    "country_code" => "CA",
+                    "country_name" => "Canada",
                 ), );
         }
         //====================================================================//
         // Create Customer from Api
-        $newCustomer   =   API::post('customers', array("customer" => $this->object), "customer");
+        $newCustomer = API::post('customers', array("customer" => $this->object), "customer");
         if (null === $newCustomer) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Create Customer (".$this->in["email"].").");
+            return Splash::log()->errTrace(" Unable to Create Customer (".$this->in["email"].").");
         }
 
         return new ArrayObject($newCustomer, ArrayObject::ARRAY_AS_PROPS);
     }
-    
+
     /**
      * Update Request Object
      *
@@ -101,19 +101,19 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         if (!$needed) {
-            return (string) $this->object->id;
+            return $this->getObjectIdentifier();
         }
         //====================================================================//
         // Update Customer from Api
         if (null === API::put('customers/'.$this->object->id, array("customer" => $this->object))) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Update Customer (".$this->object->id.").");
+            return Splash::log()->errTrace(" Unable to Update Customer (".$this->object->id.").");
         }
-        
-        return (string) $this->object->id;
+
+        return $this->getObjectIdentifier();
     }
-    
+
     /**
      * Delete requested Object
      *
@@ -125,13 +125,25 @@ trait CRUDTrait
     {
         //====================================================================//
         // Stack Trace
-        Splash::log()->trace(__CLASS__, __FUNCTION__);
+        Splash::log()->trace();
         //====================================================================//
         // Delete Customer from Api
         if (null === API::delete('customers/'.$objectId)) {
-            return Splash::log()->err("ErrLocalTpl", __CLASS__, __FUNCTION__, " Unable to Delete Customer (".$objectId.").");
+            return Splash::log()->errTrace(" Unable to Delete Customer (".$objectId.").");
         }
-        
+
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectIdentifier()
+    {
+        if (!isset($this->object->id)) {
+            return false;
+        }
+
+        return (string) $this->object->id;
     }
 }
