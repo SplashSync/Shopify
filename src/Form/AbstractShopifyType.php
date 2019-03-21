@@ -40,23 +40,23 @@ abstract class AbstractShopifyType extends AbstractType
         if (!isset($options["data"]["LocationsMap"]) || empty($options["data"]["LocationsMap"])) {
             return $this;
         }
-        
+
         $builder
             //==============================================================================
             // Shopify List Option Selector
             ->add('LocationId', ChoiceType::class, array(
-                'label'                     => "var.location.label",
-                'help_block'                => "var.location.desc",
-                'required'                  => true,
-                'translation_domain'        => "ShopifyBundle",
+                'label' => "var.location.label",
+                'help_block' => "var.location.desc",
+                'required' => true,
+                'translation_domain' => "ShopifyBundle",
                 'choice_translation_domain' => false,
-                'choices'                   => array_flip($options["data"]["LocationsMap"]),
+                'choices' => array_flip($options["data"]["LocationsMap"]),
             ))
         ;
 
         return $this;
     }
-    
+
     /**
      * Add Api Key Field to FormBuilder
      *
@@ -73,13 +73,13 @@ abstract class AbstractShopifyType extends AbstractType
             //==============================================================================
             // Shopify Api Key Option Authentification
             ->add('Token', TextType::class, array(
-                'label'                     => "var.token.label",
-                'help_block'                => "var.token.desc",
-                'required'                  => false,
-                'translation_domain'        => "ShopifyBundle",
+                'label' => "var.token.label",
+                'help_block' => "var.token.desc",
+                'required' => false,
+                'translation_domain' => "ShopifyBundle",
             ))
         ;
-        
+
         return $this;
     }
     /**

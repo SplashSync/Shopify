@@ -33,7 +33,7 @@ class ShopifyHelper
      * @var string
      */
     private static $endpoint;
-    
+
     /**
      * @var PublicAppCredential
      */
@@ -43,7 +43,7 @@ class ShopifyHelper
      * @var Client
      */
     private static $client;
-    
+
     /**
      * Configure Shopify REST API
      *
@@ -65,10 +65,10 @@ class ShopifyHelper
         self::$client = new Client(self::$credential, self::$endpoint, array(
             'metaCacheDir' => './tmp',  // Metadata cache dir, required
         ));
-       
+
         return true;
     }
-    
+
     /**
      * Ping Shopify API Url as Annonymous User
      *
@@ -86,14 +86,14 @@ class ShopifyHelper
 
             return false;
         }
-        
+
         if (($response->code >= 200) && ($response->code < 500)) {
             return true;
         }
 
         return false;
     }
-    
+
     /**
      * Ping Shopify API Url with API Key (Logged User)
      *
@@ -115,7 +115,7 @@ class ShopifyHelper
         // Return Connect Result
         return true;
     }
-    
+
     /**
      * Shopify API GET Request
      *
@@ -227,7 +227,7 @@ class ShopifyHelper
         // Catch Errors in Response
         return true;
     }
-    
+
     /**
      * Shopify API List Request
      *
@@ -243,8 +243,8 @@ class ShopifyHelper
         // Prepare Parameters
         $query = array();
         if (!is_null($limit) && ($limit > 0) && !is_null($offset) && ($offset >= 0)) {
-            $query['limit']    =   $limit;
-            $query['page']     =   (1 + (int) ($offset / $limit));
+            $query['limit'] = $limit;
+            $query['page'] = (1 + (int) ($offset / $limit));
         }
         //====================================================================//
         // Perform Request
@@ -259,7 +259,7 @@ class ShopifyHelper
         // Return Response
         return isset($response[$resource]) ? $response[$resource] : $response;
     }
-    
+
     /**
      * Shopify API Count Request
      *
@@ -282,7 +282,7 @@ class ShopifyHelper
         // Return Response
         return isset($response["count"]) ? $response["count"] : null;
     }
-    
+
     /**
      * Check if Shop Url is Ok.
      *
@@ -295,17 +295,17 @@ class ShopifyHelper
         //====================================================================//
         // Remove Http
         if (0 === strpos($wsHost, "http://")) {
-            $wsHost   = substr($wsHost, strlen("http://"));
+            $wsHost = substr($wsHost, strlen("http://"));
         }
         //====================================================================//
         // Remove Https
         if (0 === strpos($wsHost, "https://")) {
-            $wsHost   = substr($wsHost, strlen("https://"));
+            $wsHost = substr($wsHost, strlen("https://"));
         }
         //====================================================================//
         // Remove End Slash
         if (strpos($wsHost, "/") === (strlen($wsHost) - 1)) {
-            $wsHost   = substr($wsHost, 0, strlen($wsHost) - 1);
+            $wsHost = substr($wsHost, 0, strlen($wsHost) - 1);
         }
 
         return $wsHost;

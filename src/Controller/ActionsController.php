@@ -69,7 +69,7 @@ class ActionsController extends Controller
         // Do Shopify OAuth2 Authentification
         return $client->redirect();
     }
-    
+
     /**
      * Register Connector App Token
      *
@@ -117,7 +117,7 @@ class ActionsController extends Controller
         } catch (Exception $e) {
             return new Response($e->getMessage(), 400);
         }
-        
+
         //====================================================================//
         // Redirect Response
         /** @var string $referer */
@@ -125,14 +125,14 @@ class ActionsController extends Controller
         if (empty($referer)) {
             return self::getDefaultResponse();
         }
-        
+
         return new RedirectResponse($referer);
     }
-    
+
     //==============================================================================
     // WEBHOOKS CONFIGURATION
     //==============================================================================
-            
+
     /**
      * Update User Connector WebHooks List
      *
@@ -151,7 +151,7 @@ class ActionsController extends Controller
             $router = $this->get('router');
             //====================================================================//
             // Update WebHooks Config
-            $result =   $connector->updateWebHooks($router);
+            $result = $connector->updateWebHooks($router);
         }
         //====================================================================//
         // Inform User

@@ -27,7 +27,7 @@ class S01WebHookTest extends TestCase
     const PING_RESPONSE = '{"success":true}';
     const MEMBER = "ThirdParty";
     const FAKE_EMAIL = "fake@exemple.com";
-   
+
     /**
      * Test WebHook For Ping
      */
@@ -103,7 +103,7 @@ class S01WebHookTest extends TestCase
         //====================================================================//
         // Setup Client
         $this->configure($connector, $topic);
-        
+
         //====================================================================//
         // Prepare Request
 //        $post  = array_replace_recursive(
@@ -132,7 +132,7 @@ class S01WebHookTest extends TestCase
     public function webHooksInputsProvider()
     {
         $hooks = array();
-        
+
         for ($i = 0; $i < 5; $i++) {
             //====================================================================//
             // Add ThirdParty WebHook Test
@@ -140,14 +140,14 @@ class S01WebHookTest extends TestCase
             $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/update", uniqid());
             $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/disable", uniqid());
             $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/enable", uniqid());
-            
+
             //====================================================================//
             // Add Address WebHook Test
             $hooks[] = self::getThirdPartyWebHook(SPL_A_CREATE, "customers/create", uniqid(), uniqid());
             $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/update", uniqid(), uniqid());
             $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/disable", uniqid(), uniqid());
             $hooks[] = self::getThirdPartyWebHook(SPL_A_UPDATE, "customers/enable", uniqid(), uniqid());
-            
+
             //====================================================================//
             // Add Product WebHook Test
             $hooks[] = self::getProductWebHook(SPL_A_CREATE, "products/create", uniqid());
@@ -167,7 +167,7 @@ class S01WebHookTest extends TestCase
 
         return $hooks;
     }
-    
+
     /**
      * Configure Client Headers for Shopify Requests
      *
@@ -179,7 +179,7 @@ class S01WebHookTest extends TestCase
         $this->getClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $connector->getParameter("WsHost"));
         $this->getClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
     }
-    
+
     /**
      * Generate Fake ThirdParty Inputs for WebHook Requets
      *
@@ -203,7 +203,7 @@ class S01WebHookTest extends TestCase
             is_null($address) ? $thirdparty : Objects\Address::getObjectId($thirdparty, $address),
         );
     }
-    
+
     /**
      * Generate Fake Product Inputs for WebHook Requets
      *
@@ -216,7 +216,7 @@ class S01WebHookTest extends TestCase
     private static function getProductWebHook(string $action, string $eventName, string $variant) : array
     {
         $product = uniqid();
-        
+
         return array(
             $eventName,
             array(
@@ -228,7 +228,7 @@ class S01WebHookTest extends TestCase
             Objects\Product::getObjectId($product, $variant),
         );
     }
-    
+
     /**
      * Generate Fake Order & Invoice Inputs for WebHook Requets
      *

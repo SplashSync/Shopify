@@ -31,7 +31,7 @@ trait DatesTrait
         //====================================================================//
         // TRACEABILITY INFORMATIONS
         //====================================================================//
-        
+
         //====================================================================//
         // Creation Date
         $this->fieldsFactory()->create(SPL_T_DATETIME)
@@ -41,7 +41,7 @@ trait DatesTrait
             ->MicroData("http://schema.org/DataFeedItem", "dateCreated")
             ->isListed()
             ->isReadOnly();
-        
+
         //====================================================================//
         // Last Change Date
         $this->fieldsFactory()->create(SPL_T_DATETIME)
@@ -51,14 +51,12 @@ trait DatesTrait
             ->MicroData("http://schema.org/DataFeedItem", "dateModified")
             ->isReadOnly();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getDatesFields($key, $fieldName)
     {

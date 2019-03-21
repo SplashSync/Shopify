@@ -35,8 +35,8 @@ trait ObjectsListTrait
         $query = array();
         if (isset($params["max"]) && ($params["max"] > 0) && isset($params["offset"]) && ($params["offset"] >= 0)) {
             $query = array(
-                'limit'    =>   $params["max"],
-                'page'     =>   (1 + (int) ($params["offset"] / $params["max"])),
+                'limit' => $params["max"],
+                'page' => (1 + (int) ($params["offset"] / $params["max"])),
             );
         }
         //====================================================================//
@@ -45,23 +45,23 @@ trait ObjectsListTrait
         //====================================================================//
         // Request Failed
         if (false == $rawData) {
-            return array( 'meta'    => array('current' => 0, 'total' => 0));
+            return array( 'meta' => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Parse Data in response
         $response = array();
         foreach ($rawData as $product) {
             foreach ($product['variants'] as $variant) {
-                $response[]   = array(
-                    'id'                        =>      self::getObjectId($product['id'], $variant['id']),
-                    'title'                     =>      $product['title'],
-                    'variant_title'             =>      $product['title']." - ".$variant['title'],
-                    'published'                 =>      !empty($product['published_at']),
-                    'sku'                       =>      $variant['sku'],
-                    'price'                     =>      $variant['price'],
-                    'inventory_quantity'        =>      $variant['inventory_quantity'],
-                    'created_at'                =>      (new DateTime($product['created_at']))->format(SPL_T_DATETIMECAST),
-                    'updated_at'                =>      (new DateTime($product['updated_at']))->format(SPL_T_DATETIMECAST),
+                $response[] = array(
+                    'id' => self::getObjectId($product['id'], $variant['id']),
+                    'title' => $product['title'],
+                    'variant_title' => $product['title']." - ".$variant['title'],
+                    'published' => !empty($product['published_at']),
+                    'sku' => $variant['sku'],
+                    'price' => $variant['price'],
+                    'inventory_quantity' => $variant['inventory_quantity'],
+                    'created_at' => (new DateTime($product['created_at']))->format(SPL_T_DATETIMECAST),
+                    'updated_at' => (new DateTime($product['updated_at']))->format(SPL_T_DATETIMECAST),
                 );
             }
         }
@@ -71,7 +71,7 @@ trait ObjectsListTrait
             'current' => count($response),
             'total' => API::count('products'),
         );
-        
+
         return $response;
     }
 }

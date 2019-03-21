@@ -32,7 +32,7 @@ trait AttributesTrait
         1 => 'option2',
         2 => 'option3'
     );
-    
+
     //====================================================================//
     // Fields Generation Functions
     //====================================================================//
@@ -42,7 +42,7 @@ trait AttributesTrait
      */
     protected function buildVariantsAttributesFields()
     {
-        $groupName  = "Options";
+        $groupName = "Options";
 
         //====================================================================//
         // Product Variation List - Variation Attribute Code
@@ -84,8 +84,6 @@ trait AttributesTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getVariantsAttributesFields($key, $fieldName)
     {
@@ -110,17 +108,17 @@ trait AttributesTrait
             switch ($fieldId) {
                 case 'code':
                 case 'name':
-                    $value  =   $this->object->options[$code]["name"];
+                    $value = $this->object->options[$code]["name"];
 
                     break;
                 case 'value':
-                    $value  =   $this->variant->{$name};
+                    $value = $this->variant->{$name};
 
                     break;
                 default:
                     return;
             }
-            
+
             self::lists()->insert($this->out, "attributes", $fieldId, $code, $value);
         }
         unset($this->in[$key]);
@@ -128,7 +126,7 @@ trait AttributesTrait
         // Sort Attributes by Code
         ksort($this->out["attributes"]);
     }
-    
+
     //====================================================================//
     // Fields Writting Functions
     //====================================================================//
@@ -138,8 +136,6 @@ trait AttributesTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setVariantsAttributesFields($fieldName, $fieldData)
     {
@@ -148,7 +144,7 @@ trait AttributesTrait
         if ("attributes" !== $fieldName) {
             return;
         }
-      
+
         //====================================================================//
         // Update Products Attributes Ids
         $index = 0;
@@ -168,16 +164,16 @@ trait AttributesTrait
                 );
             }
             $this->object->options[$index]["name"] = $item["code"];
-            
+
             //====================================================================//
             // Update Attribute Value
-            $this->setSimple("option" . ($index + 1), $item["value"], "variant");
+            $this->setSimple("option".($index + 1), $item["value"], "variant");
 
             //====================================================================//
             // Inc. Attribute Index
             $index++;
         }
-        
+
         unset($this->in[$fieldName]);
     }
 

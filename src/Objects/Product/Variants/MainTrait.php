@@ -50,11 +50,11 @@ trait MainTrait
             ->isListed()
             ->MicroData("http://schema.org/Product", "name")
             ->isReadOnly();
-        
+
         //====================================================================//
         // PRICES INFORMATIONS
         //====================================================================//
-        
+
         //====================================================================//
         // Product Selling Price
         $this->fieldsFactory()->Create(SPL_T_PRICE)
@@ -62,7 +62,7 @@ trait MainTrait
             ->Name("Price (tax excl.)")
 //                ->isListed()
             ->MicroData("http://schema.org/Product", "price");
-        
+
         //====================================================================//
         // PRODUCT SPECIFICATIONS
         //====================================================================//
@@ -73,7 +73,7 @@ trait MainTrait
             ->Identifier("grams")
             ->Name("Product weight (Kg)")
             ->MicroData("http://schema.org/Product", "weight");
-        
+
         //====================================================================//
         // PRODUCT BARCODES
         //====================================================================//
@@ -85,14 +85,12 @@ trait MainTrait
             ->Name("UPC | ISBN BarCode")
             ->MicroData("http://schema.org/Product", "gtin12");
     }
-        
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getMainFields($key, $fieldName)
     {
@@ -116,8 +114,8 @@ trait MainTrait
             case 'price':
                 //====================================================================//
                 // Read Price
-                $priceHT    = (float) $this->variant->price;
-                $tax        = (float) ($this->variant->taxable ? $this->getLocalVatRate() : 0);
+                $priceHT = (float) $this->variant->price;
+                $tax = (float) ($this->variant->taxable ? $this->getLocalVatRate() : 0);
                 //====================================================================//
                 // Build Price Array
                 $this->out[$fieldName] = self::prices()->Encode(
@@ -145,17 +143,15 @@ trait MainTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setMainFields($fieldName, $fieldData)
     {
@@ -210,7 +206,7 @@ trait MainTrait
         //====================================================================//
         // Get Store Informations
         $storeCountry = $this->getParameter("country", null, "ShopInformations");
-        $countries  = $this->getParameter("Countries");
+        $countries = $this->getParameter("Countries");
         //====================================================================//
         // Safety Check
         if (!is_iterable($countries) || is_null($storeCountry)) {

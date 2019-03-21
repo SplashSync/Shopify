@@ -27,14 +27,14 @@ trait AddressTrait
      * @var ArrayObject
      */
     protected $address;
-        
+
     /**
      * Build Address Fields using FieldFactory
      */
     protected function buildAddressFields()
     {
         $groupName = "Address";
-        
+
         //====================================================================//
         // Addess
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -60,7 +60,7 @@ trait AddressTrait
             ->MicroData("http://schema.org/PostalAddress", "postalCode")
             ->AddOption('maxLength', (string) 18)
             ->isReadOnly();
-        
+
         //====================================================================//
         // City Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -69,7 +69,7 @@ trait AddressTrait
             ->Group($groupName)
             ->isReadOnly()
             ->MicroData("http://schema.org/PostalAddress", "addressLocality");
-        
+
         //====================================================================//
         // Country Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -77,7 +77,7 @@ trait AddressTrait
             ->Name("Country")
             ->Group($groupName)
             ->isReadOnly();
-        
+
         //====================================================================//
         // Country ISO Code
         $this->fieldsFactory()->create(SPL_T_COUNTRY)
@@ -86,7 +86,7 @@ trait AddressTrait
             ->Group($groupName)
             ->isReadOnly()
             ->MicroData("http://schema.org/PostalAddress", "addressCountry");
-        
+
         //====================================================================//
         // State Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -94,7 +94,7 @@ trait AddressTrait
             ->Group($groupName)
             ->Name("State")
             ->isReadOnly();
-        
+
         //====================================================================//
         // State code
         $this->fieldsFactory()->create(SPL_T_STATE)
@@ -104,21 +104,19 @@ trait AddressTrait
             ->MicroData("http://schema.org/PostalAddress", "addressRegion")
             ->isReadOnly();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
      *
-     * @return void
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getAddressFields($key, $fieldName)
     {
         if (!isset($this->address)) {
-            $this->address  =   new ArrayObject($this->object['default_address'], ArrayObject::ARRAY_AS_PROPS);
+            $this->address = new ArrayObject($this->object['default_address'], ArrayObject::ARRAY_AS_PROPS);
         }
         //====================================================================//
         // READ Fields
@@ -139,7 +137,7 @@ trait AddressTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
 }

@@ -37,11 +37,11 @@ trait CoreTrait
             ->Group("Meta")
             ->MicroData("http://schema.org/Product", "isVariationOf")
             ->isReadOnly();
-        
+
         //====================================================================//
         // CHILD PRODUCTS INFORMATIONS
         //====================================================================//
-        
+
         //====================================================================//
         // Product Variation List - Product Link
         $this->fieldsFactory()->Create((string) self::objects()->Encode("Product", SPL_T_ID))
@@ -50,7 +50,7 @@ trait CoreTrait
             ->InList("variants")
             ->MicroData("http://schema.org/Product", "Variants")
             ->isNotTested();
-        
+
         //====================================================================//
         // Product Variation List - Product SKU
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
@@ -59,7 +59,7 @@ trait CoreTrait
             ->InList("variants")
             ->MicroData("http://schema.org/Product", "VariationName")
             ->isReadOnly();
-        
+
         //====================================================================//
         // Product Variation List - Variation Attribute
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
@@ -69,14 +69,12 @@ trait CoreTrait
             ->MicroData("http://schema.org/Product", "VariationAttribute")
             ->isReadOnly();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getVariantsCoreFields($key, $fieldName)
     {
@@ -90,17 +88,15 @@ trait CoreTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getVariantsListFields($key, $fieldName)
     {
@@ -118,7 +114,7 @@ trait CoreTrait
             // Get Variant Infos
             switch ($fieldId) {
                 case 'id':
-                    $value  =   self::objects()
+                    $value = self::objects()
                         ->encode(
                             "Product",
                             $this->getObjectId((string) $this->productId, $variant['id'])
@@ -126,34 +122,32 @@ trait CoreTrait
 
                     break;
                 case 'sku':
-                    $value  =   $variant["sku"];
+                    $value = $variant["sku"];
 
                     break;
                 case 'options':
                     $variantOptions = array($variant["option1"], $variant["option2"], $variant["option3"]);
-                    $value  =   implode(" | ", array_filter($variantOptions));
+                    $value = implode(" | ", array_filter($variantOptions));
 
                     break;
                 default:
                     return;
             }
-            
+
             self::lists()->insert($this->out, "variants", $fieldId, $index, $value);
         }
-        
+
         unset($this->in[$key]);
         //====================================================================//
         // Sort Attributes by Code
         ksort($this->out["variants"]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setVariantsListFields($fieldName, $fieldData)
     {
@@ -164,7 +158,7 @@ trait CoreTrait
         }
         unset($this->in[$fieldName]);
     }
-        
+
     /**
      * Identify Default Variant Product Id
      *
@@ -198,7 +192,7 @@ trait CoreTrait
             if (empty($productId) || !is_scalar($productId)) {
                 continue;
             }
-            
+
             return $productId;
         }
 

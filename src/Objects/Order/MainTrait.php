@@ -23,7 +23,7 @@ use DateTime;
 trait MainTrait
 {
     private $updateBilled;
-    
+
     /**
      * Build Address Fields using FieldFactory
      */
@@ -35,11 +35,11 @@ trait MainTrait
             ->Identifier("closed_at")
             ->Name("Closed Date")
             ->MicroData("http://schema.org/ParcelDelivery", "expectedArrivalUntil");
-        
+
         //====================================================================//
         // PRICES INFORMATIONS
         //====================================================================//
-        
+
         //====================================================================//
         // Order Total Price HT
         $this->fieldsFactory()->create(SPL_T_DOUBLE)
@@ -47,7 +47,7 @@ trait MainTrait
             ->Name("Total Price")
             ->MicroData("http://schema.org/Invoice", "totalPaymentDue")
             ->isReadOnly();
-        
+
         //====================================================================//
         // Order Total Price TTC
         $this->fieldsFactory()->create(SPL_T_DOUBLE)
@@ -55,7 +55,7 @@ trait MainTrait
             ->Name("Total Tax Excl.")
             ->MicroData("http://schema.org/Invoice", "totalPaymentDueTaxIncluded")
             ->isReadOnly();
-        
+
         //====================================================================//
         // ORDER STATUS FLAGS
         //====================================================================//
@@ -79,7 +79,7 @@ trait MainTrait
             ->MicroData("http://schema.org/OrderStatus", "OrderCancelled")
             ->Association("isdraft", "iscanceled", "isvalidated", "isclosed")
             ->isReadOnly();
-        
+
         //====================================================================//
         // Is Validated
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -89,7 +89,7 @@ trait MainTrait
             ->MicroData("http://schema.org/OrderStatus", "OrderProcessing")
             ->Association("isdraft", "iscanceled", "isvalidated", "isclosed")
             ->isReadOnly();
-        
+
         //====================================================================//
         // Is Closed
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -108,14 +108,12 @@ trait MainTrait
             ->MicroData("http://schema.org/OrderStatus", "OrderPaid")
             ->isReadOnly();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getMainFields($key, $fieldName)
     {
@@ -128,7 +126,7 @@ trait MainTrait
                 if ($this->object->closed_at) {
                     $date = new DateTime($this->object->closed_at);
                     $this->out[$fieldName] = $date->format(SPL_T_DATECAST);
-                    
+
                     break;
                 }
                 $this->out[$fieldName] = null;
@@ -148,17 +146,15 @@ trait MainTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
@@ -173,29 +169,29 @@ trait MainTrait
 
             case 'isdraft':
                 // Darft Orders are not Visible from API
-                $this->out[$fieldName]  = !$this->object->confirmed;
+                $this->out[$fieldName] = !$this->object->confirmed;
 
                 break;
             case 'iscanceled':
-                $this->out[$fieldName]  = ("restocked" == $this->object->fulfillment_status)   ?   true:false;
+                $this->out[$fieldName] = ("restocked" == $this->object->fulfillment_status)   ?   true:false;
 
                 break;
             case 'isvalidated':
-                $this->out[$fieldName]  = ($this->object->confirmed)   ?   true:false;
+                $this->out[$fieldName] = ($this->object->confirmed)   ?   true:false;
 
                 break;
             case 'isclosed':
-                $this->out[$fieldName]  = ("fulfilled" == $this->object->fulfillment_status)   ?   true:false;
+                $this->out[$fieldName] = ("fulfilled" == $this->object->fulfillment_status)   ?   true:false;
 
                 break;
             case 'financial_status':
-                $this->out[$fieldName]  = ("paid" == $this->object->financial_status)    ?   true:false;
+                $this->out[$fieldName] = ("paid" == $this->object->financial_status)    ?   true:false;
 
                 break;
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
 }

@@ -23,14 +23,14 @@ use Splash\Components\UnitConverter as Units;
 trait UnitConverterTrait
 {
     use \Splash\Models\Objects\UnitsHelperTrait;
-    
+
     private static $wcWeights = array(
         "g" => Units::MASS_GRAM,
         "kg" => Units::MASS_KG,
         "lb" => Units::MASS_LIVRE,
         "oz" => Units::MASS_OUNCE,
     );
-    
+
     /**
      * Reading of a Product Variant Weight Value
      *
@@ -49,7 +49,7 @@ trait UnitConverterTrait
 
         return $this;
     }
-    
+
     /**
      * Common Writing of a Product Variant Weight Value
      *

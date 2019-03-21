@@ -25,7 +25,7 @@ trait VariantsTrait
     use Variants\CRUDTrait;
     use Variants\CoreTrait;
     use Variants\AttributesTrait;
-    
+
     /**
      * Shopify Product Id
      *
@@ -39,7 +39,7 @@ trait VariantsTrait
      * @var null|string
      */
     protected $variantId;
-    
+
     /**
      * Shopify Product Variant Object
      *
@@ -57,7 +57,7 @@ trait VariantsTrait
     //====================================================================//
     // Product Variants Id Management
     //====================================================================//
-    
+
     /**
      * Extract Base Product Id from Splash Product Id
      *
@@ -98,7 +98,7 @@ trait VariantsTrait
     {
         return $productId."-".$variantId;
     }
-    
+
     //====================================================================//
     // Fields Generation Functions
     //====================================================================//
@@ -111,7 +111,7 @@ trait VariantsTrait
         //====================================================================//
         // CHILD PRODUCTS INFORMATIONS
         //====================================================================//
-        
+
 //        //====================================================================//
 //        // Product Variation List - Product Link
 //        $this->fieldsFactory()->Create(self::objects()->Encode("Product", SPL_T_ID))
@@ -139,11 +139,11 @@ trait VariantsTrait
 //            ->MicroData("http://schema.org/Product", "VariationAttribute")
 //            ->isReadOnly();
     }
-    
+
     //====================================================================//
     // Fields Reading Functions
     //====================================================================//
-    
+
 //    /**
 //     * Read requested Field
 //     *

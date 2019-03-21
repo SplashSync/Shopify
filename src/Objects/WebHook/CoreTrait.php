@@ -57,7 +57,7 @@ trait CoreTrait
         "json" => "Json Data Format",
         "xml" => "Xml Data Format",
     );
-    
+
     /**
      * Get List of Required WebHooks Topics
      *
@@ -67,7 +67,7 @@ trait CoreTrait
     {
         return array_keys(static::$topics);
     }
-    
+
     /**
      * Build Core Fields using FieldFactory
      */
@@ -80,7 +80,7 @@ trait CoreTrait
             ->Name("Address")
             ->isRequired()
             ->isListed();
-        
+
         //====================================================================//
         // WebHook Topic (Event Type)
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -89,7 +89,7 @@ trait CoreTrait
             ->addChoices(static::$topics)
             ->isRequired()
             ->isListed();
-        
+
         //====================================================================//
         // WebHook Format
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -103,8 +103,6 @@ trait CoreTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getCoreFields($key, $fieldName)
     {
@@ -118,19 +116,17 @@ trait CoreTrait
             default:
                 return;
         }
-        
+
         //====================================================================//
         // Clear Key Flag
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setCoreFields($fieldName, $fieldData)
     {

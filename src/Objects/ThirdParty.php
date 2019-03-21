@@ -29,39 +29,39 @@ class ThirdParty extends AbstractObject
     // Splash Php Core Traits
     use IntelParserTrait;
     use SimpleFieldsTrait;
-    
+
     // Shopify Core Traits
     use DatesTrait;
-    
+
     // Shopify Customer Traits
     use ThirdParty\CRUDTrait;
     use ThirdParty\ObjectsListTrait;
     use ThirdParty\CoreTrait;
     use ThirdParty\MainTrait;
     use ThirdParty\AddressTrait;
-    
+
     /**
      *  Object Disable Flag. Override this flag to disable Object.
      */
-    protected static $DISABLED        =  false;
+    protected static $DISABLED = false;
     /**
      *  Object Name
      */
-    protected static $NAME            =  "Customer";
+    protected static $NAME = "Customer";
     /**
      *  Object Description
      */
-    protected static $DESCRIPTION     =  "Shopify Customer";
+    protected static $DESCRIPTION = "Shopify Customer";
     /**
      *  Object Icon (FontAwesome or Glyph ico tag)
      */
-    protected static $ICO     =  "fa fa-user";
-    
+    protected static $ICO = "fa fa-user";
+
     /**
      * @var ShopifyConnector
      */
     protected $connector;
-    
+
     /**
      * Class Constructor
      *
@@ -69,6 +69,6 @@ class ThirdParty extends AbstractObject
      */
     public function __construct(ShopifyConnector $connector)
     {
-        $this->connector  =   $connector;
+        $this->connector = $connector;
     }
 }

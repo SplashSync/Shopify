@@ -35,9 +35,9 @@ trait ObjectsListTrait
         $query = array("status" => "any");
         if (isset($params["max"]) && ($params["max"] > 0) && isset($params["offset"]) && ($params["offset"] >= 0)) {
             $query = array(
-                "status"    => "any",
-                'limit'    =>   $params["max"],
-                'page'     =>   (1 + (int) ($params["offset"] / $params["max"])),
+                "status" => "any",
+                'limit' => $params["max"],
+                'page' => (1 + (int) ($params["offset"] / $params["max"])),
             );
         }
         //====================================================================//
@@ -46,22 +46,22 @@ trait ObjectsListTrait
         //====================================================================//
         // Request Failled
         if (null === $rawData) {
-            return array( 'meta'    => array('current' => 0, 'total' => 0));
+            return array( 'meta' => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Compute Totals
-        $response   =   array(
-            'meta'  => array('current' => count($rawData), 'total' => API::count('orders')),
+        $response = array(
+            'meta' => array('current' => count($rawData), 'total' => API::count('orders')),
         );
         //====================================================================//
         // Parse Data in response
         foreach ($rawData as $order) {
-            $response[]   = array(
-                'id'                        =>      $order['id'],
-                'name'                      =>      $order['name'],
-                'created_at'                =>      (new DateTime($order['created_at']))->format(SPL_T_DATETIMECAST),
-                'updated_at'                =>      (new DateTime($order['updated_at']))->format(SPL_T_DATETIMECAST),
-                'processed_at'              =>      (new DateTime($order['processed_at']))->format(SPL_T_DATETIMECAST),
+            $response[] = array(
+                'id' => $order['id'],
+                'name' => $order['name'],
+                'created_at' => (new DateTime($order['created_at']))->format(SPL_T_DATETIMECAST),
+                'updated_at' => (new DateTime($order['updated_at']))->format(SPL_T_DATETIMECAST),
+                'processed_at' => (new DateTime($order['processed_at']))->format(SPL_T_DATETIMECAST),
             );
         }
 

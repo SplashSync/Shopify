@@ -27,35 +27,35 @@ use Splash\Bundle\Models\AbstractConnector;
 class OAuth2Client extends AbstractProvider
 {
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
-    
+
     /**
      * @var string This will be prepended to the base uri.
      *
      * @link https://help.shopify.com/api/guides/authentication/oauth#asking-for-permission
      */
     protected $shop;
-    
+
     /**
      * @var string If set, this will be sent to shopify as the "per-user" parameter.
      *
      * @link https://help.shopify.com/api/guides/authentication/oauth#asking-for-permission
      */
     protected $accessType;
-    
+
     private static $config = array(
         // Shopify OAuth2 Provider
-        "type"              => "generic",
-        "provider_class"    => OAuth2Client::class,
+        "type" => "generic",
+        "provider_class" => OAuth2Client::class,
         // Shopify Public App Options!
-        "client_id"         => "32324733c73b1ea6e98bd2266c1ec089",
-        "client_secret"     => "f4e625818548cf851d0ebbd6bf05fb53",
+        "client_id" => "32324733c73b1ea6e98bd2266c1ec089",
+        "client_secret" => "f4e625818548cf851d0ebbd6bf05fb53",
         // Shopify Redirect Route Definition
-        "redirect_route"    => "splash_connector_action_master",
-        "redirect_params"   =>    array(
+        "redirect_route" => "splash_connector_action_master",
+        "redirect_params" => array(
             "connectorName" => "shopify",
         ),
     );
-    
+
     /**
      * Get Shopify OAuth2 Client Configuration
      *
@@ -65,7 +65,7 @@ class OAuth2Client extends AbstractProvider
     {
         return static::$config;
     }
-    
+
     /**
      * Configure OAuth2 Client for User Connector
      *
@@ -81,7 +81,7 @@ class OAuth2Client extends AbstractProvider
 
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -97,7 +97,7 @@ class OAuth2Client extends AbstractProvider
     {
         return 'https://'.$this->shop.'/admin/oauth/access_token';
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -105,7 +105,7 @@ class OAuth2Client extends AbstractProvider
     {
         return 'https://'.$this->shop.'/admin/shop.json';
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -120,7 +120,7 @@ class OAuth2Client extends AbstractProvider
             ))
         );
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -138,7 +138,7 @@ class OAuth2Client extends AbstractProvider
             // 'read_all_orders',
         );
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -146,7 +146,7 @@ class OAuth2Client extends AbstractProvider
     {
         return ',';
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -156,7 +156,7 @@ class OAuth2Client extends AbstractProvider
             throw new IdentityProviderException($data['errors'], 0, $data);
         }
     }
-    
+
     /**
      * Returns the authorization headers used by this provider.
      *
@@ -174,7 +174,7 @@ class OAuth2Client extends AbstractProvider
     {
         return array('X-Shopify-Access-Token' => $token->getToken());
     }
-    
+
     /**
      * {@inheritdoc}
      */

@@ -23,22 +23,22 @@ use DateTime;
 trait PaymentsTrait
 {
     private $knownPaymentMethods = array(
-        "manual"                        =>      "ByBankTransferInAdvance",
-        "Bank Deposit"                  =>      "ByBankTransferInAdvance",
-        
-        "Money Order"                   =>      "CheckInAdvance",
-        
-        "PayPal Express Checkout"       =>      "PayPal",
-        "PayPal Payflow Pro"            =>      "PayPal",
-        "Alipay Global"                 =>      "PayPal",
-        "Amazon Pay"                    =>      "PayPal",
-        
-        "Cash on Delivery (COD)"        =>      "COD",
+        "manual" => "ByBankTransferInAdvance",
+        "Bank Deposit" => "ByBankTransferInAdvance",
 
-        "Stripe"                        =>      "CreditCard",
-        "Shopify Payments"              =>      "CreditCard",
+        "Money Order" => "CheckInAdvance",
+
+        "PayPal Express Checkout" => "PayPal",
+        "PayPal Payflow Pro" => "PayPal",
+        "Alipay Global" => "PayPal",
+        "Amazon Pay" => "PayPal",
+
+        "Cash on Delivery (COD)" => "COD",
+
+        "Stripe" => "CreditCard",
+        "Shopify Payments" => "CreditCard",
     );
-    
+
     /**
      * Build Fields using FieldFactory
      */
@@ -88,14 +88,12 @@ trait PaymentsTrait
             ->isReadOnly()
                 ;
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     private function getPaymentsFields($key, $fieldName)
     {
@@ -118,26 +116,26 @@ trait PaymentsTrait
             //====================================================================//
             // Payment Line - Payment Mode
             case 'mode@payments':
-                $value  =   $this->getPaymentMethod();
+                $value = $this->getPaymentMethod();
 
                 break;
             //====================================================================//
             // Payment Line - Payment Date
             case 'date@payments':
                 $date = new DateTime($this->object->created_at);
-                $value  =   $date->format(SPL_T_DATECAST);
+                $value = $date->format(SPL_T_DATECAST);
 
                 break;
             //====================================================================//
             // Payment Line - Payment Identification Number
             case 'number@payments':
-                $value  =   null;
+                $value = null;
 
                 break;
             //====================================================================//
             // Payment Line - Payment Amount
             case 'amount@payments':
-                $value  =   $this->object->total_price;
+                $value = $this->object->total_price;
 
                 break;
             default:
@@ -149,7 +147,7 @@ trait PaymentsTrait
 
         unset($this->in[$key]);
     }
-    
+
     /**
      * Try To Detect Payment method Standardized Name
      *

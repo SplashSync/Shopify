@@ -40,12 +40,12 @@ trait ObjectsListTrait
         //====================================================================//
         // Request Failled
         if (null === $rawData) {
-            return array( 'meta'    => array('current' => 0, 'total' => 0));
+            return array( 'meta' => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Compute Totals
-        $response   =   array(
-            'meta'  => array('current' => count($rawData), 'total' => API::count('customers') ),
+        $response = array(
+            'meta' => array('current' => count($rawData), 'total' => API::count('customers') ),
         );
         //====================================================================//
         // Parse Data in response
@@ -53,10 +53,10 @@ trait ObjectsListTrait
         foreach ($rawData as $customer) {
             //====================================================================//
             // Parse Meta Dates to Splash Format
-            $customer['created_at'] =   (new DateTime($customer['created_at']))->format(SPL_T_DATETIMECAST);
-            $customer['updated_at'] =   (new DateTime($customer['updated_at']))->format(SPL_T_DATETIMECAST);
-            
-            $response[]   = $customer;
+            $customer['created_at'] = (new DateTime($customer['created_at']))->format(SPL_T_DATETIMECAST);
+            $customer['updated_at'] = (new DateTime($customer['updated_at']))->format(SPL_T_DATETIMECAST);
+
+            $response[] = $customer;
         }
 
         return $response;

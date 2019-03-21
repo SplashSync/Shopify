@@ -28,7 +28,7 @@ trait MainTrait
     protected function buildMAinFields()
     {
         $groupName = "Address";
-        
+
         //====================================================================//
         // Addess
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -51,7 +51,7 @@ trait MainTrait
             ->Group($groupName)
             ->MicroData("http://schema.org/PostalAddress", "postalCode")
             ->AddOption('maxLength', (string) 18);
-        
+
         //====================================================================//
         // City Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -59,7 +59,7 @@ trait MainTrait
             ->Name("Town")
             ->Group($groupName)
             ->MicroData("http://schema.org/PostalAddress", "addressLocality");
-        
+
         //====================================================================//
         // Country Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -67,7 +67,7 @@ trait MainTrait
             ->Name("Country")
             ->Group($groupName)
             ->isReadOnly();
-        
+
         //====================================================================//
         // Country ISO Code
         $this->fieldsFactory()->create(SPL_T_COUNTRY)
@@ -75,7 +75,7 @@ trait MainTrait
             ->Name("Country Code")
             ->Group($groupName)
             ->MicroData("http://schema.org/PostalAddress", "addressCountry");
-        
+
         //====================================================================//
         // State Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -83,7 +83,7 @@ trait MainTrait
             ->Group($groupName)
             ->Name("State")
             ->isReadOnly();
-        
+
         //====================================================================//
         // State code
         $this->fieldsFactory()->create(SPL_T_STATE)
@@ -94,14 +94,12 @@ trait MainTrait
             ->isReadOnly()
             ->isNotTested();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getMainFields($key, $fieldName)
     {
@@ -124,17 +122,15 @@ trait MainTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setMainFields($fieldName, $fieldData)
     {

@@ -32,7 +32,7 @@ class WebHooksController extends Controller
      * @var AbstractConnector
      */
     private $connector;
-    
+
     /**
      * @var string
      */
@@ -46,7 +46,7 @@ class WebHooksController extends Controller
     //====================================================================//
     //  SHOPIFY WEBHOOKS MANAGEMENT
     //====================================================================//
-   
+
     /**
      * Execute WebHook Actions for A MailJet Node
      *
@@ -67,34 +67,32 @@ class WebHooksController extends Controller
 
             return $this->prepareResponse(200);
         }
-        
+
         //==============================================================================
         // Safety Check
         if (!$this->verify($request, $connector)) {
             throw new BadRequestHttpException('Malformatted or missing data');
         }
-        
+
         //====================================================================//
         // Read Request Parameters
         if (!$this->extractData($request)) {
             throw new BadRequestHttpException('Malformatted or missing data');
         }
-        
+
         //====================================================================//
         // Log Shopify Request
         $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (isset($this->data) ? $this->data : array()));
-        
+
         //==============================================================================
         // Commit Changes
         $this->executeCommits();
-        
+
         return $this->prepareResponse(200);
     }
-    
+
     /**
      * Execute Changes Commits
-     *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
@@ -156,15 +154,13 @@ class WebHooksController extends Controller
                 return;
         }
     }
-    
+
     /**
      * Execute Changes Commits for Customers
      *
      * @param array  $data
      * @param string $action
      * @param string $comment
-     *
-     * @return void
      */
     private function executeCustomerCommit(array $data, string $action, string $comment) : void
     {
@@ -188,15 +184,13 @@ class WebHooksController extends Controller
             );
         }
     }
-    
+
     /**
      * Execute Changes Commits fro Products
      *
      * @param array  $data
      * @param string $action
      * @param string $comment
-     *
-     * @return void
      */
     private function executeProductCommit(array $data, string $action, string $comment) : void
     {
@@ -217,22 +211,20 @@ class WebHooksController extends Controller
             );
         }
     }
-    
+
     /**
      * Execute Changes Commits Orders & Invoices
      *
      * @param array  $data
      * @param string $action
      * @param string $comment
-     *
-     * @return void
      */
     private function executeOrderCommit(array $data, string $action, string $comment) : void
     {
         $this->connector->commit('Order', (string) $data['id'], $action, 'Shopify API', 'Shopify Order was '.$comment);
         $this->connector->commit('Invoice', (string) $data['id'], $action, 'Shopify API', 'Shopify Invoice was '.$comment);
     }
-    
+
     /**
      * Verify Request Headers
      *
@@ -256,22 +248,22 @@ class WebHooksController extends Controller
         if (empty($headerHost) || ($headerHost != $wsHost)) {
             return false;
         }
-        
+
         //====================================================================//
         // Verify WebHook Type is Provided & is Valid
-        $topic =  $request->headers->get("X-Shopify-Topic");
+        $topic = $request->headers->get("X-Shopify-Topic");
         if (empty($topic) || !is_string($topic) || (!in_array($topic, Objects\WebHook::getTopics(), true))) {
             return false;
         }
         $this->topic = $topic;
-        
+
         //====================================================================//
         // Store Connector for Further Usages
         $this->connector = $connector;
-        
+
         return true;
     }
-        
+
     /**
      * Extract Data from Request
      *
@@ -288,7 +280,7 @@ class WebHooksController extends Controller
 
         return true;
     }
-    
+
     /**
      * @param int $status
      *

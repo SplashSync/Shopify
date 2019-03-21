@@ -24,7 +24,7 @@ use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 class ShopifyStore implements ResourceOwnerInterface
 {
     use ArrayAccessorTrait;
-    
+
     /**
      * @var array
      */

@@ -35,7 +35,7 @@ trait CoreTrait
             ->AddOption("emailDomain", "exemple")
             ->AddOption("emailExtension", "com")
             ->isListed();
-        
+
         //====================================================================//
         // Firstname
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -43,7 +43,7 @@ trait CoreTrait
             ->Name("Firstname")
             ->MicroData("http://schema.org/Person", "familyName")
             ->isLogged();
-        
+
         //====================================================================//
         // Lastname
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -51,7 +51,7 @@ trait CoreTrait
             ->Name("Lastname")
             ->MicroData("http://schema.org/Person", "givenName")
             ->isLogged();
-        
+
         //====================================================================//
         // Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -66,8 +66,6 @@ trait CoreTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getCoreFields($key, $fieldName)
     {
@@ -80,9 +78,9 @@ trait CoreTrait
                 break;
             case 'company':
                 if (isset($this->object['default_address']['company']) && !empty($this->object['default_address']['company'])) {
-                    $this->out[$fieldName]  =   $this->object['default_address']['company'];
+                    $this->out[$fieldName] = $this->object['default_address']['company'];
                 }
-                $this->out[$fieldName]  =  "Shopify (".$this->object->id.")";
+                $this->out[$fieldName] = "Shopify (".$this->object->id.")";
 
                 break;
             default:
@@ -92,14 +90,12 @@ trait CoreTrait
         // Clear Key Flag
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setCoreFields($fieldName, $fieldData)
     {

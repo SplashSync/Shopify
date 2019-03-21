@@ -15,8 +15,6 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
-use Splash\Connectors\Shopify\Objects\Core\DatesTrait;
-use Splash\Connectors\Shopify\Objects\ThirdParty\ShopifyObjectTrait as ShopifyCustomerTrait;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;
@@ -32,35 +30,35 @@ class Address extends AbstractObject
     use IntelParserTrait;
     use SimpleFieldsTrait;
     use ObjectsTrait;
-    
+
     // Shopify Customer Traits
     use Address\CRUDTrait;
     use Address\ObjectsListTrait;
     use Address\CoreTrait;
     use Address\MainTrait;
-    
+
     /**
      * Object Disable Flag. Override this flag to disable Object.
      */
-    protected static $DISABLED        =  false;
+    protected static $DISABLED = false;
     /**
      * Object Name
      */
-    protected static $NAME            =  "Customer Address";
+    protected static $NAME = "Customer Address";
     /**
      * Object Description
      */
-    protected static $DESCRIPTION     =  "Shopify Customer Address";
+    protected static $DESCRIPTION = "Shopify Customer Address";
     /**
      * Object Icon (FontAwesome or Glyph ico tag)
      */
-    protected static $ICO     =  "fa fa-envelope-o";
-    
+    protected static $ICO = "fa fa-envelope-o";
+
     /**
      * @var ShopifyConnector
      */
     protected $connector;
-    
+
     /**
      * Class Constructor
      *
@@ -68,9 +66,9 @@ class Address extends AbstractObject
      */
     public function __construct(ShopifyConnector $connector)
     {
-        $this->connector  =   $connector;
+        $this->connector = $connector;
     }
-    
+
     /**
      * Extract Customer Id from Splash Address Id
      *

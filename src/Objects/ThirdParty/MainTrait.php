@@ -49,7 +49,7 @@ trait MainTrait
             ->Group("Meta")
             ->MicroData("http://schema.org/Organization", "active")
             ->isReadOnly();
-        
+
         //====================================================================//
         // isVAT
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -57,7 +57,7 @@ trait MainTrait
             ->Name("Uses VAT")
             ->Group("Meta")
             ->MicroData("http://schema.org/Organization", "UseVAT");
-        
+
         //====================================================================//
         // Is Opt In
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -73,8 +73,6 @@ trait MainTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getMainFields($key, $fieldName)
     {
@@ -100,14 +98,12 @@ trait MainTrait
         // Clear Key Flag
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setMainFields($fieldName, $fieldData)
     {

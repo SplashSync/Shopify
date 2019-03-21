@@ -38,14 +38,12 @@ trait StatusTrait
             ->AddChoice("OrderDelivered", "Delivered")
                 ;
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
@@ -54,21 +52,21 @@ trait StatusTrait
         if ('status' != $fieldName) {
             return;
         }
-        
+
         if ("restocked" == $this->object->fulfillment_status) {
-            $this->out[$fieldName]  = "OrderCanceled";
+            $this->out[$fieldName] = "OrderCanceled";
         } elseif (!$this->object->confirmed) {
-            $this->out[$fieldName]  = "OrderDraft";
+            $this->out[$fieldName] = "OrderDraft";
         } elseif (empty($this->object->fulfillment_status)) {
-            $this->out[$fieldName]  = "OrderProcessing";
+            $this->out[$fieldName] = "OrderProcessing";
         } elseif ("partial" == $this->object->fulfillment_status) {
-            $this->out[$fieldName]  = "OrderInTransit";
+            $this->out[$fieldName] = "OrderInTransit";
         } elseif ("fulfilled" == $this->object->fulfillment_status) {
-            $this->out[$fieldName]  = "OrderDelivered";
+            $this->out[$fieldName] = "OrderDelivered";
         } else {
-            $this->out[$fieldName]  = "Unknown";
+            $this->out[$fieldName] = "Unknown";
         }
-        
+
         unset($this->in[$key]);
     }
 }

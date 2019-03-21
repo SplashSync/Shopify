@@ -37,25 +37,25 @@ trait ObjectsListTrait
         //====================================================================//
         // Request Failed
         if (null == $rawData) {
-            return array( 'meta'    => array('current' => 0, 'total' => 0));
+            return array( 'meta' => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
         // Compute Totals
-        $response   =   array(
-            'meta'  => array('current' => count($rawData), 'total' => API::count('webhooks')),
+        $response = array(
+            'meta' => array('current' => count($rawData), 'total' => API::count('webhooks')),
         );
         //====================================================================//
         // Parse Data in response
         foreach ($rawData as $webhook) {
-            $response[]   = array(
+            $response[] = array(
                 //====================================================================//
                 // Parse Core Data
-                'id'        =>      $webhook['id'],
-                'address'   =>      $webhook['address'],
-                'topic'     =>      $webhook['topic'],
+                'id' => $webhook['id'],
+                'address' => $webhook['address'],
+                'topic' => $webhook['topic'],
                 //====================================================================//
                 // Parse Meta Dates to Splash Format
-                'created_at' =>     (new DateTime($webhook['created_at']))->format(SPL_T_DATETIMECAST),
+                'created_at' => (new DateTime($webhook['created_at']))->format(SPL_T_DATETIMECAST),
             );
         }
 

@@ -24,7 +24,7 @@ use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
 trait ImagesTrait
 {
     use SplashImagesTrait;
-    
+
     /**
      * Build Fields using FieldFactory
      */
@@ -33,7 +33,7 @@ trait ImagesTrait
         //====================================================================//
         // PRODUCT IMAGES
         //====================================================================//
-        
+
         //====================================================================//
         // Product Images List
         $this->fieldsFactory()->Create(SPL_T_IMG)
@@ -43,7 +43,7 @@ trait ImagesTrait
             ->Group("Images")
             ->MicroData("http://schema.org/Product", "image")
             ->isReadOnly();
-        
+
         //====================================================================//
         // Product Images => Image Position In List
         $this->fieldsFactory()->create(SPL_T_INT)
@@ -55,7 +55,7 @@ trait ImagesTrait
             ->MicroData("http://schema.org/Product", "positionImage")
             ->isReadOnly()
             ->isNotTested();
-        
+
         //====================================================================//
         // Product Images => Is Cover
         $this->fieldsFactory()->Create(SPL_T_BOOL)
@@ -66,7 +66,7 @@ trait ImagesTrait
             ->MicroData("http://schema.org/Product", "isCover")
             ->isNotTested()
             ->isReadOnly();
-        
+
         //====================================================================//
         // Product Images => Is Visible Image
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -86,8 +86,6 @@ trait ImagesTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getImagesFields($key, $fieldName)
     {
@@ -107,10 +105,10 @@ trait ImagesTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
 //    /**
 //     *  @abstract     Write Given Fields
 //     *
@@ -142,11 +140,9 @@ trait ImagesTrait
 //        }
 //        unset($this->in[$FieldName]);
 //    }
-    
+
     /**
      * Return Product Image Array from Product Object Class
-     *
-     * @return void
      */
     private function getImgArray()
     {
@@ -189,7 +185,7 @@ trait ImagesTrait
                     : in_array($this->variantId, $shopifyImage['variant_ids'], true);
         }
     }
-         
+
     //    /**
 //    *   @abstract     Update Product Image Array from Server Data
 //    *   @param        array   $Data             Input Image List for Update

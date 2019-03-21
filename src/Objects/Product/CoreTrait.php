@@ -42,7 +42,7 @@ trait CoreTrait
             ->Name("Is Published")
             ->MicroData("http://schema.org/Product", "offered")
             ->isListed();
-        
+
         //====================================================================//
         // Long Description
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
@@ -50,7 +50,7 @@ trait CoreTrait
             ->Name("Description")
             ->Description("A description of the product. Supports HTML formatting.")
             ->MicroData("http://schema.org/Product", "description");
-        
+
         //====================================================================//
         // Meta Url
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
@@ -60,14 +60,12 @@ trait CoreTrait
             ->addOption("isLowerCase")
             ->MicroData("http://schema.org/Product", "urlRewrite");
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     private function getCoreFields($key, $fieldName)
     {
@@ -78,7 +76,7 @@ trait CoreTrait
             case 'body_html':
             case 'handle':
                 $this->getSimple($fieldName);
-            
+
                 break;
             case 'published':
                 $this->getSimpleBool($fieldName);
@@ -87,17 +85,15 @@ trait CoreTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     private function setCoreFields($fieldName, $fieldData)
     {

@@ -26,7 +26,7 @@ trait StockTrait
      * @var null|array
      */
     private $newInventoryLevel;
-    
+
     /**
      * Get Stock Updated data
      *
@@ -34,12 +34,12 @@ trait StockTrait
      */
     protected function getNewInventorylevel()
     {
-        $response                   = $this->newInventoryLevel;
-        $this->newInventoryLevel    = null;
+        $response = $this->newInventoryLevel;
+        $this->newInventoryLevel = null;
 
         return $response;
     }
-    
+
     /**
      * Build Fields using FieldFactory
      */
@@ -48,7 +48,7 @@ trait StockTrait
         //====================================================================//
         // PRODUCT STOCKS
         //====================================================================//
-        
+
         //====================================================================//
         // Stock Reel
         $this->fieldsFactory()->Create(SPL_T_INT)
@@ -65,14 +65,12 @@ trait StockTrait
             ->MicroData("http://schema.org/ItemAvailability", "OutOfStock")
             ->isReadOnly();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getStockFields($key, $fieldName)
     {
@@ -96,17 +94,15 @@ trait StockTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
-     *
-     * @return void
      */
     protected function setStockFields($fieldName, $fieldData)
     {
@@ -140,10 +136,10 @@ trait StockTrait
                 }
                 //====================================================================//
                 // Update Variant Product Inventory Level
-                $inventoryLevel  =    array(
-                    "location_id"         =>  (int) $locationId,
-                    "inventory_item_id"   =>  (int) $this->variant->inventory_item_id,
-                    "available"           =>  (int) $fieldData,
+                $inventoryLevel = array(
+                    "location_id" => (int) $locationId,
+                    "inventory_item_id" => (int) $this->variant->inventory_item_id,
+                    "available" => (int) $fieldData,
                 );
                 //====================================================================//
                 // Store Chantges on Inventory Level for Post Set Update

@@ -86,14 +86,12 @@ trait ItemsTrait
             ->Association("title@lines", "quantity@lines", "price@lines")
                 ;
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     protected function getItemsFields($key, $fieldName)
     {
@@ -103,7 +101,7 @@ trait ItemsTrait
         if (!$fieldId) {
             return;
         }
-        
+
         //====================================================================//
         // Parse Order Items
         //====================================================================//
@@ -113,13 +111,13 @@ trait ItemsTrait
             foreach ($this->object->line_items as $index => $orderLine) {
                 //====================================================================//
                 // Read Data from Line Item
-                $value  =   $this->getItemField($orderLine, $fieldName);
+                $value = $this->getItemField($orderLine, $fieldName);
                 //====================================================================//
                 // Insert Data in List
                 self::lists()->Insert($this->out, "lines", $fieldName, $index, $value);
             }
         }
-        
+
         //====================================================================//
         // Parse Order Shipping
         //====================================================================//
@@ -129,16 +127,16 @@ trait ItemsTrait
             foreach ($this->object->shipping_lines as $index => $orderLine) {
                 //====================================================================//
                 // Read Data from Line Item
-                $value  =   $this->getShippingField($orderLine, $fieldName);
+                $value = $this->getShippingField($orderLine, $fieldName);
                 //====================================================================//
                 // Insert Data in List
                 self::lists()->Insert($this->out, "lines", $fieldName, count($this->object->line_items) + $index, $value);
             }
         }
-        
+
         unset($this->in[$key]);
     }
-    
+
     /**
      * Read requested Field
      *
@@ -169,8 +167,8 @@ trait ItemsTrait
             case 'price@lines':
                     //====================================================================//
                     // Read Price
-                    $priceHT    = (float) $line['price'];
-                    $tax        = (float) $this->getItemVatRate($line);
+                    $priceHT = (float) $line['price'];
+                    $tax = (float) $this->getItemVatRate($line);
                     //====================================================================//
                     // Build Price Array
                 return self::prices()->Encode(
@@ -192,7 +190,7 @@ trait ItemsTrait
                 return null;
         }
     }
-    
+
     /**
      * Read requested Field
      *
@@ -223,8 +221,8 @@ trait ItemsTrait
             case 'price@lines':
                     //====================================================================//
                     // Read Price
-                    $priceHT    = (float) $line['price'];
-                    $tax        = (float) $this->getItemVatRate($line);
+                    $priceHT = (float) $line['price'];
+                    $tax = (float) $this->getItemVatRate($line);
                     //====================================================================//
                     // Build Price Array
                 return self::prices()->Encode(
@@ -246,7 +244,7 @@ trait ItemsTrait
                 return null;
         }
     }
-    
+
     /**
      * Compute Item Total Tax Rate
      *
@@ -329,7 +327,7 @@ trait ItemsTrait
         if (isset($line['quantity'])) {
             $amount = $amount / $line['quantity'];
         }
-        
+
         return 100 * ($amount / $line['price']);
     }
 }

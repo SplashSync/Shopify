@@ -40,7 +40,7 @@ trait CoreTrait
         } else {
             $this->fieldsFactory()->MicroData("http://schema.org/Organization", "ID");
         }
-        
+
         //====================================================================//
         // Customer Email
         $this->fieldsFactory()->create(SPL_T_EMAIL)
@@ -48,7 +48,7 @@ trait CoreTrait
             ->Name("Customer Email")
             ->MicroData("http://schema.org/ContactPoint", "email")
             ->isReadOnly();
-        
+
         //====================================================================//
         // Reference
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
@@ -67,14 +67,12 @@ trait CoreTrait
             ->isReadOnly()
             ->isListed();
     }
-    
+
     /**
      * Read requested Field
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
-     *
-     * @return void
      */
     private function getCoreFields($key, $fieldName)
     {
@@ -109,7 +107,7 @@ trait CoreTrait
             default:
                 return;
         }
-        
+
         unset($this->in[$key]);
     }
 }

@@ -52,10 +52,10 @@ trait CRUDTrait
         if (!isset($this->variant)) {
             return Splash::log()->errTrace(" Unable to load Product Variant (".$this->variantId.").");
         }
-        
+
         return true;
     }
-    
+
     /**
      * Create New Product Variant
      *
@@ -69,7 +69,7 @@ trait CRUDTrait
         //====================================================================//
         // Load Existing Parent Id
         $productId = $this->getParentProductId();
-        
+
         if (null !== $productId) {
             return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
@@ -91,22 +91,22 @@ trait CRUDTrait
             }
             //====================================================================//
             // Update Attribute Value
-            $variant["option" . ($index + 1)] = $item["value"];
+            $variant["option".($index + 1)] = $item["value"];
             //====================================================================//
             // Inc. Attribute Index
             $index++;
         }
         //====================================================================//
         // Create New Product from Api
-        $response  =   API::post(
-                "products/" . $productId . "/variants",
-                array("variant" => $variant),
-                "product"
+        $response = API::post(
+            "products/".$productId."/variants",
+            array("variant" => $variant),
+            "product"
             );
         if (null === $response) {
             return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
-        
+
         return $this->load(self::getObjectId($response["product_id"], $response["id"]));
     }
 }
