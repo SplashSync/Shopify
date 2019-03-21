@@ -61,8 +61,12 @@ script:
     - if [[ ${TRAVIS_PHP_VERSION:0:3} > "7.0" ]]; then php ./vendor/bin/grumphp run --testsuite=csfixer; fi    
     # With PHP > 7.0 => Execute Phpstan 
     - if [[ ${TRAVIS_PHP_VERSION:0:3} > "7.0" ]]; then php ./vendor/bin/grumphp run --testsuite=phpstan; fi   
-    # Execute PhpUnit Tests 
-    - vendor/bin/phpunit
+
+    # Execute Complete PhpUnit Tests
+    - phpdbg -qrr -d memory_limit=-1 vendor/bin/phpunit
+    # Without Php Debugger (Coverage x2 Faster)
+#    - php vendor/bin/phpunit
+    
     # Show Outdated Packages   
     - composer outdated
     
