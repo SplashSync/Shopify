@@ -95,3 +95,11 @@ notifications:
   email:         
     on_success: never # default: change
     on_failure: never # default: always
+    
+after_failure:
+    # Display Full List of Executed Tests    
+    - cat coverage/executed.txt  
+    
+after_success:
+    # Display Full List of Executed Tests    
+    - cat coverage/executed.txt    
