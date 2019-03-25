@@ -41,7 +41,8 @@ trait CoreTrait
             ->Identifier("published")
             ->Name("Is Published")
             ->MicroData("http://schema.org/Product", "offered")
-            ->isListed();
+            ->isListed()
+            ->isNotTested();
 
         //====================================================================//
         // Long Description
