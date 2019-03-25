@@ -250,7 +250,7 @@ trait AttributesTrait
                 }
                 //====================================================================//
                 // Travis Mode => If Encoded Attribute Name
-                if (false === strpos($attrName, "@")) {
+                if (false !== strpos($attrName, "@")) {
                     return explode("@", $this->object->options[$code]["name"])[0];
                 }
                 //====================================================================//
@@ -264,7 +264,7 @@ trait AttributesTrait
                 }
                 //====================================================================//
                 // Travis Mode => If Encoded Attribute Name
-                if (false === strpos($attrName, "@")) {
+                if (false !== strpos($attrName, "@")) {
                     return explode("@", $this->object->options[$code]["name"])[1];
                 }
                 //====================================================================//
