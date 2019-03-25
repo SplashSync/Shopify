@@ -15,6 +15,8 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
+use Splash\Core\SplashCore      as Splash;
+
 /**
  * Prestashop Product Variant Core Data Access
  */
@@ -111,6 +113,13 @@ trait CoreTrait
         // READ Fields
         foreach ($this->object->variants as $index => $variant) {
             //====================================================================//
+            // SKIP Current Variant When in PhpUnit/Travis Mode
+            // Only Existing Variant will be Returned
+            if (!empty(Splash::input('SPLASH_TRAVIS')) && ($this->variantId == $variant['id'])) {
+                continue;
+            }
+
+            //====================================================================//
             // Get Variant Infos
             switch ($fieldId) {
                 case 'id':
@@ -181,7 +190,7 @@ trait CoreTrait
             }
             //====================================================================//
             // Safety Check => Is Product Object Id
-            if ("Product" == self::objects()->type((string) $variant['id'])) {
+            if ("Product" !== self::objects()->type((string) $variant['id'])) {
                 continue;
             }
             //====================================================================//

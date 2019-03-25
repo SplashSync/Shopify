@@ -69,8 +69,7 @@ trait CRUDTrait
         //====================================================================//
         // Load Existing Parent Id
         $productId = $this->getParentProductId();
-
-        if (null !== $productId) {
+        if (null === $productId) {
             return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
         //====================================================================//
@@ -107,6 +106,6 @@ trait CRUDTrait
             return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
 
-        return $this->load(self::getObjectId($response["product_id"], $response["id"]));
+        return $this->load(self::getObjectId($response["variant"]["product_id"], $response["variant"]["id"]));
     }
 }

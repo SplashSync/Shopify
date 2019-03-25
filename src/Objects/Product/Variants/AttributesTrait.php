@@ -52,6 +52,7 @@ trait AttributesTrait
             ->InList("attributes")
             ->Group($groupName)
             ->MicroData("http://schema.org/Product", "VariantAttributeCode")
+            ->isReadOnly(empty(Splash::input('SPLASH_TRAVIS')))
             ->isNotTested();
 
         //====================================================================//
@@ -107,7 +108,22 @@ trait AttributesTrait
             // Get Variant Infos
             switch ($fieldId) {
                 case 'code':
+                    if (!empty(Splash::input('SPLASH_TRAVIS'))) {
+                        $value = explode("@", $this->object->options[$code]["name"])[0];
+
+                        break;
+                    }
+
+                    $value = $this->object->options[$code]["name"];
+
+                    break;
                 case 'name':
+                    if (!empty(Splash::input('SPLASH_TRAVIS'))) {
+                        $value = explode("@", $this->object->options[$code]["name"])[1];
+
+                        break;
+                    }
+
                     $value = $this->object->options[$code]["name"];
 
                     break;
@@ -156,14 +172,21 @@ trait AttributesTrait
             }
 
             //====================================================================//
+            // Build Attribute Name
+            // Travis Mode => Encode Code & Name
+            $attrName = !empty(Splash::input('SPLASH_TRAVIS'))
+                    ? $item["code"]."@".$item["name"]
+                    : $item["name"];
+
+            //====================================================================//
             // Update Attribute Name
             if (!isset($this->object->options[$index])) {
                 $this->object->options[$index] = array(
-                    'name' => $item["code"],
+                    'name' => $attrName,
                     'position' => $index + 1,
                 );
             }
-            $this->object->options[$index]["name"] = $item["code"];
+            $this->object->options[$index]["name"] = $attrName;
 
             //====================================================================//
             // Update Attribute Value
@@ -195,26 +218,26 @@ trait AttributesTrait
         if (!is_iterable($attrData) || empty($attrData)) {
             return false;
         }
-        //====================================================================//
-        // Check Attributes Code is Given
-        if (!isset($attrData["code"]) || !is_string($attrData["code"]) || empty($attrData["code"])) {
-            return Splash::log()->err(
-                "ErrLocalTpl",
-                __CLASS__,
-                __FUNCTION__,
-                " Product Attribute Code is Not Valid."
-            );
-        }
 //        //====================================================================//
-//        // Check Attributes Names are Given
-//        if (!isset($attrData["name"]) || !is_scalar($attrData["name"]) || empty($attrData["name"])) {
+//        // Check Attributes Code is Given
+//        if (!isset($attrData["code"]) || !is_string($attrData["code"]) || empty($attrData["code"])) {
 //            return Splash::log()->err(
 //                "ErrLocalTpl",
 //                __CLASS__,
 //                __FUNCTION__,
-//                " Product Attribute Public Name is Not Valid."
+//                " Product Attribute Code is Not Valid."
 //            );
 //        }
+        //====================================================================//
+        // Check Attributes Names are Given
+        if (!isset($attrData["name"]) || !is_scalar($attrData["name"]) || empty($attrData["name"])) {
+            return Splash::log()->err(
+                "ErrLocalTpl",
+                __CLASS__,
+                __FUNCTION__,
+                " Product Attribute Public Name is Not Valid."
+            );
+        }
         //====================================================================//
         // Check Attributes Values are Given
         if (!isset($attrData["value"]) || !is_scalar($attrData["value"]) || empty($attrData["value"])) {
