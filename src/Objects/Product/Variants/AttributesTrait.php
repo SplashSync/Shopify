@@ -103,38 +103,12 @@ trait AttributesTrait
             if (!isset($this->variant->{$name})) {
                 continue;
             }
-
             //====================================================================//
             // Get Variant Infos
-            switch ($fieldId) {
-                case 'code':
-                    if (!empty(Splash::input('SPLASH_TRAVIS'))) {
-                        $value = explode("@", $this->object->options[$code]["name"])[0];
+            $value = $this->getVariantsAttributesFieldValue($fieldId, $code, $name);
 
-                        break;
-                    }
-
-                    $value = $this->object->options[$code]["name"];
-
-                    break;
-                case 'name':
-                    if (!empty(Splash::input('SPLASH_TRAVIS'))) {
-                        $value = explode("@", $this->object->options[$code]["name"])[1];
-
-                        break;
-                    }
-
-                    $value = $this->object->options[$code]["name"];
-
-                    break;
-                case 'value':
-                    $value = $this->variant->{$name};
-
-                    break;
-                default:
-                    return;
-            }
-
+            //====================================================================//
+            // Add Info to Attributes List
             self::lists()->insert($this->out, "attributes", $fieldId, $code, $value);
         }
         unset($this->in[$key]);
@@ -250,5 +224,56 @@ trait AttributesTrait
         }
 
         return true;
+    }
+
+    /**
+     * Read requested Field
+     *
+     * @param string $fieldId
+     * @param string $code
+     * @param string $name
+     *
+     * @return null|string
+     */
+    private function getVariantsAttributesFieldValue(string $fieldId, string $code, string $name): ?string
+    {
+        $attrName = $this->object->options[$code]["name"];
+
+        //====================================================================//
+        // Get Variant Infos
+        switch ($fieldId) {
+            case 'code':
+                //====================================================================//
+                // Normal Mode => Direct Reading
+                if (empty(Splash::input('SPLASH_TRAVIS'))) {
+                    return $attrName;
+                }
+                //====================================================================//
+                // Travis Mode => If Encoded Attribute Name
+                if (false === strpos($attrName, "@")) {
+                    return explode("@", $this->object->options[$code]["name"])[0];
+                }
+                //====================================================================//
+                // Travis Mode => If NOT Encoded Attribute Name
+                return $attrName;
+            case 'name':
+                //====================================================================//
+                // Normal Mode => Direct Reading
+                if (empty(Splash::input('SPLASH_TRAVIS'))) {
+                    return $attrName;
+                }
+                //====================================================================//
+                // Travis Mode => If Encoded Attribute Name
+                if (false === strpos($attrName, "@")) {
+                    return explode("@", $this->object->options[$code]["name"])[1];
+                }
+                //====================================================================//
+                // Travis Mode => If NOT Encoded Attribute Name
+                return $attrName;
+            case 'value':
+                return $this->variant->{$name};
+        }
+
+        return null;
     }
 }
