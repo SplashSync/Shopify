@@ -172,9 +172,24 @@ trait CRUDTrait
         $this->productId = self::getProductId((string) $objectId);
         $this->variantId = self::getVariantId((string) $objectId);
         //====================================================================//
+        // Count Product Variants from Api
+        $variantsCount = API::count(self::getUri($this->productId)."/variants");
+        if (null === $variantsCount) {
+            Splash::log()->errTrace("Unable to Count Product Variants (".$objectId.").");
+        }
+        //====================================================================//
         // Delete Product Variant from Api
-        if (null === API::delete(self::getUri($this->productId, $this->variantId))) {
-            Splash::log()->errTrace(" Unable to Delete Product (".$objectId.").");
+        if (false == API::delete(self::getUri($this->productId, $this->variantId))) {
+            Splash::log()->errTrace("Unable to Delete Product (".$objectId.").");
+
+            return true;
+        }
+        //====================================================================//
+        // Last Product Variant ? Delete Whole Product from Api
+        if (1 == $variantsCount) {
+            if (null === API::delete(self::getUri($this->productId))) {
+                Splash::log()->errTrace(" Unable to Delete Product (".$objectId.").");
+            }
         }
 
         return true;
