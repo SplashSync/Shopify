@@ -25,7 +25,7 @@
 
     <filter>
         <whitelist>
-            <directory>../src/Objects</directory>
+            <directory>src/Objects</directory>
         </whitelist>
     </filter>
 
