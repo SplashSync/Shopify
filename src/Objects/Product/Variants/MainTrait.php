@@ -30,6 +30,10 @@ trait MainTrait
     protected function buildMainFields()
     {
         //====================================================================//
+        // Read Price Tax Mode
+        $taxIncluded = (bool) $this->getParameter("taxes_included", null, "ShopInformations");
+
+        //====================================================================//
         // PRODUCT DESCRIPTIONS
         //====================================================================//
 
@@ -59,8 +63,7 @@ trait MainTrait
         // Product Selling Price
         $this->fieldsFactory()->Create(SPL_T_PRICE)
             ->Identifier("price")
-            ->Name("Price (tax excl.)")
-//                ->isListed()
+            ->Name("Price ".($taxIncluded ? "(tax incl.)" : "(tax excl.)"))
             ->MicroData("http://schema.org/Product", "price");
 
         //====================================================================//
