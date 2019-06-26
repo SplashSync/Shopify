@@ -255,7 +255,7 @@ trait ItemsTrait
      *
      * @param array $line
      *
-     * @return array
+     * @return array|string
      */
     private function getItemPrice($line)
     {
