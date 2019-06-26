@@ -165,19 +165,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Price
             case 'price@lines':
-                    //====================================================================//
-                    // Read Price
-                    $priceHT = (float) $line['price'];
-                    $tax = (float) $this->getItemVatRate($line);
-                    //====================================================================//
-                    // Build Price Array
-                return self::prices()->Encode(
-                    $priceHT,
-                    $tax,
-                    null,
-                    $this->connector->getDefaultCurrency()
-                );
-
+                return $this->getItemPrice($line);
             //====================================================================//
             // Order Line Discount Percentile
             case "discount@lines":
@@ -219,19 +207,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Price
             case 'price@lines':
-                    //====================================================================//
-                    // Read Price
-                    $priceHT = (float) $line['price'];
-                    $tax = (float) $this->getItemVatRate($line);
-                    //====================================================================//
-                    // Build Price Array
-                return self::prices()->Encode(
-                    $priceHT,
-                    $tax,
-                    null,
-                    $this->connector->getDefaultCurrency()
-                );
-
+                return $this->getItemPrice($line);
             //====================================================================//
             // Order Line Discount Percentile
             case "discount@lines":
@@ -272,6 +248,33 @@ trait ItemsTrait
         }
 
         return $vatRate;
+    }
+
+    /**
+     * Compute Item Price Array
+     *
+     * @param array $line
+     *
+     * @return array
+     */
+    private function getItemPrice($line)
+    {
+        //====================================================================//
+        // Read Price Tax Mode
+        $taxIncluded = (bool) $this->object->taxes_included;
+        //====================================================================//
+        // Read Price
+        $priceHT = $taxIncluded ? null : (float) $line['price'];
+        $priceTTC = $taxIncluded ? (float) $line['price'] : null;
+        $tax = (float) $this->getItemVatRate($line);
+        //====================================================================//
+        // Build Price Array
+        return self::prices()->Encode(
+            $priceHT,
+            $tax,
+            $priceTTC,
+            $this->connector->getDefaultCurrency()
+        );
     }
 
     /**

@@ -113,15 +113,19 @@ trait MainTrait
             //====================================================================//
             case 'price':
                 //====================================================================//
+                // Read Price Tax Mode
+                $taxIncluded = (bool) $this->getParameter("taxes_included", null, "ShopInformations");
+                //====================================================================//
                 // Read Price
-                $priceHT = (float) $this->variant->price;
+                $priceHT = $taxIncluded ? null : (float) $this->variant->price;
+                $priceTTC = $taxIncluded ? (float) $this->variant->price : null;
                 $tax = (float) ($this->variant->taxable ? $this->getLocalVatRate() : 0);
                 //====================================================================//
                 // Build Price Array
                 $this->out[$fieldName] = self::prices()->Encode(
                     $priceHT,
                     $tax,
-                    null,
+                    $priceTTC,
                     $this->connector->getDefaultCurrency()
                 );
 
