@@ -15,6 +15,8 @@
 
 namespace Splash\Connectors\Shopify\Objects\Order;
 
+use Splash\Connectors\Shopify\Objects\Product;
+
 /**
  * Shopify Customer Orders Items Fields
  */
@@ -157,7 +159,11 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
-                return ($line['product_id']) ? self::objects()->Encode("Product", $line['product_id']) : null;
+                if (empty($line['product_id'])) {
+                    return null;
+                }
+
+                return self::objects()->Encode("Product", Product::getObjectId($line['product_id'], $line['variant_id']));
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
