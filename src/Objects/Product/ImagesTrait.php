@@ -178,6 +178,7 @@ trait ImagesTrait
         $filename = !empty($altImageNane) ? $altImageNane : basename((string) parse_url($absoluteUrl, PHP_URL_PATH));
         //====================================================================//
         // Load Image from API
+        $image = false;
         for ($count = 0; $count < 3; $count++) {
             //====================================================================//
             // Touch Image with Curl (In Case first reading)
