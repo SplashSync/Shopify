@@ -17,7 +17,7 @@ namespace Splash\Connectors\Shopify\Objects\Product;
 
 use Splash\Core\SplashCore      as Splash;
 use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Simple\ApcuCache;
 
 /**
  * Access to Product Images Fields
@@ -169,7 +169,7 @@ trait ImagesTrait
         $cacheKey = implode(".", array("splash.shopify.connector.image", $shopifyId, md5($absoluteUrl)));
         //====================================================================//
         // Check if Image is In Cache
-        $apcuCache = new FilesystemCache();
+        $apcuCache = new ApcuCache();
         if ($apcuCache->has($cacheKey)) {
             return $apcuCache->get($cacheKey);
         }
