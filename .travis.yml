@@ -22,8 +22,8 @@ matrix:
 # Prepare Test Environement
 before_install:
 #    - pear config-set preferred_state beta
-#    - yes '' | pecl install apcu    
-    - pecl install -f apcu    
+    - yes '' | pecl install -f apcu    
+#    - pecl install -f apcu    
     - echo "Configuring The Bundles"
     - cp tests/config/parameters.yml.dist tests/config/parameters.yml
     - echo "Configuring Folders"
