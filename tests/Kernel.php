@@ -27,6 +27,8 @@ class Kernel extends BaseKernel
      * Register System Bundle
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.MissingImport)
      */
     public function registerBundles()
     {
