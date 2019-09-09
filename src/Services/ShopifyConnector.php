@@ -391,7 +391,7 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // Generate WebHook Url
         $webHookServer = filter_input(INPUT_SERVER, 'SERVER_NAME');
-        $webHookUrl = $router->generate(
+        $webHookUrl = (string) $router->generate(
             'splash_connector_action',
             array(
                 'connectorName' => $this->getProfile()["name"],

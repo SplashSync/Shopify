@@ -101,7 +101,7 @@ trait CRUDTrait
             "products/".$productId."/variants",
             array("variant" => $variant),
             "product"
-            );
+        );
         if (null === $response) {
             return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
         }
