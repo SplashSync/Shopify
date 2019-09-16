@@ -21,6 +21,21 @@ clipboard@^2.0.0:
     select "^1.1.2"
     tiny-emitter "^2.0.0"
 
+datatables.net-bs4@^1.10.19:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net-bs4/-/datatables.net-bs4-1.10.19.tgz#0608dff22008cf3c7b8a68b1bc702ed255b404fb"
+  integrity sha512-pgeP17w4aPR7HIxIwuJghfqXULjdg1K6xMUUKDyCERJRSNNK4MRToFfELtIsluLNN555YBK4Kx8nihX5/ZT1Fw==
+  dependencies:
+    datatables.net "1.10.19"
+    jquery ">=1.7"
+
+datatables.net@1.10.19:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.19.tgz#97a1ed41c85e62d61040603481b59790a172dd1f"
+  integrity sha512-+ljXcI6Pj3PTGy5pesp3E5Dr3x3AV45EZe0o1r0gKENN2gafBKXodVnk2ypKwl2tTmivjxbkiqoWnipTefyBTA==
+  dependencies:
+    jquery ">=1.7"
+
 delegate@^3.1.2:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/delegate/-/delegate-3.2.0.tgz#b66b71c3158522e8ab5744f720d8ca0c2af59166"
@@ -50,7 +65,7 @@ jquery-scrollTo@^0.2.2:
   dependencies:
     jquery ">=2.2.0"
 
-jquery@>=2.2.0, jquery@^3.4.1:
+jquery@>=1.7, jquery@>=2.2.0, jquery@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
   integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
