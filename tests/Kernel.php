@@ -20,6 +20,8 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
 /**
  * Symfony Kernel for testing
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Kernel extends BaseKernel
 {
@@ -29,7 +31,6 @@ class Kernel extends BaseKernel
      * @return array
      *
      * @SuppressWarnings(PHPMD.MissingImport)
-     * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
      */
     public function registerBundles()
     {
