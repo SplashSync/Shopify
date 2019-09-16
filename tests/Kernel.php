@@ -29,6 +29,7 @@ class Kernel extends BaseKernel
      * @return array
      *
      * @SuppressWarnings(PHPMD.MissingImport)
+     * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
      */
     public function registerBundles()
     {
