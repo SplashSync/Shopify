@@ -155,6 +155,8 @@ class ShopifyConnector extends AbstractConnector
         // Module Informations
         $informations->moduleauthor = SPLASH_AUTHOR;
         $informations->moduleversion = "master";
+        $informations->github = "https://github.com/SplashSync/Shopify";
+        $informations->documentation = "https://splashsync.github.io/Shopify/";
 
         return $informations;
     }
