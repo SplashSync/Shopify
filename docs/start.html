@@ -148,7 +148,7 @@
           </span>
         </label>
 
-        <div class="trigger"><a class="page-link" href="/Shopify/start/composer">Install</a><a class="page-link" href="/Shopify/faq/splash">Questions about Splash Sync</a><a class="page-link" href="/Shopify/about.html">About</a><a class="page-link" href="/Shopify/documentation">Documentation</a><a class="page-link" href="/Shopify/faq">Faq</a><a class="page-link" href="/Shopify/manifest">Manifest</a><a class="page-link" href="/Shopify/objects">Objects</a><a class="page-link" href="/Shopify/start">Quick Start</a></div>
+        <div class="trigger"><a class="page-link" href="/Shopify/start/setup">Splash Account Setup</a><a class="page-link" href="/Shopify/faq/splash">Questions about Splash Sync</a><a class="page-link" href="/Shopify/about.html">About</a><a class="page-link" href="/Shopify/documentation">Documentation</a><a class="page-link" href="/Shopify/faq">Faq</a><a class="page-link" href="/Shopify/manifest">Manifest</a><a class="page-link" href="/Shopify/objects">Objects</a><a class="page-link" href="/Shopify/start">Quick Start</a></div>
       </nav></div>
 </header>
  --><div class="doc-wrapper">
@@ -177,19 +177,66 @@
 
 
 			<!--Doc Section-->
-			<section id="install" class="doc-section">
+			<section id="splash-account-setup" class="doc-section">
 
-			    <h2 class="section-title">Install</h2>
+			    <h2 class="section-title">Splash Account Setup</h2>
 			    
 			    <div class="section-block lightbox-content">
-			    	<h3 id="install-via-composer">Install via Composer</h3>
+			    	<h3 id="account-vs-server-">Account vs Server ?</h3>
 
-<p>Download Shopify-Bundle and its dependencies to the vendor directory. You can use Composer for the automated process:</p>
+<p>Accounts servers are different from standard servers because connection to your shop is managed by Splash.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>php composer.phar require splash/shopify
-</code></pre></div></div>
+<p>To do so, we implemented communication with Sphopify API, you don’t have any specific plugin to install on Shopify.</p>
 
-<p>Composer will install the bundle to <code class="highlighter-rouge">vendor/splash/shopify</code> directory.</p>
+<h3 id="step-1---create-a-new-account-server-profile">Step 1 - Create a new Account Server Profile</h3>
+
+<p>To connect your Shopify Shop with Splash, first click on “Connect” button.</p>
+
+<p><img src="/Shopify/assets/img/add-account.png" alt="Add Shopify Account" /></p>
+
+<h3 id="step-2---setup-your-shop-admin-url">Step 2 - Setup your Shop Admin Url</h3>
+
+<p>Setup the url of you new Shopify Account.</p>
+
+<p>Click on server <i class="far fa-edit"></i> Edit button and fill the form with the admin url of you shop.</p>
+
+<p>Generally, this url looks like: myawesomeshop.myshopify.com.</p>
+
+<p><strong>Do not use your public domain here, this is only for admin access to your Shopify Account.</strong></p>
+
+<p><img src="/Shopify/assets/img/first-setup.png" alt="Setup Shopify Admin Url" /></p>
+
+<h3 id="step-3---connect-to-your-shop">Step 3 - Connect to your Shop</h3>
+
+<p>Now that you have set the shop Url, click on Connect to Shopify API to start the authentication process.</p>
+
+<p>This process will require your Shopify Account approval.</p>
+
+<h3 id="step-4---refresh-your-server">Step 4 - Refresh your server</h3>
+
+<p>Now Splash should have a valid Token to access your Shopify Shop API.</p>
+
+<p>You can Refresh you connection so that Splash collect all informations about you shop and it’s available objects.</p>
+
+<p><img src="/Shopify/assets/img/refresh.png" alt="Server Refresh" /></p>
+
+<h3 id="step-5---setup-of-webhooks">Step 5 - Setup of Webhooks</h3>
+
+<p>Shopify Webhooks are used to inform Splash of any changes you does on yoru Shopify Account.</p>
+
+<p>This could an update of a Product decription or stock, but also a new Order received on your Shop.</p>
+
+<p>To ensure Splash receive all those notifications, you need to trigger the webkook setup.</p>
+
+<p>This is only done once.</p>
+
+<h3 id="step-6---select-default-warehouse">Step 6 - Select default Warehouse</h3>
+
+<p>Shopify now uses multi-location warehouses, so you have to select which warehouse Splash should use for stocks synchronization.</p>
+
+<p>Click on server <i class="far fa-edit"></i> Edit button and fill select the default warehouse to use.</p>
+
+<p>Now all should be ok, you can use your new server as any other servers to syncrhonize your Shopify data!</p>
 
 			    </div>
 
@@ -317,8 +364,8 @@
 
           
             <a class="nav-link scrollto" 
-              href="#install">
-              Install
+              href="#splash-account-setup">
+              Splash Account Setup
             </a>
           
 
