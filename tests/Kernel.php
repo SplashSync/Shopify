@@ -46,6 +46,7 @@ class Kernel extends BaseKernel
         //==============================================================================
         // SPLASH PHP BUNDLE
         $bundles[] = new Splash\Bundle\SplashBundle();
+        $bundles[] = new Splash\Console\ConsoleBundle();
 
         //==============================================================================
         // oAuth Management Bundles
