@@ -15,3 +15,5 @@
 /src/.php_cs.cache
 /coverage/
 /.gh-pages/
+/docs/yarn.lock
+/reboot.sh
