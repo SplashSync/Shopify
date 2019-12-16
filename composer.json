@@ -54,6 +54,7 @@
         "symfony/monolog-bundle":                       "*",
         "symfony/phpunit-bridge":                       "*",
         "symfony/browser-kit":                          "*", 
+        "monolog/monolog":                              "^1.0", 
         
         "doctrine/doctrine-bundle":                     "^1.6",
         "doctrine/orm":                                 "^2.5",
@@ -64,7 +65,7 @@
         "j13k/yaml-lint":                               "^1.1",
         "jakub-onderka/php-parallel-lint":              "^1.0",
         "phpmd/phpmd":                                  "^2.6",
-        "phpro/grumphp":                                "^0.14.0",
+        "phpro/grumphp":                                "^0.16",
         "sclable/xml-lint":                             "^0.2.4",
         "sebastian/phpcpd":                             ">3.0",
         "seld/jsonlint":                                "^1.7",
@@ -73,9 +74,9 @@
         "friendsofphp/php-cs-fixer":                    "^2.10",
         
         "escapestudios/symfony2-coding-standard":       "^3.4",
-        "phpstan/phpstan-symfony":                      "~0.10",
-        "phpstan/phpstan-doctrine":                     "~0.10",
-        "phpstan/phpstan-phpunit":                      "~0.10",
-        "phpstan/phpstan-shim":                         "~0.10"
+        "phpstan/phpstan":                              "~0.12",
+        "phpstan/phpstan-symfony":                      "~0.12",
+        "phpstan/phpstan-doctrine":                     "~0.12",
+        "phpstan/phpstan-phpunit":                      "~0.12"
     }
 }
