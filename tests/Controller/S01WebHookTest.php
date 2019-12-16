@@ -31,7 +31,7 @@ class S01WebHookTest extends TestCase
     /**
      * Test WebHook For Ping
      */
-    public function testWebhookPing()
+    public function testWebhookPing(): void
     {
         //====================================================================//
         // Load Connector
@@ -93,8 +93,10 @@ class S01WebHookTest extends TestCase
      * @param string $objectType
      * @param string $action
      * @param string $objectId
+     *
+     * @return void
      */
-    public function testWebhookRequest(string $topic, array $data, string $objectType, string $action, string $objectId)
+    public function testWebhookRequest(string $topic, array $data, string $objectType, string $action, string $objectId): void
     {
         //====================================================================//
         // Load Connector
@@ -129,7 +131,7 @@ class S01WebHookTest extends TestCase
      *
      * @return array
      */
-    public function webHooksInputsProvider()
+    public function webHooksInputsProvider(): array
     {
         $hooks = array();
 
@@ -173,8 +175,10 @@ class S01WebHookTest extends TestCase
      *
      * @param ShopifyConnector $connector
      * @param string           $topic
+     *
+     * @return void
      */
-    private function configure(ShopifyConnector $connector, string $topic)
+    private function configure(ShopifyConnector $connector, string $topic): void
     {
         $this->getClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $connector->getParameter("WsHost"));
         $this->getClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
