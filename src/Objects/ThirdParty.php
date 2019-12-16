@@ -41,19 +41,22 @@ class ThirdParty extends AbstractObject
     use ThirdParty\AddressTrait;
 
     /**
-     *  Object Disable Flag. Override this flag to disable Object.
+     * {@inheritdoc}
      */
     protected static $DISABLED = false;
+
     /**
-     *  Object Name
+     * {@inheritdoc}
      */
     protected static $NAME = "Customer";
+
     /**
-     *  Object Description
+     * {@inheritdoc}
      */
     protected static $DESCRIPTION = "Shopify Customer";
+
     /**
-     *  Object Icon (FontAwesome or Glyph ico tag)
+     * {@inheritdoc}
      */
     protected static $ICO = "fa fa-user";
 

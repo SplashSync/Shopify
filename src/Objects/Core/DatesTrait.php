@@ -16,7 +16,6 @@
 namespace Splash\Connectors\Shopify\Objects\Core;
 
 use DateTime;
-use Splash\Core\SplashCore      as Splash;
 
 /**
  * Objects Metadata Fields
@@ -25,8 +24,10 @@ trait DatesTrait
 {
     /**
      * Build Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildDatesFields()
+    protected function buildDatesFields(): void
     {
         //====================================================================//
         // TRACEABILITY INFORMATIONS
@@ -57,8 +58,10 @@ trait DatesTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getDatesFields($key, $fieldName)
+    protected function getDatesFields($key, $fieldName): void
     {
         //====================================================================//
         // Does the Field Exists?

@@ -42,6 +42,9 @@ class OAuth2Client extends AbstractProvider
      */
     protected $accessType;
 
+    /**
+     * @var array
+     */
     private static $config = array(
         // Shopify OAuth2 Provider
         "type" => "generic",

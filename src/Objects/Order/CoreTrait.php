@@ -26,9 +26,11 @@ trait CoreTrait
     /**
      * Build Core Fields using FieldFactory
      *
+     * @return void
+     *
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    private function buildCoreFields()
+    private function buildCoreFields(): void
     {
         //====================================================================//
         // Customer Object
@@ -73,8 +75,10 @@ trait CoreTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    private function getCoreFields($key, $fieldName)
+    private function getCoreFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields

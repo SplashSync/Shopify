@@ -16,7 +16,6 @@
 namespace Splash\Connectors\Shopify\Objects\ThirdParty;
 
 use ArrayObject;
-use Splash\Core\SplashCore      as Splash;
 
 /**
  * Shopify ThirdParty Address Fields
@@ -30,8 +29,10 @@ trait AddressTrait
 
     /**
      * Build Address Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildAddressFields()
+    protected function buildAddressFields(): void
     {
         $groupName = "Address";
 
@@ -111,9 +112,11 @@ trait AddressTrait
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
      *
+     * @return void
+     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getAddressFields($key, $fieldName)
+    protected function getAddressFields($key, $fieldName): void
     {
         if (!isset($this->address)) {
             $this->address = new ArrayObject($this->object['default_address'], ArrayObject::ARRAY_AS_PROPS);

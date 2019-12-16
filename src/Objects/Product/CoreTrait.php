@@ -15,8 +15,6 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product;
 
-use Splash\Core\SplashCore      as Splash;
-
 /**
  * Access to Product Core Fields
  */
@@ -24,8 +22,10 @@ trait CoreTrait
 {
     /**
      * Build Core Fields using FieldFactory
+     *
+     * @return void
      */
-    private function buildCoreFields()
+    private function buildCoreFields(): void
     {
         //====================================================================//
         // Name without Options
@@ -67,8 +67,10 @@ trait CoreTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    private function getCoreFields($key, $fieldName)
+    private function getCoreFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -95,8 +97,10 @@ trait CoreTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
+     *
+     * @return void
      */
-    private function setCoreFields($fieldName, $fieldData)
+    private function setCoreFields($fieldName, $fieldData): void
     {
         //====================================================================//
         // WRITE Field

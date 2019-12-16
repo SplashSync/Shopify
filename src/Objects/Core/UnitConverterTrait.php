@@ -24,6 +24,9 @@ trait UnitConverterTrait
 {
     use \Splash\Models\Objects\UnitsHelperTrait;
 
+    /**
+     * @var array
+     */
     private static $wcWeights = array(
         "g" => Units::MASS_GRAM,
         "kg" => Units::MASS_KG,

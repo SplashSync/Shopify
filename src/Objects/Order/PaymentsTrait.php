@@ -22,6 +22,9 @@ use DateTime;
  */
 trait PaymentsTrait
 {
+    /**
+     * @var array
+     */
     private $knownPaymentMethods = array(
         "manual" => "ByBankTransferInAdvance",
         "Bank Deposit" => "ByBankTransferInAdvance",
@@ -41,8 +44,10 @@ trait PaymentsTrait
 
     /**
      * Build Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildPaymentsFields()
+    protected function buildPaymentsFields(): void
     {
         //====================================================================//
         // Payment Line Payment Method
@@ -94,8 +99,10 @@ trait PaymentsTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    private function getPaymentsFields($key, $fieldName)
+    private function getPaymentsFields($key, $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array

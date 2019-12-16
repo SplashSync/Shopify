@@ -22,12 +22,17 @@ use DateTime;
  */
 trait MainTrait
 {
+    /**
+     * @var bool
+     */
     private $updateBilled;
 
     /**
      * Build Address Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildMainFields()
+    protected function buildMainFields(): void
     {
         //====================================================================//
         // Delivry Estimated Date
@@ -114,8 +119,10 @@ trait MainTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getMainFields($key, $fieldName)
+    protected function getMainFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -156,9 +163,11 @@ trait MainTrait
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
      *
+     * @return void
+     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getStatesFields($key, $fieldName)
+    protected function getStatesFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields

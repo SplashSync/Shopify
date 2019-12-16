@@ -15,17 +15,17 @@
 
 namespace Splash\Connectors\Shopify\Objects\Address;
 
-use Splash\Core\SplashCore      as Splash;
-
 /**
- * @abstract    Shopify ThirdParty Address Main Fields
+ * Shopify ThirdParty Address Main Fields
  */
 trait MainTrait
 {
     /**
-     *  @abstract     Build Fields using FieldFactory
+     * Build Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildMAinFields()
+    protected function buildMainFields(): void
     {
         $groupName = "Address";
 
@@ -100,8 +100,10 @@ trait MainTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getMainFields($key, $fieldName)
+    protected function getMainFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -131,8 +133,10 @@ trait MainTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
+     *
+     * @return void
      */
-    protected function setMainFields($fieldName, $fieldData)
+    protected function setMainFields($fieldName, $fieldData): void
     {
         //====================================================================//
         // WRITE Field

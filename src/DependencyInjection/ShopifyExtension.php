@@ -32,7 +32,7 @@ class ShopifyExtension extends Extension implements PrependExtensionInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -41,7 +41,7 @@ class ShopifyExtension extends Extension implements PrependExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         //====================================================================//
         // CONFIGURE Splash OAuth2 Shopify Client

@@ -22,8 +22,10 @@ trait StatusTrait
 {
     /**
      * Build Customer Order Status Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildStatusFields()
+    protected function buildStatusFields(): void
     {
         //====================================================================//
         // Order Current Status
@@ -45,9 +47,11 @@ trait StatusTrait
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
      *
+     * @return void
+     *
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    protected function getStatusFields($key, $fieldName)
+    protected function getStatusFields($key, $fieldName): void
     {
         if ('status' != $fieldName) {
             return;

@@ -24,8 +24,10 @@ trait ItemsTrait
 {
     /**
      * Build Address Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildItemsFields()
+    protected function buildItemsFields(): void
     {
         //====================================================================//
         // Order Line Description
@@ -94,8 +96,10 @@ trait ItemsTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getItemsFields($key, $fieldName)
+    protected function getItemsFields($key, $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
@@ -191,7 +195,7 @@ trait ItemsTrait
      * @param array  $line      Line Data Object
      * @param string $fieldName Field Identifier / Name
      *
-     * @return null|float|array|int|string-float
+     * @return null|array|float|float|int|string
      */
     private function getShippingField($line, $fieldName)
     {

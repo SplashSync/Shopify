@@ -39,8 +39,10 @@ trait AttributesTrait
 
     /**
      * Build Attributes Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildVariantsAttributesFields()
+    protected function buildVariantsAttributesFields(): void
     {
         $groupName = "Options";
 
@@ -85,8 +87,10 @@ trait AttributesTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getVariantsAttributesFields($key, $fieldName)
+    protected function getVariantsAttributesFields($key, $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
@@ -126,8 +130,10 @@ trait AttributesTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
+     *
+     * @return void
      */
-    protected function setVariantsAttributesFields($fieldName, $fieldData)
+    protected function setVariantsAttributesFields($fieldName, $fieldData): void
     {
         //====================================================================//
         // Safety Check

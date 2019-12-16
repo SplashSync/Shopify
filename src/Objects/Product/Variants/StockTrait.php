@@ -42,8 +42,10 @@ trait StockTrait
 
     /**
      * Build Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildStockFields()
+    protected function buildStockFields(): void
     {
         //====================================================================//
         // PRODUCT STOCKS
@@ -71,8 +73,10 @@ trait StockTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getStockFields($key, $fieldName)
+    protected function getStockFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -103,8 +107,10 @@ trait StockTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
+     *
+     * @return void
      */
-    protected function setStockFields($fieldName, $fieldData)
+    protected function setStockFields($fieldName, $fieldData): void
     {
         //====================================================================//
         // WRITE Field

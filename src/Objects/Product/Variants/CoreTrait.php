@@ -28,8 +28,10 @@ trait CoreTrait
 
     /**
      * Build Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildVariantsCoreFields()
+    protected function buildVariantsCoreFields(): void
     {
         //====================================================================//
         // Product Variation Parent Link
@@ -77,8 +79,10 @@ trait CoreTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getVariantsCoreFields($key, $fieldName)
+    protected function getVariantsCoreFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -99,8 +103,10 @@ trait CoreTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getVariantsListFields($key, $fieldName)
+    protected function getVariantsListFields($key, $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
@@ -157,8 +163,10 @@ trait CoreTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
+     *
+     * @return void
      */
-    protected function setVariantsListFields($fieldName, $fieldData)
+    protected function setVariantsListFields($fieldName, $fieldData): void
     {
         //====================================================================//
         // Safety Check

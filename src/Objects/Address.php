@@ -38,19 +38,22 @@ class Address extends AbstractObject
     use Address\MainTrait;
 
     /**
-     * Object Disable Flag. Override this flag to disable Object.
+     * {@inheritdoc}
      */
     protected static $DISABLED = false;
+
     /**
-     * Object Name
+     * {@inheritdoc}
      */
     protected static $NAME = "Customer Address";
+
     /**
-     * Object Description
+     * {@inheritdoc}
      */
     protected static $DESCRIPTION = "Shopify Customer Address";
+
     /**
-     * Object Icon (FontAwesome or Glyph ico tag)
+     * {@inheritdoc}
      */
     protected static $ICO = "fa fa-envelope-o";
 

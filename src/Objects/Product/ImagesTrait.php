@@ -15,7 +15,6 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product;
 
-use Splash\Core\SplashCore      as Splash;
 use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
 use Symfony\Component\Cache\Simple\ApcuCache;
 
@@ -33,8 +32,10 @@ trait ImagesTrait
 
     /**
      * Build Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildImagesFields()
+    protected function buildImagesFields(): void
     {
         //====================================================================//
         // PRODUCT IMAGES
@@ -92,8 +93,10 @@ trait ImagesTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getImagesFields($key, $fieldName)
+    protected function getImagesFields($key, $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -117,8 +120,10 @@ trait ImagesTrait
 
     /**
      * Return Product Image Array from Product Object Class
+     *
+     * @return void
      */
-    private function getImgArray()
+    private function getImgArray(): void
     {
         //====================================================================//
         // Images List Alraedy Loaded

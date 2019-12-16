@@ -52,46 +52,39 @@ class Product extends AbstractStandaloneObject
     //====================================================================//
 
     /**
-     *  Object Disable Flag. Uncomment thius line to Override this flag and disable Object.
+     * {@inheritdoc}
      */
 //    protected static    $DISABLED        =  True;
 
     /**
-     *  Object Name (Translated by Module)
+     * {@inheritdoc}
      */
     protected static $NAME = "Product";
 
     /**
-     *  Object Description (Translated by Module)
+     * {@inheritdoc}
      */
     protected static $DESCRIPTION = "Shopify Product Object";
 
     /**
-     *  Object Icon (FontAwesome or Glyph ico tag)
+     * {@inheritdoc}
      */
     protected static $ICO = "fa fa-product-hunt";
 
+    //====================================================================//
+    // Object Synchronization Recommended Configuration
+    //
+    // This Flags are Used by Splash Server to Setup Default Objects Configuration
+    //====================================================================//
+
     /**
-     * Object Synchronistion Limitations
+     * Enable Creation Of New Local Objects when Not Existing
      *
-     * This Flags are Used by Splash Server to Prevent Unexpected Operations on Remote Server
+     * @var bool
      *
      * @codingStandardsIgnoreStart
      */
-    protected static $ALLOW_PUSH_CREATED = true;        // Allow Creation Of New Local Objects
-    protected static $ALLOW_PUSH_UPDATED = true;        // Allow Update Of Existing Local Objects
-    protected static $ALLOW_PUSH_DELETED = true;        // Allow Delete Of Existing Local Objects
-
-    /**
-     * Object Synchronistion Recommended Configuration
-     */
-    protected static $ENABLE_PUSH_CREATED = false;        // Enable Creation Of New Local Objects when Not Existing
-    protected static $ENABLE_PUSH_UPDATED = true;         // Enable Update Of Existing Local Objects when Modified Remotly
-    protected static $ENABLE_PUSH_DELETED = true;         // Enable Delete Of Existing Local Objects when Deleted Remotly
-
-    protected static $ENABLE_PULL_CREATED = true;         // Enable Import Of New Local Objects
-    protected static $ENABLE_PULL_UPDATED = true;         // Enable Import of Updates of Local Objects when Modified Localy
-    protected static $ENABLE_PULL_DELETED = true;         // Enable Delete Of Remotes Objects when Deleted Localy
+    protected static $ENABLE_PUSH_CREATED = false;
 
     /**
      * @codingStandardsIgnoreEnd

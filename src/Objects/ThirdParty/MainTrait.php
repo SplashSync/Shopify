@@ -22,8 +22,10 @@ trait MainTrait
 {
     /**
      * Build Core Fields using FieldFactory
+     *
+     * @return void
      */
-    protected function buildMainFields()
+    protected function buildMainFields(): void
     {
         //====================================================================//
         // Phone
@@ -73,8 +75,10 @@ trait MainTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @return void
      */
-    protected function getMainFields($key, $fieldName)
+    protected function getMainFields($key, $fieldName): void
     {
         switch ($fieldName) {
             case 'phone':
@@ -104,8 +108,10 @@ trait MainTrait
      *
      * @param string $fieldName Field Identifier / Name
      * @param mixed  $fieldData Field Data
+     *
+     * @return void
      */
-    protected function setMainFields($fieldName, $fieldData)
+    protected function setMainFields($fieldName, $fieldData): void
     {
         switch ($fieldName) {
             case 'phone':

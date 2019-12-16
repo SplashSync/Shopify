@@ -67,7 +67,7 @@ class ActionsController extends Controller
         $session->set("shopify_oauth2_wsid", $connector->getWebserviceId());
         //==============================================================================
         // Do Shopify OAuth2 Authentification
-        return $client->redirect();
+        return $client->redirect(array(), array());
     }
 
     /**
