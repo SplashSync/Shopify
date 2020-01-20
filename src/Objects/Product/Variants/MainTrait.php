@@ -182,7 +182,15 @@ trait MainTrait
             // PRICES INFORMATIONS
             //====================================================================//
             case 'price':
-                $this->setSimple($fieldName, self::prices()->taxExcluded($fieldData), "variant");
+                //====================================================================//
+                // Read Price Tax Mode
+                $taxIncluded = (bool) $this->getParameter("taxes_included", null, "ShopInformations");
+                //====================================================================//
+                // Compute Price
+                $price = $taxIncluded
+                    ? self::prices()->taxIncluded($fieldData)
+                    : self::prices()->taxExcluded($fieldData);
+                $this->setSimple($fieldName, $price, "variant");
                 $this->setSimple('taxable', !empty(self::prices()->taxPercent($fieldData)), "variant");
 
                 break;
