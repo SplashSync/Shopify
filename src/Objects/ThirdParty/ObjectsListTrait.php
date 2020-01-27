@@ -15,7 +15,7 @@
 
 namespace   Splash\Connectors\Shopify\Objects\ThirdParty;
 
-use DateTime;
+use Slince\Shopify\Manager\Customer\Customer;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -25,8 +25,6 @@ trait ObjectsListTrait
 {
     /**
      * {@inheritdoc}
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function objectsList($filter = null, $params = null)
     {
@@ -35,7 +33,8 @@ trait ObjectsListTrait
         $rawData = API::list(
             'customers',
             (isset($params["max"]) ? $params["max"] : 0),
-            (isset($params["offset"]) ? $params["offset"] : 0)
+            (isset($params["offset"]) ? $params["offset"] : 0),
+            (!empty($filter) ? array("query" => $filter) : array())
         );
         //====================================================================//
         // Request Failled
@@ -49,14 +48,17 @@ trait ObjectsListTrait
         );
         //====================================================================//
         // Parse Data in response
-        /** @var array $customer */
+        /** @var Customer $customer */
         foreach ($rawData as $customer) {
             //====================================================================//
             // Parse Meta Dates to Splash Format
-            $customer['created_at'] = (new DateTime($customer['created_at']))->format(SPL_T_DATETIMECAST);
-            $customer['updated_at'] = (new DateTime($customer['updated_at']))->format(SPL_T_DATETIMECAST);
-
-            $response[] = $customer;
+            $response[] = array(
+                'id' => $customer->getId(),
+                'created_at' => $customer->getCreatedAt()->format(SPL_T_DATETIMECAST),
+                'updated_at' => $customer->getUpdatedAt()->format(SPL_T_DATETIMECAST),
+                'email' => $customer->getEmail(),
+                'phone' => $customer->getPhone(),
+            );
         }
 
         return $response;

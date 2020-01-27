@@ -15,11 +15,13 @@
 
 namespace Splash\Connectors\Shopify\Models;
 
+use Exception;
 use Httpful\Exception\ConnectionErrorException;
 use Httpful\Request;
 use Slince\Shopify\Client;
 use Slince\Shopify\Exception\ClientException;
 use Slince\Shopify\PublicAppCredential;
+use Splash\Connectors\Shopify\Helpers\CachedCursorPagination;
 use Splash\Core\SplashCore as Splash;
 
 /**
@@ -234,23 +236,31 @@ class ShopifyHelper
      * @param string $resource API REST Path
      * @param int    $limit    Number of results
      * @param int    $offset   Results Offset
+     * @param array  $query    Query Parameters
      *
      * @return null|array
      */
-    public static function list(string $resource, int $limit = null, int $offset = null): ?array
+    public static function list(string $resource, int $limit = null, int $offset = null, array $query = array()): ?array
     {
         //====================================================================//
         // Prepare Parameters
-        $query = array();
-        if (!is_null($limit) && ($limit > 0) && !is_null($offset) && ($offset >= 0)) {
+        if (!is_null($limit) && ($limit > 0)) {
             $query['limit'] = $limit;
-            $query['page'] = (1 + (int) ($offset / $limit));
+        }
+        $page = 1;
+        if (!is_null($offset) && ($offset >= 0)) {
+            $page = (1 + (int) ($offset / $limit));
         }
         //====================================================================//
         // Perform Request
         try {
-            $response = self::$client->get($resource."/search", $query);
-        } catch (ClientException $ex) {
+            //====================================================================//
+            // Create Cached Cursor Pagination
+            $cursor = new CachedCursorPagination(self::$client, $resource, $query);
+            //====================================================================//
+            // Load Requested Page
+            $response = $cursor->getPage($page);
+        } catch (Exception $ex) {
             Splash::log()->err($ex->getMessage());
 
             return null;

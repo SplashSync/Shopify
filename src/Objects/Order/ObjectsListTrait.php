@@ -15,7 +15,7 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Order;
 
-use DateTime;
+use Slince\Shopify\Manager\Order\Order;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -31,18 +31,13 @@ trait ObjectsListTrait
     public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
-        // Prepare Parameters
-        $query = array("status" => "any");
-        if (isset($params["max"]) && ($params["max"] > 0) && isset($params["offset"]) && ($params["offset"] >= 0)) {
-            $query = array(
-                "status" => "any",
-                'limit' => $params["max"],
-                'page' => (1 + (int) ($params["offset"] / $params["max"])),
-            );
-        }
-        //====================================================================//
-        // Execute Products List Request
-        $rawData = API::get('orders', null, $query, 'orders');
+        // Execute List Request
+        $rawData = API::list(
+            'orders',
+            (isset($params["max"]) ? $params["max"] : 0),
+            (isset($params["offset"]) ? $params["offset"] : 0),
+            array("status" => "any")
+        );
         //====================================================================//
         // Request Failled
         if (null === $rawData) {
@@ -55,13 +50,14 @@ trait ObjectsListTrait
         );
         //====================================================================//
         // Parse Data in response
+        /** @var Order $order */
         foreach ($rawData as $order) {
             $response[] = array(
-                'id' => $order['id'],
-                'name' => $order['name'],
-                'created_at' => (new DateTime($order['created_at']))->format(SPL_T_DATETIMECAST),
-                'updated_at' => (new DateTime($order['updated_at']))->format(SPL_T_DATETIMECAST),
-                'processed_at' => (new DateTime($order['processed_at']))->format(SPL_T_DATETIMECAST),
+                'id' => $order->getId(),
+                'name' => $order->getName(),
+                'created_at' => self::toDateTimeString($order->getProcessedAt()),
+                'updated_at' => self::toDateTimeString($order->getUpdatedAt()),
+                'processed_at' => self::toDateTimeString($order->getProcessedAt()),
             );
         }
 

@@ -82,6 +82,7 @@ abstract class AbstractShopifyType extends AbstractType
 
         return $this;
     }
+
     /**
      * Add Remote Host Url Field.
      *
@@ -97,7 +98,7 @@ abstract class AbstractShopifyType extends AbstractType
                 // 'help_block' => 'var.url.desc',
                 'translation_domain' => 'ShopifyBundle',
             ))
-            ;
+        ;
 
         return $this;
     }

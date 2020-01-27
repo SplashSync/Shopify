@@ -15,26 +15,27 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Address;
 
+use Slince\Shopify\Manager\Customer\Customer;
+use Slince\Shopify\Manager\CustomerAddress\Address;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
- * @abstract    Shopify Customer List Functions
+ * Shopify Customer Address List Functions
  */
 trait ObjectsListTrait
 {
     /**
      * {@inheritdoc}
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
-        // Execute Customers List Request
+        // Execute List Request
         $rawData = API::list(
             'customers',
             (isset($params["max"]) ? $params["max"] : 0),
-            (isset($params["offset"]) ? $params["offset"] : 0)
+            (isset($params["offset"]) ? $params["offset"] : 0),
+            (!empty($filter) ? array("query" => $filter) : array())
         );
         //====================================================================//
         // Request Failled
@@ -44,12 +45,14 @@ trait ObjectsListTrait
         //====================================================================//
         // Parse Data in response
         $response = array();
+        /** @var Customer $customer */
         foreach ($rawData as $customer) {
-            foreach ($customer['addresses'] as $address) {
+            /** @var Address $address */
+            foreach ($customer->getAddresses() as $address) {
                 $response[] = array(
-                    'id' => $this->getObjectId($customer['id'], $address['id']),
-                    'first_name' => $address['first_name'],
-                    'last_name' => $address['last_name'],
+                    'id' => $this->getObjectId((string) $customer->getId(), (string) $address->getId()),
+                    'first_name' => $address->getFirstName(),
+                    'last_name' => $address->getLastName(),
                 );
             }
         }

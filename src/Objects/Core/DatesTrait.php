@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Core;
 
 use DateTime;
+use DateTimeInterface;
 
 /**
  * Objects Metadata Fields
@@ -75,5 +76,21 @@ trait DatesTrait
         //====================================================================//
         // Clear Key Flag
         unset($this->in[$key]);
+    }
+
+    /**
+     * Convert Date to List DateTime String
+     *
+     * @param DateTimeInterface|string $input
+     *
+     * @return string
+     */
+    protected static function toDateTimeString($input): string
+    {
+        if ($input instanceof DateTimeInterface) {
+            return $input->format(SPL_T_DATETIMECAST);
+        }
+
+        return (new DateTime($input))->format(SPL_T_DATETIMECAST);
     }
 }

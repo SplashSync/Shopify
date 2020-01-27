@@ -15,7 +15,8 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Product;
 
-use DateTime;
+use Slince\Shopify\Manager\Product\Product;
+use Slince\Shopify\Manager\ProductVariant\Variant;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -25,23 +26,17 @@ trait ObjectsListTrait
 {
     /**
      * {@inheritdoc}
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function objectsList($filter = null, $params = null)
     {
         //====================================================================//
-        // Prepare Parameters
-        $query = array();
-        if (isset($params["max"]) && ($params["max"] > 0) && isset($params["offset"]) && ($params["offset"] >= 0)) {
-            $query = array(
-                'limit' => $params["max"],
-                'page' => (1 + (int) ($params["offset"] / $params["max"])),
-            );
-        }
-        //====================================================================//
-        // Execute Products List Request
-        $rawData = API::get('products', null, $query, 'products');
+        // Execute Customers List Request
+        $rawData = API::list(
+            'products',
+            (isset($params["max"]) ? $params["max"] : 0),
+            (isset($params["offset"]) ? $params["offset"] : 0),
+            (!empty($filter) ? array("title" => $filter) : array())
+        );
         //====================================================================//
         // Request Failed
         if (false == $rawData) {
@@ -50,18 +45,20 @@ trait ObjectsListTrait
         //====================================================================//
         // Parse Data in response
         $response = array();
+        /** @var Product $product */
         foreach ($rawData as $product) {
-            foreach ($product['variants'] as $variant) {
+            /** @var Variant $variant */
+            foreach ($product->getVariants() as $variant) {
                 $response[] = array(
-                    'id' => self::getObjectId($product['id'], $variant['id']),
-                    'title' => $product['title'],
-                    'variant_title' => $product['title']." - ".$variant['title'],
-                    'published' => !empty($product['published_at']),
-                    'sku' => $variant['sku'],
-                    'price' => $variant['price'],
-                    'inventory_quantity' => $variant['inventory_quantity'],
-                    'created_at' => (new DateTime($product['created_at']))->format(SPL_T_DATETIMECAST),
-                    'updated_at' => (new DateTime($product['updated_at']))->format(SPL_T_DATETIMECAST),
+                    'id' => self::getObjectId((string) $product->getId(), (string) $variant->getId()),
+                    'title' => $product->getTitle(),
+                    'variant_title' => $product->getTitle()." - ".$variant->getTitle(),
+                    'published' => !empty($product->getPublishedAt()),
+                    'sku' => $variant->getSku(),
+                    'price' => $variant->getPrice(),
+                    'inventory_quantity' => $variant->getInventoryQuantity(),
+                    'created_at' => self::toDateTimeString($product->getCreatedAt()),
+                    'updated_at' => self::toDateTimeString($product->getUpdatedAt()),
                 );
             }
         }
