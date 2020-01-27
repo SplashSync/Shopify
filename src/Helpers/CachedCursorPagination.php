@@ -37,7 +37,7 @@ class CachedCursorPagination extends CursorBasedPagination
     /**
      * @var string Cache Key
      */
-    private $cacheKey = 3600;
+    private $cacheKey;
 
     /**
      * @var ApcuCache
@@ -169,7 +169,7 @@ class CachedCursorPagination extends CursorBasedPagination
      *
      * @param int $page
      *
-     * @return null|string
+     * @return string
      */
     private function getLink(int $page): string
     {
@@ -250,12 +250,12 @@ class CachedCursorPagination extends CursorBasedPagination
      * Build Cache Key from Inputs
      *
      * @param Client $client
-     * @param type   $resource
-     * @param type   $query
+     * @param string $resource
+     * @param array  $query
      *
      * @return string
      */
-    private function getCacheKey(Client $client, $resource, $query): string
+    private function getCacheKey(Client $client, string $resource, array $query): string
     {
         $params = array_merge_recursive(
             array(
@@ -270,7 +270,8 @@ class CachedCursorPagination extends CursorBasedPagination
             ".",
             array(
                 "splash.shopify.connector.list",
-                md5(serialize($params)))
+                md5(serialize($params)),
+            )
         );
     }
 }

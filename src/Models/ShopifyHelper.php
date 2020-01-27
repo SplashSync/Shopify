@@ -248,7 +248,7 @@ class ShopifyHelper
             $query['limit'] = $limit;
         }
         $page = 1;
-        if (!is_null($offset) && ($offset >= 0)) {
+        if (!is_null($limit) && ($limit > 0) && !is_null($offset) && ($offset >= 0)) {
             $page = (1 + (int) ($offset / $limit));
         }
         //====================================================================//
