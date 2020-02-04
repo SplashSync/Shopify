@@ -67,6 +67,10 @@ class ShopifyImages
             //====================================================================//
             // Stop Loop if Succeeded
             if (is_array($image)) {
+                //====================================================================//
+                // Image was Potentially Resized
+                $image["resized"] = true;
+
                 break;
             }
         }
@@ -103,10 +107,16 @@ class ShopifyImages
         //==============================================================================
         // Build Shopify Image Array
         return array(
-            "alt" => $splashImage["filename"],      // Image File Name
-            "attachment" => $rawFile["raw"],       // Raw Image File Contents
-            "position" => null,                     // Position will be Setuped After
-            "variant_ids" => array(),               // Variants IDs will be Setuped After
+            // Image File Name
+            "alt" => !empty($splashImage["name"])
+                ? $splashImage["name"]
+                : $splashImage["filename"],
+            // Raw Image File Contents
+            "attachment" => $rawFile["raw"],
+            // Position will be Setuped After
+            "position" => null,
+            // Variants IDs will be Setuped After
+            "variant_ids" => array(),
         );
     }
 }

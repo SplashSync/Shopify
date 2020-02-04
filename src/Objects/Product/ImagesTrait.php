@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product;
 
+use ArrayObject;
 use Splash\Connectors\Shopify\Helpers\ShopifyImages;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
@@ -143,6 +144,11 @@ trait ImagesTrait
             // PRODUCT IMAGES
             //====================================================================//
             case 'images':
+                //==============================================================================
+                // Detect ArrayObjects                
+                if ($fieldData instanceof ArrayObject) {
+                    $fieldData = $fieldData->getArrayCopy();
+                }
                 $this->setImgArray($fieldData);
 
                 break;
@@ -205,7 +211,7 @@ trait ImagesTrait
     {
         //====================================================================//
         // Init
-        $this->imgPosition = 1;
+        $this->imgPosition = 0;
         $this->imgFound = array();
 
         //====================================================================//
@@ -242,10 +248,12 @@ trait ImagesTrait
             $this->updateImagePosition($imgIndex, $inValue);
             $this->updateImageCoverFlag($imgIndex, $inValue);
         }
-
         //====================================================================//
         // Clear Remaining Local Images
         $this->cleanImages();
+        //====================================================================//
+        // Re-Index Images
+        $this->object->images = array_values($this->object->images);
     }
 
     /**
@@ -307,12 +315,17 @@ trait ImagesTrait
     /**
      * Add Product Image
      *
-     * @param array $splashImage
+     * @param array|ArrayObject $splashImage
      *
      * @return null|int
      */
-    private function addImage(array $splashImage): ?int
+    private function addImage($splashImage): ?int
     {
+        //==============================================================================
+        // Detect ArrayObjects
+        if ($splashImage instanceof ArrayObject) {
+            $splashImage = $splashImage->getArrayCopy();
+        }
         //==============================================================================
         // Create Image Array from Local System
         $newImage = ShopifyImages::buildImage($splashImage, $this->connector);
