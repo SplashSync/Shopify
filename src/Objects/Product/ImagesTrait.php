@@ -3,7 +3,7 @@
 /*
  *  This file is part of SplashSync Project.
  *
- *  Copyright (C) 2015-2020 Splash Sync  <www.splashsync.com>
+ *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -253,7 +253,7 @@ trait ImagesTrait
      *
      * @param array $shopifyImage Shopify Image Definition Array
      *
-     * @return     bool
+     * @return bool
      */
     private function isCoverImage(array $shopifyImage): bool
     {
@@ -267,7 +267,7 @@ trait ImagesTrait
      *
      * @param string $md5 Expected Image Md5
      *
-     * @return     int|null
+     * @return null|int
      */
     private function searchImage($md5): ?int
     {
