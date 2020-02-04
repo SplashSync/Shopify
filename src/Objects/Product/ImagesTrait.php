@@ -392,7 +392,7 @@ trait ImagesTrait
     {
         //====================================================================//
         // Safety Checks
-        if (!isset($this->object->images[$imgIndex])) {
+        if (!isset($this->object->images[$imgIndex]) || !isset($imgArray["cover"])) {
             return;
         }
         $isCover = self::isCoverImage($this->object->images[$imgIndex]);
