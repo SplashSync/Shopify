@@ -1,0 +1,58 @@
+
+################################################################################
+#
+#  This file is part of SplashSync Project.
+# 
+#  Copyright (C) Splash Sync <www.splashsync.com>
+# 
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# 
+#  For the full copyright and license information, please view the LICENSE
+#  file that was distributed with this source code.
+# 
+#  @author Bernard Paquier <contact@splashsync.com>
+#
+################################################################################
+
+################################################################################
+# Docker Compose File
+#
+# This Docker File intend to Create a Complete Dev Envirenement 
+# for Splash Modules
+# 
+# 172.115.0.100       toolkit.shopify.local
+#
+################################################################################
+
+version: "3.2"
+
+services:
+    ################################################################################
+    # Splash Toolkit Container   
+    shopify:
+        image: 'splashsync/toolkit'
+        container_name: shopify-toolkit
+        volumes:
+            # Specify Local Configuration File
+            - './docker/toolkit/splash.yml:/app/config/packages/splash.yml:ro'
+            # Uncomment to use Local Sources instead of Release
+#            - './src/:/app/vendor/splash/shopify/src/:ro'            
+        hostname:           toolkit.shopify.local
+        networks:
+            shopify:        { ipv4_address: 172.115.0.100, aliases: [ toolkit.shopify.local ] }            
+            splashsync:     { aliases: [ toolkit.shopify.local ] }            
+            
+networks:
+    ################################################################################
+    # Default Private Network    
+    shopify:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.115.0.0/24    
+    ################################################################################
+    # External Splash Network
+    splashsync:
+        external: true  
