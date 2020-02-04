@@ -238,16 +238,16 @@ class ShopifyConnector extends AbstractConnector
     public function getProfile() : array
     {
         return array(
-            'enabled' => true,                                   // is Connector Enabled
-            'beta' => false,                                  // is this a Beta release
-            'type' => self::TYPE_ACCOUNT,                     // Connector Type or Mode
-            'name' => 'shopify',                           // Connector code (lowercase, no space allowed)
+            'enabled' => true,                                  // is Connector Enabled
+            'beta' => false,                                    // is this a Beta release
+            'type' => self::TYPE_ACCOUNT,                       // Connector Type or Mode
+            'name' => 'shopify',                                // Connector code (lowercase, no space allowed)
             'connector' => 'splash.connectors.shopify',         // Connector Symfony Service
-            'title' => 'profile.card.title',                   // Public short name
-            'label' => 'profile.card.label',                   // Public long name
-            'domain' => 'ShopifyBundle',                     // Translation domain for names
-            'ico' => '/bundles/shopify/img/Shopify-Icon.png', // Public Icon path
-            'www' => 'www.Shopify.com',                   // Website Url
+            'title' => 'profile.card.title',                    // Public short name
+            'label' => 'profile.card.label',                    // Public long name
+            'domain' => 'ShopifyBundle',                        // Translation domain for names
+            'ico' => '/bundles/shopify/img/Shopify-Icon.png',   // Public Icon path
+            'www' => 'www.Shopify.com',                         // Website Url
         );
     }
 

@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
+use ArrayObject;
 use Splash\Core\SplashCore      as Splash;
 
 /**
@@ -195,7 +196,7 @@ trait AttributesTrait
     {
         //====================================================================//
         // Check Attribute is Array
-        if (!is_array($attrData) || empty($attrData)) {
+        if (!is_array($attrData) && !($attrData instanceof ArrayObject)) {
             return false;
         }
         //====================================================================//

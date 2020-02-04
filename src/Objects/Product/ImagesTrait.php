@@ -179,14 +179,14 @@ trait ImagesTrait
         foreach ($this->object->images as $key => $shopifyImage) {
             //====================================================================//
             // Load Image Informations from cache or from API
-            $image = ShopifyImages::getInfos($shopifyImage['id'], $shopifyImage['src'], $shopifyImage['alt']);
+            $splashImage = ShopifyImages::getInfos($shopifyImage);
             //====================================================================//
             // Init Image List Item
             if (!isset($this->out["images"][$key])) {
                 $this->out["images"][$key] = array();
             }
             // Shopify Image Raw data
-            $this->out["images"][$key]["image"] = $image;
+            $this->out["images"][$key]["image"] = $splashImage;
             // Shopify Image Position
             $this->out["images"][$key]["position"] = $shopifyImage['position'];
             // Shopify Image Cover Flag
@@ -246,7 +246,10 @@ trait ImagesTrait
             //====================================================================//
             // Update Image Position in List
             $this->updateImagePosition($imgIndex, $inValue);
+            // Update Image Cover Flag
             $this->updateImageCoverFlag($imgIndex, $inValue);
+
+            $this->needUpdate();
         }
         //====================================================================//
         // Clear Remaining Local Images
@@ -290,8 +293,8 @@ trait ImagesTrait
                 continue;
             }
             //====================================================================//
-            // Load Image Informations from cache or from API
-            $splashImage = ShopifyImages::getInfos($shopifyImage['id'], $shopifyImage['src'], $shopifyImage['alt']);
+            // Load Image Metadata from Cache | API | Url
+            $splashImage = ShopifyImages::getInfos($shopifyImage);
             if (null == $splashImage) {
                 Splash::log()->errTrace("An Error Occured while writting images, please retry");
 
@@ -327,17 +330,25 @@ trait ImagesTrait
             $splashImage = $splashImage->getArrayCopy();
         }
         //==============================================================================
+        // Try Reading of File on Local System
+        $rawFile = $this->connector->file($splashImage["path"], $splashImage["md5"]);
+        //==============================================================================
+        // Verify File was Found
+        if (!is_array($rawFile)) {
+            return null;
+        }
+        //==============================================================================
         // Create Image Array from Local System
-        $newImage = ShopifyImages::buildImage($splashImage, $this->connector);
+        $shopifyImage = ShopifyImages::buildShopifyImage($splashImage, $rawFile);
         //==============================================================================
         // Verify
-        if (!is_array($newImage)) {
+        if (!is_array($shopifyImage)) {
             return null;
         }
         //==============================================================================
         // Add Image to Product
         $imgIndex = count($this->object->images);
-        $this->object->images[] = $newImage;
+        $this->object->images[] = $shopifyImage;
         $this->needUpdate();
 
         return $imgIndex;
