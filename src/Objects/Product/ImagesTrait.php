@@ -93,7 +93,7 @@ trait ImagesTrait
             ->Description("Image is visible for this Product Variant")
             ->MicroData("http://schema.org/Product", "isVisibleImage")
             ->Group("Images")
-            ->isReadOnly()
+//            ->isReadOnly()
             ->isNotTested();
     }
 
