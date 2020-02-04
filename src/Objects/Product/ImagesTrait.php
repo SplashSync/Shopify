@@ -145,7 +145,7 @@ trait ImagesTrait
             //====================================================================//
             case 'images':
                 //==============================================================================
-                // Detect ArrayObjects                
+                // Detect ArrayObjects
                 if ($fieldData instanceof ArrayObject) {
                     $fieldData = $fieldData->getArrayCopy();
                 }
