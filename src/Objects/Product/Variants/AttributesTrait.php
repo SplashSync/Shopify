@@ -195,38 +195,18 @@ trait AttributesTrait
     {
         //====================================================================//
         // Check Attribute is Array
-        if (!is_iterable($attrData) || empty($attrData)) {
+        if (!is_array($attrData) || empty($attrData)) {
             return false;
         }
-//        //====================================================================//
-//        // Check Attributes Code is Given
-//        if (!isset($attrData["code"]) || !is_string($attrData["code"]) || empty($attrData["code"])) {
-//            return Splash::log()->err(
-//                "ErrLocalTpl",
-//                __CLASS__,
-//                __FUNCTION__,
-//                " Product Attribute Code is Not Valid."
-//            );
-//        }
         //====================================================================//
         // Check Attributes Names are Given
         if (!isset($attrData["name"]) || !is_scalar($attrData["name"]) || empty($attrData["name"])) {
-            return Splash::log()->err(
-                "ErrLocalTpl",
-                __CLASS__,
-                __FUNCTION__,
-                " Product Attribute Public Name is Not Valid."
-            );
+            return Splash::log()->errTrace("Product Attribute Public Name is Not Valid.");
         }
         //====================================================================//
         // Check Attributes Values are Given
         if (!isset($attrData["value"]) || !is_scalar($attrData["value"]) || empty($attrData["value"])) {
-            return Splash::log()->err(
-                "ErrLocalTpl",
-                __CLASS__,
-                __FUNCTION__,
-                " Product Attribute Value Name is Not Valid."
-            );
+            return Splash::log()->errTrace("Product Attribute Value Name is Not Valid.");
         }
 
         return true;
