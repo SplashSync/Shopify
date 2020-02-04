@@ -276,8 +276,9 @@ trait ImagesTrait
         }
         foreach ($this->object->images as $index => $shopifyImage) {
             //====================================================================//
-            // If Image Already Found, Skip
-            if (in_array($shopifyImage['id'], $this->imgFound, true)) {
+            // If Image has no ID => NEW Image => Skip
+            // If Image Already Found => Skip
+            if (!isset($shopifyImage['id']) || in_array($shopifyImage['id'], $this->imgFound, true)) {
                 continue;
             }
             //====================================================================//
