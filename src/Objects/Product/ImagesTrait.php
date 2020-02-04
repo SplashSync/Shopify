@@ -3,7 +3,7 @@
 /*
  *  This file is part of SplashSync Project.
  *
- *  Copyright (C) 2015-2019 Splash Sync  <www.splashsync.com>
+ *  Copyright (C) 2015-2020 Splash Sync  <www.splashsync.com>
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,9 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product;
 
+use Splash\Connectors\Shopify\Helpers\ShopifyImages;
+use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
-use Symfony\Component\Cache\Simple\ApcuCache;
 
 /**
  * Access to Product Images Fields
@@ -29,6 +30,16 @@ trait ImagesTrait
      * @var int Image Info Cache Lifetime
      */
     private static $imgCacheTtl = 3600;
+
+    /**
+     * @var int
+     */
+    private $imgPosition = 0;
+
+    /**
+     * @var array Shopify ID of Already Found Images
+     */
+    private $imgFound = array();
 
     /**
      * Build Fields using FieldFactory
@@ -48,8 +59,7 @@ trait ImagesTrait
             ->InList("images")
             ->Name("Image")
             ->Group("Images")
-            ->MicroData("http://schema.org/Product", "image")
-            ->isReadOnly();
+            ->MicroData("http://schema.org/Product", "image");
 
         //====================================================================//
         // Product Images => Image Position In List
@@ -60,7 +70,6 @@ trait ImagesTrait
             ->Group("Images")
             ->Description("Image Order for this Product Variant")
             ->MicroData("http://schema.org/Product", "positionImage")
-            ->isReadOnly()
             ->isNotTested();
 
         //====================================================================//
@@ -71,8 +80,7 @@ trait ImagesTrait
             ->Name("Is Cover")
             ->Group("Images")
             ->MicroData("http://schema.org/Product", "isCover")
-            ->isNotTested()
-            ->isReadOnly();
+            ->isNotTested();
 
         //====================================================================//
         // Product Images => Is Visible Image
@@ -83,7 +91,7 @@ trait ImagesTrait
             ->Group("Images")
             ->Description("Image is visible for this Product Variant")
             ->MicroData("http://schema.org/Product", "isVisibleImage")
-            ->Group("Product gallery")
+            ->Group("Images")
             ->isReadOnly()
             ->isNotTested();
     }
@@ -119,6 +127,32 @@ trait ImagesTrait
     }
 
     /**
+     * Write Given Fields
+     *
+     * @param string $fieldName Field Identifier / Name
+     * @param mixed  $fieldData Field Data
+     *
+     * @return void
+     */
+    private function setImagesFields($fieldName, $fieldData)
+    {
+        //====================================================================//
+        // WRITE Field
+        switch ($fieldName) {
+            //====================================================================//
+            // PRODUCT IMAGES
+            //====================================================================//
+            case 'images':
+                $this->setImgArray($fieldData);
+
+                break;
+            default:
+                return;
+        }
+        unset($this->in[$fieldName]);
+    }
+
+    /**
      * Return Product Image Array from Product Object Class
      *
      * @return void
@@ -139,7 +173,7 @@ trait ImagesTrait
         foreach ($this->object->images as $key => $shopifyImage) {
             //====================================================================//
             // Load Image Informations from cache or from API
-            $image = $this->getImageInfoArray($shopifyImage['id'], $shopifyImage['src'], $shopifyImage['alt']);
+            $image = ShopifyImages::getInfos($shopifyImage['id'], $shopifyImage['src'], $shopifyImage['alt']);
             //====================================================================//
             // Init Image List Item
             if (!isset($this->out["images"][$key])) {
@@ -150,62 +184,236 @@ trait ImagesTrait
             // Shopify Image Position
             $this->out["images"][$key]["position"] = $shopifyImage['position'];
             // Shopify Image Cover Flag
-            $this->out["images"][$key]["cover"] = (1 == $shopifyImage['position']);
+            $this->out["images"][$key]["cover"] = self::isCoverImage($shopifyImage);
             // Shopify Image Visible Flag
-            $this->out["images"][$key]["visible"] = empty($shopifyImage['variant_ids'])
-                ? true
-                : in_array($this->variantId, $shopifyImage['variant_ids'], true);
+            // Shopify Do Not Manage This Feature
+            $this->out["images"][$key]["visible"] = true;
         }
     }
 
     /**
-     * Load Product Image Informations Array from Cache or API
+     * Update Product Image Array from Server Data
      *
-     * @param int    $shopifyId
-     * @param string $absoluteUrl
-     * @param string $altImageNane
+     * @param array $data Input Image List for Update
      *
-     * @return null|array
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    private function getImageInfoArray(int $shopifyId, string $absoluteUrl, ?string $altImageNane): ?array
+    private function setImgArray(array $data)
     {
         //====================================================================//
-        // Build Image Cache Key
-        $cacheKey = implode(".", array("splash.shopify.connector.image", $shopifyId, md5($absoluteUrl)));
+        // Init
+        $this->imgPosition = 1;
+        $this->imgFound = array();
+
         //====================================================================//
-        // Check if Image is In Cache
-        $apcuCache = new ApcuCache();
-        if ($apcuCache->has($cacheKey)) {
-            return $apcuCache->get($cacheKey);
-        }
-        //====================================================================//
-        // Build Image File Name
-        $filename = !empty($altImageNane) ? $altImageNane : basename((string) parse_url($absoluteUrl, PHP_URL_PATH));
-        //====================================================================//
-        // Load Image from API
-        $image = false;
-        for ($count = 0; $count < 3; $count++) {
+        // Given List Is Not Empty
+        foreach ($data as $inValue) {
             //====================================================================//
-            // Touch Image with Curl (In Case first reading)
-            $this->images()->touchRemoteFile($absoluteUrl);
-            //====================================================================//
-            // Encode Image Infos from Url
-            $image = $this->images()->encodeFromUrl($filename, $absoluteUrl, $absoluteUrl);
-            //====================================================================//
-            // Stop Loop if Succeeded
-            if (is_array($image)) {
-                break;
+            // Check Image Array is here
+            if (!isset($inValue["image"]) || empty($inValue["image"])) {
+                continue;
             }
+            //====================================================================//
+            // Check Image is Visible
+            if (isset($inValue["visible"]) && empty($inValue["visible"])) {
+                continue;
+            }
+            $this->imgPosition++;
+            //====================================================================//
+            // Search For Image In Current List
+            $imgIndex = $this->searchImage($inValue["image"]["md5"]);
+            //====================================================================//
+            // If Not found, Add this object to list
+            if (is_null($imgIndex)) {
+                $imgIndex = $this->addImage($inValue["image"]);
+            }
+            //====================================================================//
+            // If STILL Not found, Error
+            if (is_null($imgIndex)) {
+                Splash::log()->errTrace("An Error occured while sending an image, please retry.");
+
+                return;
+            }
+            //====================================================================//
+            // Update Image Position in List
+            $this->updateImagePosition($imgIndex, $inValue);
+            $this->updateImageCoverFlag($imgIndex, $inValue);
         }
+
         //====================================================================//
-        // Ensure Informations Loaded
-        if (!is_array($image)) {
+        // Clear Remaining Local Images
+        $this->cleanImages();
+    }
+
+    /**
+     * Check if Image is Cover for THIS Variant
+     *
+     * @param array $shopifyImage Shopify Image Definition Array
+     *
+     * @return     bool
+     */
+    private function isCoverImage(array $shopifyImage): bool
+    {
+        //====================================================================//
+        // Present in Variants Ids
+        return in_array((int) $this->variantId, $shopifyImage['variant_ids'], true);
+    }
+
+    /**
+     * Search Image on Product Images List
+     *
+     * @param string $md5 Expected Image Md5
+     *
+     * @return     int|null
+     */
+    private function searchImage($md5): ?int
+    {
+        if (!is_array($this->object->images)) {
             return null;
         }
-        //====================================================================//
-        // Store Image In Cache
-        $apcuCache->set($cacheKey, $image, static::$imgCacheTtl);
+        foreach ($this->object->images as $index => $shopifyImage) {
+            //====================================================================//
+            // If Image Already Found, Skip
+            if (in_array($shopifyImage['id'], $this->imgFound, true)) {
+                continue;
+            }
+            //====================================================================//
+            // Load Image Informations from cache or from API
+            $splashImage = ShopifyImages::getInfos($shopifyImage['id'], $shopifyImage['src'], $shopifyImage['alt']);
+            if (null == $splashImage) {
+                Splash::log()->errTrace("An Error Occured while writting images, please retry");
 
-        return $image;
+                return null;
+            }
+            //====================================================================//
+            // If CheckSum are Different => Continue
+            if ($splashImage["md5"] != $md5) {
+                continue;
+            }
+            //====================================================================//
+            // Add Image ID to Found List
+            $this->imgFound[] = $shopifyImage['id'];
+
+            return $index;
+        }
+
+        return null;
+    }
+
+    /**
+     * Add Product Image
+     *
+     * @param array $splashImage
+     *
+     * @return null|int
+     */
+    private function addImage(array $splashImage): ?int
+    {
+        //==============================================================================
+        // Create Image Array from Local System
+        $newImage = ShopifyImages::buildImage($splashImage, $this->connector);
+        //==============================================================================
+        // Verify
+        if (!is_array($newImage)) {
+            return null;
+        }
+        //==============================================================================
+        // Add Image to Product
+        $imgIndex = count($this->object->images);
+        $this->object->images[] = $newImage;
+        $this->needUpdate();
+
+        return $imgIndex;
+    }
+
+    /**
+     * Remove Deleted Product Images
+     *
+     * @return void
+     */
+    private function cleanImages(): void
+    {
+        if (!is_array($this->object->images)) {
+            return;
+        }
+        foreach ($this->object->images as $index => $shopifyImage) {
+            //====================================================================//
+            // If Image has no ID => NEW Image => Skip
+            // If Image Already Found, Skip
+            if (!isset($shopifyImage['id']) || in_array($shopifyImage['id'], $this->imgFound, true)) {
+                continue;
+            }
+            //====================================================================//
+            // Remove Image from Product
+            unset($this->object->images[$index]);
+            $this->needUpdate();
+        }
+    }
+
+    /**
+     * Update Image Position
+     *
+     * @param int   $imgIndex Image Index in Product Images
+     * @param array $imgArray Splash Image Value Definition Array
+     *
+     * @retrurn     void
+     */
+    private function updateImagePosition($imgIndex, $imgArray): void
+    {
+        //====================================================================//
+        // Safety Checks
+        if (!isset($this->object->images[$imgIndex])) {
+            return;
+        }
+        $newPosition = (int) isset($imgArray["position"]) ? $imgArray["position"]: $this->imgPosition;
+        //====================================================================//
+        // Needed ?
+        if ($this->object->images[$imgIndex]["position"] == $newPosition) {
+            return;
+        }
+        //====================================================================//
+        // Update Image Position in List
+        $this->object->images[$imgIndex]["position"] = $newPosition;
+        $this->needUpdate();
+    }
+
+    /**
+     * Update Image Cover Flag
+     *
+     * @param int   $imgIndex Image Index in Product Images
+     * @param array $imgArray Splash Image Value Definition Array
+     *
+     * @retrurn     void
+     */
+    private function updateImageCoverFlag($imgIndex, $imgArray): void
+    {
+        //====================================================================//
+        // Safety Checks
+        if (!isset($this->object->images[$imgIndex])) {
+            return;
+        }
+        $isCover = self::isCoverImage($this->object->images[$imgIndex]);
+        //====================================================================//
+        // Needed ?
+        if ($isCover == $imgArray["cover"]) {
+            return;
+        }
+        $this->needUpdate();
+        //====================================================================//
+        // Set Image Cover Flag
+        if ($imgArray["cover"]) {
+            $this->object->images[$imgIndex]['variant_ids'][] = (int) $this->variantId;
+
+            return;
+        }
+        //====================================================================//
+        // Unset Image Cover Flag
+        $this->object->images[$imgIndex]["variant_ids"] = array_diff(
+            $this->object->images[$imgIndex]["variant_ids"],
+            array((int) $this->variantId)
+        );
     }
 }
