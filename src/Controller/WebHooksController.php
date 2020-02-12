@@ -18,6 +18,7 @@ namespace Splash\Connectors\Shopify\Controller;
 use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Objects;
+use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -244,6 +245,7 @@ class WebHooksController extends Controller
         //====================================================================//
         // Verify User Node Domain is Ok with Identifier
         $headerHost = $request->headers->get("X-Shopify-Shop-Domain");
+        /** @var ShopifyConnector $connector */
         if (empty($headerHost) || ($connector->getShopifyDomain() != $headerHost)) {
             return false;
         }

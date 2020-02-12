@@ -481,7 +481,7 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // If Url Domain is found
         if (parse_url($wsHost, PHP_URL_HOST)) {
-            return parse_url($wsHost, PHP_URL_HOST);
+            return (string) parse_url($wsHost, PHP_URL_HOST);
         }
         //====================================================================//
         // Raw Domain was found
