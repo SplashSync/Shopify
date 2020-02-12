@@ -243,9 +243,8 @@ class WebHooksController extends Controller
 
         //====================================================================//
         // Verify User Node Domain is Ok with Identifier
-        $wsHost = (string) $connector->getParameter("WsHost");
         $headerHost = $request->headers->get("X-Shopify-Shop-Domain");
-        if (empty($headerHost) || (parse_url($wsHost, PHP_URL_HOST) != $headerHost)) {
+        if (empty($headerHost) || ($connector->getShopifyDomain() != $headerHost)) {
             return false;
         }
 

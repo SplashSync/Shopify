@@ -471,6 +471,24 @@ class ShopifyConnector extends AbstractConnector
     }
 
     /**
+     * Get Shopify Host Domain.
+     *
+     * @return string
+     */
+    public function getShopifyDomain(): string
+    {
+        $wsHost = (string) $this->getParameter("WsHost");
+        //====================================================================//
+        // If Url Domain is found
+        if (parse_url($wsHost, PHP_URL_HOST)) {
+            return parse_url($wsHost, PHP_URL_HOST);
+        }
+        //====================================================================//
+        // Raw Domain was found
+        return $wsHost;
+    }
+
+    /**
      * Check & Update Shopify Api Account WebHook Configuration.
      *
      * @param WebHook $manager    Shopify WebHook Splash Manager
