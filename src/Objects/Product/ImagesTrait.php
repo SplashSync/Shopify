@@ -331,7 +331,7 @@ trait ImagesTrait
         }
         //==============================================================================
         // Try Reading of File on Local System
-        $rawFile = $this->connector->file($splashImage["path"], $splashImage["md5"]);
+        $rawFile = $this->connector->file($splashImage["file"], $splashImage["md5"]);
         //==============================================================================
         // Verify File was Found
         if (!is_array($rawFile)) {
