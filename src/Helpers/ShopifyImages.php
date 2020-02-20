@@ -49,7 +49,7 @@ class ShopifyImages
     /**
      * @var int Image Info Cache Lifetime
      */
-    private static $imgCacheTtl = 3600;
+    private static $imgCacheTtl = 604800;
 
     /**
      * Load Product Image Informations Array from Cache or API
