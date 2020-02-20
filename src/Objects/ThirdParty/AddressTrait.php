@@ -119,7 +119,10 @@ trait AddressTrait
     protected function getAddressFields($key, $fieldName): void
     {
         if (!isset($this->address)) {
-            $this->address = new ArrayObject($this->object['default_address'], ArrayObject::ARRAY_AS_PROPS);
+            $this->address = new ArrayObject(
+                isset($this->object['default_address']) ? $this->object['default_address'] : array(),
+                ArrayObject::ARRAY_AS_PROPS
+            );
         }
         //====================================================================//
         // READ Fields
