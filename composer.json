@@ -39,7 +39,7 @@
     "require": {
         "php":                                          "^7.1",
         "splash/php-bundle":                            "*",
-        "slince/shopify-api-php":                       "^2.2",
+        "slince/shopify-api-php":                       "^2.4.1",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
         "multidimensional/oauth2-shopify":              ">1.0",
         "nategood/httpful":                             "^0.2",
@@ -78,5 +78,14 @@
         "phpstan/phpstan-symfony":                      "~0.12",
         "phpstan/phpstan-doctrine":                     "~0.12",
         "phpstan/phpstan-phpunit":                      "~0.12"
+    },
+    
+    "scripts": {
+        "post-install-cmd": [
+            "php vendor/bin/grumphp git:deinit"            
+        ],
+        "post-update-cmd": [
+            "php vendor/bin/grumphp git:deinit"            
+        ]
     }
 }
