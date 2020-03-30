@@ -22,7 +22,9 @@ use Splash\Models\Objects\ObjectsTrait;
 use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
- * @abstract    Shopify Implementation of ThirParty Address
+ * Shopify Implementation of ThirParty Address
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Address extends AbstractObject
 {
@@ -57,7 +59,24 @@ class Address extends AbstractObject
      */
     protected static $ICO = "fa fa-envelope-o";
 
+    //====================================================================//
+    // Object Synchronization Recommended Configuration
+    //
+    // This Flags are Used by Splash Server to Setup Default Objects Configuration
+    //====================================================================//
+
     /**
+     * Enable Creation Of New Local Objects when Not Existing
+     *
+     * @var bool
+     *
+     * @codingStandardsIgnoreStart
+     */
+    protected static $ENABLE_PUSH_CREATED = false;
+
+    /**
+     * @codingStandardsIgnoreEnd
+     *
      * @var ShopifyConnector
      */
     protected $connector;

@@ -94,7 +94,7 @@ class CachedCursorPagination extends CursorBasedPagination
         //====================================================================//
         // Page Link is Known
         if ($this->hasLink($page)) {
-            $response = $this->fetchResource($this->getLink($page));
+            $response = $this->current($this->getLink($page));
             $this->saveLinks($page);
 
             return $response;
@@ -103,7 +103,7 @@ class CachedCursorPagination extends CursorBasedPagination
         // A Closest Page Link is Known
         $closest = $this->getClosestLink($page);
         if ($closest) {
-            $response = $this->fetchResource($this->getLink($closest));
+            $response = $this->current($this->getLink($closest));
             $this->saveLinks($page);
             for ($i = ($closest + 1); $i <= $page; $i++) {
                 if ($this->hasNext()) {

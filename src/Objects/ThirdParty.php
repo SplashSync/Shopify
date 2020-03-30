@@ -23,6 +23,8 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of ThirdParty
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class ThirdParty extends AbstractObject
 {
@@ -60,7 +62,24 @@ class ThirdParty extends AbstractObject
      */
     protected static $ICO = "fa fa-user";
 
+    //====================================================================//
+    // Object Synchronization Recommended Configuration
+    //
+    // This Flags are Used by Splash Server to Setup Default Objects Configuration
+    //====================================================================//
+
     /**
+     * Enable Creation Of New Local Objects when Not Existing
+     *
+     * @var bool
+     *
+     * @codingStandardsIgnoreStart
+     */
+    protected static $ENABLE_PUSH_CREATED = false;
+
+    /**
+     * @codingStandardsIgnoreEnd
+     *
      * @var ShopifyConnector
      */
     protected $connector;
