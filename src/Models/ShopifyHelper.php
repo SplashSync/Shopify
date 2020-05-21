@@ -56,17 +56,23 @@ class ShopifyHelper
      */
     public static function configure(string $wsHost, string $apiToken): bool
     {
-        //====================================================================//
-        // Store Current Shop Url
-        self::$endpoint = self::validateShopUrl($wsHost);
-        //====================================================================//
-        // Store Current Shop Creditials
-        self::$credential = new PublicAppCredential($apiToken);
-        //====================================================================//
-        // Configure Shopify API Client
-        self::$client = new Client(self::$credential, self::$endpoint, array(
-            'metaCacheDir' => sys_get_temp_dir().'/shopify',  // Metadata cache dir, required
-        ));
+        try {
+            //====================================================================//
+            // Store Current Shop Url
+            self::$endpoint = self::validateShopUrl($wsHost);
+            //====================================================================//
+            // Store Current Shop Creditials
+            self::$credential = new PublicAppCredential($apiToken);
+            //====================================================================//
+            // Configure Shopify API Client
+            self::$client = new Client(self::$credential, self::$endpoint, array(
+                'metaCacheDir' => sys_get_temp_dir().'/shopify',  // Metadata cache dir, required
+            ));
+        } catch (Exception $ex) {
+            Splash::log()->err($ex->getMessage());
+
+            return false;
+        }
 
         return true;
     }
