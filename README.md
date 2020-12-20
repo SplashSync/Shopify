@@ -13,7 +13,7 @@ This Bundle is source for Embedded Shopify Connector.
 
 ## Documentation
 
-For the configuration guide and reference, see: [Shopify Connector Documentation](https://splashsync.github.io/Shopify/)
+For the configuration guide and reference, see: [Shopify Connector Documentation](https://splashsync.gitlab.io/Shopify/)
 
 ## Contributing
 

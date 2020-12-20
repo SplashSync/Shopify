@@ -3,4 +3,4 @@
 # SPLASH Php Bundle Routes
 splash_bundle:
     resource: "@SplashBundle/Resources/config/routing.yml"
-    prefix: /ws 
+    prefix: /ws

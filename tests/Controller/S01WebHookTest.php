@@ -96,8 +96,13 @@ class S01WebHookTest extends TestCase
      *
      * @return void
      */
-    public function testWebhookRequest(string $topic, array $data, string $objectType, string $action, string $objectId): void
-    {
+    public function testWebhookRequest(
+        string $topic,
+        array $data,
+        string $objectType,
+        string $action,
+        string $objectId
+    ): void {
         //====================================================================//
         // Load Connector
         $connector = $this->getConnector("shopify");
@@ -105,16 +110,6 @@ class S01WebHookTest extends TestCase
         //====================================================================//
         // Setup Client
         $this->configure($connector, $topic);
-
-        //====================================================================//
-        // Prepare Request
-//        $post  = array_replace_recursive(
-//            array("mj_list_id" => $connector->getParameter("ApiList")),
-//            $data
-//        );
-//        $post = $data;
-        //dump($data);
-        //dump($objectId);
 
         //====================================================================//
         // Touch Url
@@ -127,7 +122,7 @@ class S01WebHookTest extends TestCase
     }
 
     /**
-     * Generate Fake Inputs for WebHook Requets
+     * Generate Fake Inputs for WebHook Requests
      *
      * @return array
      */
@@ -180,31 +175,35 @@ class S01WebHookTest extends TestCase
      */
     private function configure(ShopifyConnector $connector, string $topic): void
     {
-        $this->getClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $connector->getParameter("WsHost"));
-        $this->getClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
+        $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $connector->getParameter("WsHost"));
+        $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
     }
 
     /**
      * Generate Fake ThirdParty Inputs for WebHook Requets
      *
-     * @param string $action
-     * @param string $eventName
-     * @param string $thirdparty
-     * @param string $address
+     * @param string      $action
+     * @param string      $eventName
+     * @param string      $thirdParty
+     * @param null|string $address
      *
      * @return array
      */
-    private static function getThirdPartyWebHook(string $action, string $eventName, string $thirdparty, string $address = null) : array
-    {
+    private static function getThirdPartyWebHook(
+        string $action,
+        string $eventName,
+        string $thirdParty,
+        string $address = null
+    ) : array {
         return array(
             $eventName,
             array(
-                "id" => $thirdparty,
+                "id" => $thirdParty,
                 "addresses" => is_null($address) ? array() : array(array("id" => $address)),
             ),
             is_null($address) ? "ThirdParty" : "Address",
             $action,
-            is_null($address) ? $thirdparty : Objects\Address::getObjectId($thirdparty, $address),
+            is_null($address) ? $thirdParty : Objects\Address::getObjectId($thirdParty, $address),
         );
     }
 

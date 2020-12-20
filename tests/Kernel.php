@@ -67,7 +67,8 @@ class Kernel extends BaseKernel
                 $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             }
 
-            if (('dev' === $this->getEnvironment()) && class_exists("\\Symfony\\Bundle\\WebServerBundle\\WebServerBundle")) {
+            if (('dev' === $this->getEnvironment())
+                && class_exists("\\Symfony\\Bundle\\WebServerBundle\\WebServerBundle")) {
                 $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
             }
         }

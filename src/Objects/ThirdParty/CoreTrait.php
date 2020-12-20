@@ -81,7 +81,8 @@ trait CoreTrait
 
                 break;
             case 'company':
-                if (isset($this->object['default_address']['company']) && !empty($this->object['default_address']['company'])) {
+                if (isset($this->object['default_address']['company'])
+                    && !empty($this->object['default_address']['company'])) {
                     $this->out[$fieldName] = $this->object['default_address']['company'];
                 }
                 $this->out[$fieldName] = "Shopify (".$this->object->id.")";

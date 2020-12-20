@@ -134,8 +134,12 @@ class ShopifyHelper
      *
      * @return null|array
      */
-    public static function get(string $path, string $objectId = null, array $query = array(), string $resource = null): ?array
-    {
+    public static function get(
+        string $path,
+        string $objectId = null,
+        array $query = array(),
+        string $resource = null
+    ): ?array {
         //====================================================================//
         // Complete Url
         if (!is_null($objectId)) {

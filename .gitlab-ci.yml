@@ -1,0 +1,106 @@
+################################################################################
+#
+#  This file is part of SplashSync Project.
+#
+#  Copyright (C) Splash Sync <www.splashsync.com>
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+#  For the full copyright and license information, please view the LICENSE
+#  file that was distributed with this source code.
+#
+#  @author Bernard Paquier <contact@splashsync.com>
+#
+################################################################################
+
+################################################################
+# Set any variables we need
+variables:
+  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
+  MYSQL_DATABASE:         symfony
+  MYSQL_ROOT_PASSWORD:    Shopify-Bundle
+  COMPOSER_MEMORY_LIMIT:  -1
+  SYMFONY_DEPRECATIONS_HELPER:  disabled
+
+################################################################
+# Defined Pipeline Stages
+stages:
+  - tests
+  - deploy
+
+################################################################
+# Functional Tests
+################################################################
+
+.core_tests:    &core_tests
+    stage:      tests
+    tags:
+        - Dedicated
+    services:
+        - mysql:5.7
+    ################################################################################
+    # Install & Configure Environment
+    before_script:
+        # Setup Shopify Connector
+        - sed -i -e 's/ThisIsShopUrl/'$SH_SHOP_URL'/g' tests/config/splash.yml >/dev/null 2>&1
+        - sed -i -e 's/ThisIsSecretToken/'$SH_API_TOKEN'/g' tests/config/splash.yml >/dev/null 2>&1
+        - sed -i -e 's/ThisIsLocationId/'$SH_LOC_ID'/g' tests/config/splash.yml >/dev/null 2>&1
+        # Setup Travis
+        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/configure.sh  | sh
+        # Deploy Symfony Files
+        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/deploy.sh | sh
+        # Setup Symfony Version & Create Database
+        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/configure.sh | sh
+        # Install Symfony
+        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/install.sh | sh
+
+    ################################################################################
+    # Run Test Script
+    script:
+        # Execute Grumphp Testsuite
+        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/grumphp.sh  | sh
+        # Execute PhpUnit Tests
+        - vendor/bin/phpunit
+
+    ################################################################################
+    # Run After Script
+    after_script:
+      - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
+
+tests:php-7.4:
+  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-7.4
+  <<: *core_tests
+
+#tests:php-7.3:
+#  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-7.3
+#  <<: *core_tests
+
+#tests:php-8.0:
+#  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
+#  allow_failure: true
+#  <<: *core_tests
+
+################################################################
+# Build Documentation
+################################################################
+pages:
+    image:    registry.gitlab.com/badpixxel-projects/php-sdk:jekyll
+    stage:    deploy
+    tags:
+      - Dedicated
+    services:
+      - docker:dind
+    ################################################################################
+    # Run Test Script
+    script:
+      # Deploy Symfony Files
+      - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/deploy.sh | sh
+      # Run Composer to Build deps
+      - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/composer.sh  | bash
+      # Build Documentation
+      - php vendor/bin/grumphp run --tasks=build-docs
+    artifacts:
+        paths:
+            - public

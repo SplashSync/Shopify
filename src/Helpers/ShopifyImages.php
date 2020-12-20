@@ -123,8 +123,8 @@ class ShopifyImages
     /**
      * Load Product Image Informations Array from Url
      *
-     * @param string $absoluteUrl
-     * @param string $altImageNane
+     * @param string      $absoluteUrl
+     * @param null|string $altImageNane
      *
      * @return null|array
      */
@@ -261,7 +261,10 @@ class ShopifyImages
     {
         //====================================================================//
         // Build Image Cache Key
-        $cacheKey = implode(".", array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src'])));
+        $cacheKey = implode(
+            ".",
+            array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src']))
+        );
         //====================================================================//
         // Ensure Cache Exists
         if (!isset(static::$apcu)) {
@@ -288,7 +291,10 @@ class ShopifyImages
     {
         //====================================================================//
         // Build Image Cache Key
-        $cacheKey = implode(".", array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src'])));
+        $cacheKey = implode(
+            ".",
+            array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src']))
+        );
         //====================================================================//
         // Ensure Cache Exists
         if (!isset(static::$apcu)) {

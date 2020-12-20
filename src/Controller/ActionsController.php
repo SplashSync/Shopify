@@ -49,7 +49,7 @@ class ActionsController extends Controller
      *
      * @return Response
      */
-    public function oauthAction(Session $session, ClientRegistry $registry, AbstractConnector $connector)
+    public function oauthAction(Session $session, ClientRegistry $registry, AbstractConnector $connector): Response
     {
         //==============================================================================
         // Load Shopify OAuth2 Client
@@ -80,8 +80,12 @@ class ActionsController extends Controller
      *
      * @return Response
      */
-    public function registerAction(Request $request, Session $session, ClientRegistry $registry, AbstractConnector $connector)
-    {
+    public function registerAction(
+        Request $request,
+        Session $session,
+        ClientRegistry $registry,
+        AbstractConnector $connector
+    ) {
         //==============================================================================
         // Get Connector WebService Id from Session
         $webserviceId = $session->get("shopify_oauth2_wsid");

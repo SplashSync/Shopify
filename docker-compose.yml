@@ -36,9 +36,9 @@ services:
         container_name: shopify-toolkit
         volumes:
             # Specify Local Configuration File
-            - './docker/toolkit/splash.yml:/app/config/packages/splash.yml:ro'
+            - ./docker/toolkit/splash.yml:/app/config/packages/splash.yml:ro
             # Uncomment to use Local Sources instead of Release
-#            - './src/:/app/vendor/splash/shopify/src/:ro'            
+            - ./src/:/app/vendor/splash/shopify/src/:ro
         hostname:           toolkit.shopify.local
         networks:
             shopify:        { ipv4_address: 172.115.0.100, aliases: [ toolkit.shopify.local ] }            

@@ -57,7 +57,9 @@ trait CoreTrait
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
             ->Identifier("handle")
             ->Name("Friendly URL")
-            ->Description("A unique human-friendly string for the product. Automatically generated from the product's title. Used by the Liquid templating language to refer to objects.")
+            ->Description(
+                "A unique human-friendly string for the product. Automatically generated from the product's title."
+            )
             ->addOption("isLowerCase")
             ->MicroData("http://schema.org/Product", "urlRewrite");
     }

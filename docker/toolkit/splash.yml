@@ -14,7 +14,7 @@ splash:
     notify: ["ROLE_USER"]
     
 ################################################################################    
-# List of Availables Connector Connections
+# List of Available Connector Connections
 ################################################################################    
 
     connections:

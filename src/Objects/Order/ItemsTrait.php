@@ -136,7 +136,13 @@ trait ItemsTrait
                 $value = $this->getShippingField($orderLine, $fieldName);
                 //====================================================================//
                 // Insert Data in List
-                self::lists()->Insert($this->out, "lines", $fieldName, count($this->object->line_items) + $index, $value);
+                self::lists()->insert(
+                    $this->out,
+                    "lines",
+                    $fieldName,
+                    count($this->object->line_items) + $index,
+                    $value
+                );
             }
         }
 
@@ -167,7 +173,10 @@ trait ItemsTrait
                     return null;
                 }
 
-                return self::objects()->Encode("Product", Product::getObjectId($line['product_id'], $line['variant_id']));
+                return self::objects()->encode(
+                    "Product",
+                    Product::getObjectId($line['product_id'], $line['variant_id'])
+                );
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':

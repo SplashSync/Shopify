@@ -47,6 +47,8 @@ class Order extends AbstractObject
     use Order\MainTrait;
     use Order\StatusTrait;
     use Order\ItemsTrait;
+    use Order\DeliveryTrait;
+//    use Order\ShippingTrait;
 
     //====================================================================//
     // Object Definition Parameters
@@ -114,14 +116,14 @@ class Order extends AbstractObject
     protected static $ENABLE_PUSH_CREATED = false;
 
     /**
-     * Enable Update Of Existing Local Objects when Modified Remotly
+     * Enable Update Of Existing Local Objects when Modified Remotely
      *
      * @var bool
      */
     protected static $ENABLE_PUSH_UPDATED = false;
 
     /**
-     * Enable Delete Of Existing Local Objects when Deleted Remotly
+     * Enable Delete Of Existing Local Objects when Deleted Remotely
      *
      * @var bool
      */

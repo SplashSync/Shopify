@@ -1,15 +1,15 @@
 
 parameters:
-    
+
     database_driver:        pdo_mysql
-    database_host:          localhost
+    database_host:          mysql
     database_port:          null
     database_name:          symfony
     database_user:          root
-    database_password: 
-        
+    database_password:      Shopify-Bundle
+
     kernel.secret:          ThisIsNotASecretKey
-    
+
     splash_host:            http://localhost:8000
 
     locale: en

@@ -21,9 +21,10 @@
 
 # Title of the Bundle / Module
 title: Shopify Connector
-# Subtitle of the Site (Generaly DOC)
+repository: SplashSync/Shopify
+# Subtitle of the Site (Generally DOC)
 subtitle: DOC
-# the subpath of your site, e.g. /blog
+# the sub-path of your site, e.g. /blog
 baseurl: "/Shopify" 
 # Description of the Bundle/Module
 description:    "Shopify Connectors for Splash Sync."

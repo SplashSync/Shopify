@@ -17,7 +17,8 @@ namespace Splash\Connectors\Shopify\Services;
 
 use ArrayObject;
 use Splash\Bundle\Models\AbstractConnector;
-use Splash\Connectors\Shopify\Form\EditFormType;
+use Splash\Bundle\Models\Connectors\GenericObjectMapperTrait;
+use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\Objects;
@@ -33,8 +34,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class ShopifyConnector extends AbstractConnector
 {
-    use \Splash\Bundle\Models\Connectors\GenericObjectMapperTrait;
-    use \Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
+    use GenericObjectMapperTrait;
+    use GenericWidgetMapperTrait;
 
     /**
      * Objects Type Class Map
@@ -65,7 +66,7 @@ class ShopifyConnector extends AbstractConnector
     public function ping() : bool
     {
         //====================================================================//
-        // Safety Check => Verify Selftest Pass
+        // Safety Check => Verify Self test Pass
         if (!$this->selfTest()) {
             return false;
         }
@@ -80,7 +81,7 @@ class ShopifyConnector extends AbstractConnector
     public function connect() : bool
     {
         //====================================================================//
-        // Safety Check => Verify Selftest Pass
+        // Safety Check => Verify Self test Pass
         if (!$this->selfTest()) {
             return false;
         }
@@ -118,7 +119,7 @@ class ShopifyConnector extends AbstractConnector
     public function informations(ArrayObject  $informations) : ArrayObject
     {
         //====================================================================//
-        // Safety Check => Verify Selftest Pass
+        // Safety Check => Verify Self test Pass
         if (!$this->selfTest()) {
             return $informations;
         }
@@ -144,9 +145,13 @@ class ShopifyConnector extends AbstractConnector
         $informations->phone = $details["phone"];
         //====================================================================//
         // Server Logo & Ico
-        $informations->icoraw = Splash::file()->readFileContents(dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Icon.png");
+        $informations->icoraw = Splash::file()->readFileContents(
+            dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Icon.png"
+        );
         $informations->logourl = null;
-        $informations->logoraw = Splash::file()->readFileContents(dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Logo.png");
+        $informations->logoraw = Splash::file()->readFileContents(
+            dirname(dirname(__FILE__))."/Resources/public/img/Shopify-Logo.png"
+        );
         //====================================================================//
         // Server Informations
         $informations->servertype = "Shopify REST Api";
@@ -181,7 +186,7 @@ class ShopifyConnector extends AbstractConnector
         // Verify Token is Set
         //====================================================================//
         if (!isset($config["Token"]) || empty($config["Token"]) || !is_string($config["Token"])) {
-            Splash::log()->err("Shop Creditial (App Token) is Invalid");
+            Splash::log()->err("Shop Credential (App Token) is Invalid");
 
             return false;
         }
@@ -205,7 +210,7 @@ class ShopifyConnector extends AbstractConnector
     public function getFile(string $filePath, string $fileMd5)
     {
         //====================================================================//
-        // Safety Check => Verify Selftest Pass
+        // Safety Check => Verify Self test Pass
         if (!$this->selfTest()) {
             return false;
         }
@@ -287,7 +292,7 @@ class ShopifyConnector extends AbstractConnector
     /**
      * {@inheritdoc}
      */
-    public function getMasterAction()
+    public function getMasterAction(): ?string
     {
         return "ShopifyBundle:Actions:register";
     }
@@ -499,8 +504,13 @@ class ShopifyConnector extends AbstractConnector
      *
      * @return bool
      */
-    private function updateWebHookConfig(WebHook $manager, array $webHooks, string $serverUrl, string $webhookUrl, string $topic) : bool
-    {
+    private function updateWebHookConfig(
+        WebHook $manager,
+        array $webHooks,
+        string $serverUrl,
+        string $webhookUrl,
+        string $topic
+    ) : bool {
         //====================================================================//
         // Filter & Clean List Of WebHooks
         $foundWebHook = false;
@@ -537,7 +547,7 @@ class ShopifyConnector extends AbstractConnector
      *
      * @return bool
      */
-    private function fetchShopInformations()
+    private function fetchShopInformations(): bool
     {
         //====================================================================//
         // Get User Lists from Api
@@ -557,7 +567,7 @@ class ShopifyConnector extends AbstractConnector
      *
      * @return bool
      */
-    private function fetchCountriesLists()
+    private function fetchCountriesLists(): bool
     {
         //====================================================================//
         // Get User Lists from Api
@@ -577,7 +587,7 @@ class ShopifyConnector extends AbstractConnector
      *
      * @return bool
      */
-    private function fetchLocationsLists()
+    private function fetchLocationsLists(): bool
     {
         //====================================================================//
         // Get User Lists from Api

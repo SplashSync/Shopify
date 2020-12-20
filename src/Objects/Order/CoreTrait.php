@@ -61,6 +61,15 @@ trait CoreTrait
             ->isListed();
 
         //====================================================================//
+        // UUID
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->Identifier("uuid")
+            ->Name("UUID")
+            ->description("Order Unique Reference")
+            ->MicroData("http://schema.org/Order", "orderNumberID")
+            ->isReadOnly();
+
+        //====================================================================//
         // Order Date
         $this->fieldsFactory()->create(SPL_T_DATE)
             ->Identifier("processed_at")
@@ -88,6 +97,12 @@ trait CoreTrait
             case 'name':
             case 'email':
                 $this->getSimple($fieldName);
+
+                break;
+            //====================================================================//
+            // Order UUID
+            case 'uuid':
+                $this->out[$fieldName] = $this->object->id.$this->object->name;
 
                 break;
             //====================================================================//

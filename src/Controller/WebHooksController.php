@@ -83,7 +83,10 @@ class WebHooksController extends Controller
 
         //====================================================================//
         // Log Shopify Request
-        $logger->warning(__CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ', (isset($this->data) ? $this->data : array()));
+        $logger->warning(
+            __CLASS__.'::'.__FUNCTION__.' Shopify WebHook Received ',
+            (isset($this->data) ? $this->data : array())
+        );
 
         //==============================================================================
         // Commit Changes
@@ -166,15 +169,21 @@ class WebHooksController extends Controller
     private function executeCustomerCommit(array $data, string $action, string $comment) : void
     {
         //==============================================================================
-        // Commit Change For Thirdparty
-        $this->connector->commit('ThirdParty', (string) $data['id'], $action, 'Shopify API', 'Shopify Customer '.$comment);
+        // Commit Change For ThirdParty
+        $this->connector->commit(
+            'ThirdParty',
+            (string) $data['id'],
+            $action,
+            'Shopify API',
+            'Shopify Customer '.$comment
+        );
         //==============================================================================
         // Safety Check
         if (empty($data['addresses'])) {
             return;
         }
         //==============================================================================
-        // Commit Change For Thirdparty Addresses
+        // Commit Change For ThirdParty Addresses
         foreach ($data['addresses'] as $address) {
             $this->connector->commit(
                 'Address',
@@ -222,8 +231,20 @@ class WebHooksController extends Controller
      */
     private function executeOrderCommit(array $data, string $action, string $comment) : void
     {
-        $this->connector->commit('Order', (string) $data['id'], $action, 'Shopify API', 'Shopify Order was '.$comment);
-        $this->connector->commit('Invoice', (string) $data['id'], $action, 'Shopify API', 'Shopify Invoice was '.$comment);
+        $this->connector->commit(
+            'Order',
+            (string) $data['id'],
+            $action,
+            'Shopify API',
+            'Shopify Order was '.$comment
+        );
+        $this->connector->commit(
+            'Invoice',
+            (string) $data['id'],
+            $action,
+            'Shopify API',
+            'Shopify Invoice was '.$comment
+        );
     }
 
     /**

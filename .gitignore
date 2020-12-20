@@ -17,3 +17,4 @@
 /.gh-pages/
 /docs/yarn.lock
 /reboot.sh
+/.idea/
