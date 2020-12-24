@@ -38,7 +38,7 @@ trait StatusTrait
             ->AddChoice("OrderInTransit", "Shipped")
             ->AddChoice("OrderProcessing", "Pending")
             ->AddChoice("OrderDelivered", "Delivered")
-                ;
+        ;
     }
 
     /**
@@ -72,5 +72,22 @@ trait StatusTrait
         }
 
         unset($this->in[$key]);
+    }
+
+    /**
+     * Write Given Fields
+     *
+     * @param string $fieldName Field Identifier / Name
+     * @param mixed  $fieldData Field Data
+     *
+     * @return void
+     */
+    protected function setStatusFields($fieldName, $fieldData): void
+    {
+        if ('status' != $fieldName) {
+            return;
+        }
+
+        unset($this->in[$fieldName]);
     }
 }

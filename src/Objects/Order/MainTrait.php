@@ -35,11 +35,13 @@ trait MainTrait
     protected function buildMainFields(): void
     {
         //====================================================================//
-        // Delivry Estimated Date
+        // Delivery Estimated Date
         $this->fieldsFactory()->create(SPL_T_DATE)
             ->Identifier("closed_at")
             ->Name("Closed Date")
-            ->MicroData("http://schema.org/ParcelDelivery", "expectedArrivalUntil");
+            ->MicroData("http://schema.org/ParcelDelivery", "expectedArrivalUntil")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // PRICES INFORMATIONS

@@ -15,76 +15,71 @@
 
 namespace Splash\Connectors\Shopify\Objects\Order;
 
-trait ShippingTrait
+use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
+use Splash\Core\SplashCore as Splash;
+
+trait FulfillmentTrait
 {
     /**
      * @var string
      */
-    private static $shippingListName = "shipping";
+    private static $fulfillmentListName = "fulfillments";
 
     /**
      * Build Fields using FieldFactory
      *
      * @return void
      */
-    protected function buildShippingFields(): void
+    protected function buildFulfillmentFields(): void
     {
         //====================================================================//
         // Check if Logistic Mode is Active
         if (!$this->connector->hasLogisticMode()) {
             return;
         }
-
         //====================================================================//
-        // Shipping Title
+        // Tracking Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("title")
-            ->Name("Name")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
-            ->MicroData("http://schema.org/ParcelDelivery", "name")
+            ->identifier("status")
+            ->name("Status")
+            ->inList(self::$fulfillmentListName)
+            ->group(ucfirst(self::$fulfillmentListName))
             ->isReadOnly()
         ;
-
         //====================================================================//
-        // Shipping Code
+        // Tracking Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("code")
-            ->Name("Code")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
-            ->MicroData("http://schema.org/ParcelDelivery", "provider")
+            ->identifier("shipment_status")
+            ->name("Shipping Status")
+            ->inList(self::$fulfillmentListName)
+            ->group(ucfirst(self::$fulfillmentListName))
             ->isReadOnly()
         ;
-
         //====================================================================//
-        // Shipping Source
+        // Tracking Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("source")
-            ->Name("Source")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
+            ->identifier("tracking_company")
+            ->name("Company")
+            ->inList(self::$fulfillmentListName)
+            ->group(ucfirst(self::$fulfillmentListName))
             ->isReadOnly()
         ;
-
         //====================================================================//
-        // Shipping Price
+        // Tracking Number
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("price")
-            ->Name("Price")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
+            ->identifier("tracking_number")
+            ->name("Tracking Number")
+            ->inList(self::$fulfillmentListName)
+            ->group(ucfirst(self::$fulfillmentListName))
             ->isReadOnly()
         ;
-
         //====================================================================//
-        // Shipping Carrier ID
+        // Tracking Url
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("carrier_identifier")
-            ->Name("Carrier ID")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
-            ->MicroData("http://schema.org/ParcelDelivery", "identifier")
+            ->identifier("tracking_url")
+            ->name("Tracking Url")
+            ->inList(self::$fulfillmentListName)
+            ->group(ucfirst(self::$fulfillmentListName))
             ->isReadOnly()
         ;
     }
@@ -97,11 +92,11 @@ trait ShippingTrait
      *
      * @return void
      */
-    protected function getShippingFields($key, $fieldName): void
+    protected function getFulfillmentFields($key, $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
-        $fieldId = self::lists()->InitOutput($this->out, self::$shippingListName, $fieldName);
+        $fieldId = self::lists()->initOutput($this->out, self::$fulfillmentListName, $fieldName);
         if (!$fieldId) {
             return;
         }
@@ -109,30 +104,30 @@ trait ShippingTrait
         //====================================================================//
         // Parse Order Shipping
         //====================================================================//
-        if (!is_array($this->object->shipping_lines)) {
+        if (!is_array($this->object->fulfillments)) {
             unset($this->in[$key]);
 
             return;
         }
         //====================================================================//
         // Fill List with Data
-        foreach ($this->object->shipping_lines as $index => $shippingLine) {
+        foreach ($this->object->fulfillments as $index => $fulfillment) {
             //====================================================================//
             // READ Fields
             switch ($fieldId) {
-                case 'title':
-                case 'code':
-                case 'source':
-                case 'price':
-                case 'carrier_identifier':
+                case 'status':
+                case 'tracking_company':
+                case 'tracking_number':
+                case 'tracking_url':
+                case 'shipment_status':
                     //====================================================================//
                     // Insert Data in List
                     self::lists()->insert(
                         $this->out,
-                        self::$shippingListName,
+                        self::$fulfillmentListName,
                         $fieldName,
                         $index,
-                        isset($shippingLine[$fieldId]) ? $shippingLine[$fieldId] : null
+                        isset($fulfillment[$fieldId]) ? $fulfillment[$fieldId] : null
                     );
                     break;
                 default:
@@ -141,22 +136,5 @@ trait ShippingTrait
         }
 
         unset($this->in[$key]);
-    }
-
-    /**
-     * Get Order Main Shipping Code
-     *
-     * @return null|string
-     */
-    private function getMainShippingCode(): ?string
-    {
-        if (!isset($this->object->shipping_lines[0]["code"])) {
-            return null;
-        }
-        if (empty($this->object->shipping_lines[0]["code"])) {
-            return null;
-        }
-
-        return (string) $this->object->shipping_lines[0]["code"];
     }
 }

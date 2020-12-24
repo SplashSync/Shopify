@@ -37,7 +37,9 @@ trait ItemsTrait
             ->Name("Description")
             ->Group("Items")
             ->MicroData("http://schema.org/partOfInvoice", "description")
-            ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // Order Line Product Identifier
@@ -47,7 +49,9 @@ trait ItemsTrait
             ->Name("Product")
             ->Group("Items")
             ->MicroData("http://schema.org/Product", "productID")
-            ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // Order Line Quantity
@@ -57,7 +61,9 @@ trait ItemsTrait
             ->Name("Quantity")
             ->Group("Items")
             ->MicroData("http://schema.org/QuantitativeValue", "value")
-            ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // Order Line Discount
@@ -67,7 +73,9 @@ trait ItemsTrait
             ->Name("Discount %")
             ->Group("Items")
             ->MicroData("http://schema.org/Order", "discount")
-            ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // Order Line Unit Price
@@ -77,7 +85,9 @@ trait ItemsTrait
             ->Name("Unit Price")
             ->Group("Items")
             ->MicroData("http://schema.org/PriceSpecification", "price")
-            ->Association("title@lines", "quantity@lines", "price@lines");
+            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // Order Line Tax Name
@@ -88,7 +98,8 @@ trait ItemsTrait
             ->Group("Items")
             ->MicroData("http://schema.org/PriceSpecification", "valueAddedTaxName")
             ->Association("title@lines", "quantity@lines", "price@lines")
-                ;
+            ->isReadOnly()
+        ;
     }
 
     /**

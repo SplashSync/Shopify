@@ -35,5 +35,6 @@ class ExtendedEditFormType extends AbstractShopifyType
         $this->addWsHost($builder);
         $this->addWarehouseField($builder, $options);
         $this->addTokenField($builder, $options);
+        $this->addLogisticFields($builder, $options);
     }
 }

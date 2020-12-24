@@ -18,6 +18,7 @@ namespace Splash\Connectors\Shopify\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -97,6 +98,36 @@ abstract class AbstractShopifyType extends AbstractType
                 'label' => 'var.url.label',
                 // 'help_block' => 'var.url.desc',
                 'translation_domain' => 'ShopifyBundle',
+            ))
+        ;
+
+        return $this;
+    }
+
+    /**
+     * Add Logistic Form Fields to FormBuilder
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return self
+     */
+    public function addLogisticFields(FormBuilderInterface $builder, array $options)
+    {
+        //==============================================================================
+        // Check Shopify Locations Lists is Available
+        if (!isset($options["data"]["LogisticMode"]) || empty($options["data"]["LogisticMode"])) {
+            return $this;
+        }
+
+        $builder
+            //==============================================================================
+            // Shopify List Option Selector
+            ->add('LogisticNotify', CheckboxType::class, array(
+                'label' => "var.notify.label",
+                // 'help_block' => "var.notify.desc",
+                'required' => false,
+                'translation_domain' => "ShopifyBundle",
             ))
         ;
 

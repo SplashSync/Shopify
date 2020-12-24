@@ -36,7 +36,9 @@ trait CoreTrait
         // Customer Object
         $this->fieldsFactory()->create((string) self::objects()->Encode("ThirdParty", SPL_T_ID))
             ->Identifier("customer")
-            ->Name("Customer");
+            ->Name("Customer")
+            ->isReadOnly()
+        ;
         if ($this instanceof Invoice) {
             $this->fieldsFactory()->MicroData("http://schema.org/Invoice", "customer");
         } else {

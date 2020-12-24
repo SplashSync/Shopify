@@ -15,24 +15,33 @@
     </li>
 
     {% if selfTest %}
-    <li>
-        <h4 class="font-md {% if connect %}text-success{% else %}text-danger{% endif %}">
-            <i class="fa fa-check"></i>&nbsp;{{ 'admin.connect'| trans }}
-        </h4>
-    </li>
-    
-    <li>
-        {% if connector.verifyWebHooks %}
-        <h4 class="font-md text-success">
-            <i class="fa fa-check"></i>&nbsp;{{ 'admin.webhooks.msg'| trans }}
-        </h4>
-        {% else %}
-        <h4 class="font-md text-danger">
-            <i class="fa fa-times"></i>&nbsp;{{ 'admin.webhooks.err'| trans }}
-        </h4>
+        <li>
+            <h4 class="font-md {% if connect %}text-success{% else %}text-danger{% endif %}">
+                <i class="fa fa-check"></i>&nbsp;{{ 'admin.connect'| trans }}
+            </h4>
+        </li>
+
+        {% if connector.logisticMode %}
+            <li>
+                <h4 class="font-md text-warning">
+                    <i class="fa fa-truck"></i>&nbsp;{{ 'admin.logistic.enabled'| trans }}
+                </h4>
+            </li>
         {% endif %}
-    </li>
-    {% endif %}    
+
+        <li>
+            {% if connector.verifyWebHooks %}
+            <h4 class="font-md text-success">
+                <i class="fa fa-check"></i>&nbsp;{{ 'admin.webhooks.msg'| trans }}
+            </h4>
+            {% else %}
+            <h4 class="font-md text-danger">
+                <i class="fa fa-times"></i>&nbsp;{{ 'admin.webhooks.err'| trans }}
+            </h4>
+            {% endif %}
+        </li>
+
+    {% endif %}
     
 </ul>
     

@@ -343,6 +343,11 @@ class ShopifyConnector extends AbstractConnector
             $webHookServer = "www.splashsync.com";
         }
         //====================================================================//
+        // When Running on a Splash Cloud
+        if (false !== strpos("admin.splashsync.com", $webHookServer)) {
+            $webHookServer = "www.splashsync.com";
+        }
+        //====================================================================//
         // Create Object Class
         $webHookManager = new WebHook($this);
         $webHookManager->configure("webhook", $this->getWebserviceId(), $this->getConfiguration());
@@ -491,6 +496,16 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // Raw Domain was found
         return $wsHost;
+    }
+
+    /**
+     * Check if Shopify Logistic is Enabled.
+     *
+     * @return bool
+     */
+    public function hasLogisticMode(): bool
+    {
+        return !empty($this->getParameter("LogisticMode"));
     }
 
     /**

@@ -31,3 +31,4 @@ splash:
                 WsHost:         api-connector.myshopify.com
                 LocationId:     ThisIsShopifyLocationId
                 Token:          ThisIsShopifyApiToken
+                LogisticMode:   false

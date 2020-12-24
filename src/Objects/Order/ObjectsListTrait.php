@@ -39,7 +39,7 @@ trait ObjectsListTrait
             array("status" => "any")
         );
         //====================================================================//
-        // Request Failled
+        // Request Failed
         if (null === $rawData) {
             return array( 'meta' => array('current' => 0, 'total' => 0));
         }

@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;
@@ -28,7 +29,7 @@ use Splash\Models\Objects\SimpleFieldsTrait;
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class Order extends AbstractObject
+class Order extends AbstractStandaloneObject
 {
     // Splash Php Core Traits
     use IntelParserTrait;
@@ -48,7 +49,9 @@ class Order extends AbstractObject
     use Order\StatusTrait;
     use Order\ItemsTrait;
     use Order\DeliveryTrait;
-//    use Order\ShippingTrait;
+    use Order\ShippingTrait;
+    use Order\FulfillmentTrait;
+    use Order\LogisticModeTrait;
 
     //====================================================================//
     // Object Definition Parameters

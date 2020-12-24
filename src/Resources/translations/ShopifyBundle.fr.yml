@@ -12,7 +12,11 @@ var:
     token:
         label:  Token Publique
         desc:   "La clé d'API Shopify nous permets d'accéder à votre compte."
-        
+
+    notify:
+        label:  Envoyer les Notifications
+        desc:   "Send Notifications on Shipping status Changes."
+
 ## Node Profile
 profile:
     connection:
@@ -30,3 +34,5 @@ admin:
         desc:   Détecte et Configure les WebHooks pour Splash Sync
         msg:    Configuration des WebHooks Réussie
         err:    La Configuration des WebHooks a échouée
+    logistic:
+        enabled:    Le mode Logicticien est activé

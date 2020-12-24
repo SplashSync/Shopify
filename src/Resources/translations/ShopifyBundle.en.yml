@@ -13,6 +13,10 @@ var:
         label:  Public API Token
         desc:   "API Token provide full access to your account, so keep it safe."
         
+    notify:
+        label:  Send Notifications
+        desc:   "Send Notifications on Shipping status Changes."
+
 ## Node Profile
 profile:
     connection:
@@ -30,4 +34,6 @@ admin:
         desc:   Detect & Update Splash Sync WebHooks Configuration
         msg:    WebHook Configuration Updated
         err:    Update of WebHooks Configuration Failed
+    logistic:
+        enabled:    Logictic Mode is Enabled
       

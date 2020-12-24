@@ -45,6 +45,8 @@ trait CRUDTrait
             return Splash::log()->errTrace("Unable to load Order/Invoice (".$objectId.").");
         }
 
+        dump($object);
+
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
     }
 
@@ -76,8 +78,21 @@ trait CRUDTrait
         //====================================================================//
         // Stack Trace
         Splash::log()->trace();
+        $objectId = (string) $this->getObjectIdentifier();
 
-        return Splash::log()->err("Splash API Cannot Update Shopify Orders!");
+        //====================================================================//
+        // Order Information Update is Forbidden
+        if ($this->isToUpdate('fulfillments')) {
+            $this->updateFulfillment();
+        }
+
+        //====================================================================//
+        // Order Information Update is Forbidden
+        if ($needed) {
+            return Splash::log()->err("Splash API Cannot Update Shopify Orders!");
+        }
+
+        return $this->getObjectIdentifier();
     }
 
     /**
