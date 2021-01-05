@@ -15,4 +15,3 @@ splash:
                 WsHost:         ThisIsShopUrl
                 Token:          ThisIsSecretToken
                 LocationId:     ThisIsLocationId
-

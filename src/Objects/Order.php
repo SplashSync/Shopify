@@ -148,4 +148,15 @@ class Order extends AbstractStandaloneObject
     {
         $this->connector = $connector;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function description()
+    {
+        static::$ALLOW_PUSH_UPDATED = $this->connector->hasLogisticMode();
+        static::$ENABLE_PUSH_UPDATED = static::$ALLOW_PUSH_UPDATED;
+
+        return parent::description();
+    }
 }

@@ -140,11 +140,11 @@ trait StatusTrait
     /**
      * Decode Splash Status from Order Informations
      *
-     * @param bool $confirmed
+     * @param bool                 $confirmed
      * @param null|DateTime|string $cancelledAt
-     * @param string|null $paymentStatus
-     * @param null|string $fulfillmentStatus
-     * @param null|string $shipmentStatus
+     * @param null|string          $paymentStatus
+     * @param null|string          $fulfillmentStatus
+     * @param null|string          $shipmentStatus
      *
      * @return string
      *
