@@ -47,6 +47,7 @@ stages:
         - sed -i -e 's/ThisIsShopUrl/'$SH_SHOP_URL'/g' tests/config/splash.yml >/dev/null 2>&1
         - sed -i -e 's/ThisIsSecretToken/'$SH_API_TOKEN'/g' tests/config/splash.yml >/dev/null 2>&1
         - sed -i -e 's/ThisIsLocationId/'$SH_LOC_ID'/g' tests/config/splash.yml >/dev/null 2>&1
+        - cat tests/config/splash.yml
         # Setup Travis
         - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/configure.sh  | sh
         # Deploy Symfony Files
