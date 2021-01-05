@@ -45,8 +45,6 @@ trait CRUDTrait
             return Splash::log()->errTrace("Unable to load Order/Invoice (".$objectId.").");
         }
 
-        dump($object);
-
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
     }
 
@@ -69,7 +67,7 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return bool Object Id
+     * @return bool|string Object Id
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -78,12 +76,13 @@ trait CRUDTrait
         //====================================================================//
         // Stack Trace
         Splash::log()->trace();
-        $objectId = (string) $this->getObjectIdentifier();
 
         //====================================================================//
         // Order Information Update is Forbidden
         if ($this->isToUpdate('fulfillments')) {
-            $this->updateFulfillment();
+            if (method_exists($this, 'updateFulfillment')) {
+                $this->updateFulfillment();
+            }
         }
 
         //====================================================================//

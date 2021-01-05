@@ -37,7 +37,7 @@
     
     
     "require": {
-        "php":                                          "^7.1",
+        "php":                                          "^7.3",
         "splash/php-bundle":                            "dev-master",
         "slince/shopify-api-php":                       "^2.4.3",
         "knpuniversity/oauth2-client-bundle":           ">1.0",

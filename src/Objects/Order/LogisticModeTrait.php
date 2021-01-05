@@ -25,7 +25,6 @@ trait LogisticModeTrait
      */
     protected static $fulfillmentFields = array(
         "status",
-//        "shipment_status",
         "tracking_company", "tracking_number", "tracking_url",
         "location_id", "notify_customer",
     );
@@ -45,15 +44,16 @@ trait LogisticModeTrait
         //====================================================================//
         // Tracking Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->identifier("shipment_status")
-            ->name("Status")
+            ->identifier("tracking_company")
+            ->name("Carrier")
+            ->MicroData("http://schema.org/ParcelDelivery", "identifier")
             ->isReadOnly()
         ;
         //====================================================================//
         // Tracking Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->identifier("tracking_company")
-            ->name("Company")
+            ->identifier("shipment_status")
+            ->name("Shipping Status")
             ->isReadOnly()
         ;
         //====================================================================//
@@ -85,11 +85,14 @@ trait LogisticModeTrait
         //====================================================================//
         // READ Fields
         switch ($fieldName) {
-            case 'tracking_company':
             case 'tracking_number':
             case 'tracking_url':
             case 'shipment_status':
                 $this->out[$fieldName] = $this->getLogisticalField($fieldName);
+
+                break;
+            case 'tracking_company':
+                $this->out[$fieldName] = $this->getMainShippingCode();
 
                 break;
             default:
@@ -112,17 +115,9 @@ trait LogisticModeTrait
         //====================================================================//
         // WRITE Field
         switch ($fieldName) {
-            case 'tracking_company':
             case 'tracking_number':
             case 'tracking_url':
                 $this->setMainFulfillmentField($fieldName, $fieldData);
-
-                break;
-            case 'shipment_status':
-
-
-                $this->setMainFulfillmentField("status", "pending");
-//                $this->setMainFulfillmentField("shipment_status", "confirmed");
 
                 break;
             default:
@@ -132,35 +127,18 @@ trait LogisticModeTrait
     }
 
     /**
-     * Update Request Object
+     * Update Order Fulfillment Status
      *
-     * @param bool $needed Is This Update Needed
-     *
-     * @return bool Object Id
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return bool
      */
-    protected function updateFulfillment()
+    protected function updateFulfillment(): bool
     {
         //====================================================================//
         // Search for first Active Item
         $index = $this->getFirstFulfillmentIndex();
-
-//        dump($this->getMainFulfillmentUri());
-//        dump($this->object->fulfillments[$index]);
-//        exit;
-
-//        API::post($this->getMainFulfillmentUri()."/complete", array());
-
-//        unset($this->object->fulfillments[0]["status"]);
-//        unset($this->object->fulfillments[0]["tracking_numbers"]);
-//        unset($this->object->fulfillments[0]["tracking_urls"]);
-//        unset($this->object->fulfillments[0]["line_items"]);
-//        unset($this->object->fulfillments[0]["shipment_status"]);
-//
-//
-//        $this->object->fulfillments[0]["status"] = "pending";
-
+        if (is_null($index)) {
+            return false;
+        }
         //====================================================================//
         // Extract Fulfillment for Update
         $data = array(
@@ -169,44 +147,35 @@ trait LogisticModeTrait
                 array_flip(self::$fulfillmentFields)
             )
         );
-        $data["fulfillment"]["status"] = "pending";
-//        $data["fulfillment"]["shipment_status"] = "confirmed";
-
         //====================================================================//
-        // Update Fulfillment
-dump(isset($this->object->fulfillments[$index]["id"]));
-
+        // Create/Update Fulfillment
         $result = isset($this->object->fulfillments[$index]["id"])
             ? API::put($this->getMainFulfillmentUri(), $data)
             : API::post($this->getMainFulfillmentUri(), $data)
         ;
-
-        API::post($this->getMainFulfillmentUri()."/events", array(
-            "event" => array(
-                "status" => "attempted_delivery"
-            )
-        ));
-
-//        dump($this->object->fulfillments[0]);
-
-
-
-        dump($data);
-        dump($result["fulfillment"]);
-        echo Splash::log()->getHtmlLog();
-        exit;
-
-        //====================================================================//
-        // Detect Errors
         if (null === $result) {
-            return Splash::log()->errTrace(
-                "Unable to Update Customer Order (".$this->getObjectIdentifier().")."
-            );
+            return Splash::log()->errTrace("Unable to create/update Order Fulfillment.");
         }
+        //====================================================================//
+        // Update Fulfillment Status
+        if (isset($this->object->fulfillments[$index]["new_shipment_status"])) {
+            $statusUpdate = API::post($this->getFulfillmentEventUri($result["fulfillment"]), array(
+                "event" => array(
+                    "status" => $this->object->fulfillments[$index]["new_shipment_status"]
+                )
+            ));
+            if (null === $statusUpdate) {
+                return Splash::log()->errTrace("Unable to Update Order Shipping Status.");
+            }
+        }
+
+        return true;
     }
 
     /**
      * Get Order First Fulfillment Line Field
+     *
+     * @param string $fieldName
      *
      * @return null|string
      */
@@ -225,30 +194,33 @@ dump(isset($this->object->fulfillments[$index]["id"]));
     /**
      * Set Order First Fulfillment Line Field
      *
-     * @return bool
+     * @param string $fieldName
+     * @param string $fieldData
+     *
+     * @return void
      */
-    private function setMainFulfillmentField(string $fieldName, $fieldData): void
+    private function setMainFulfillmentField(string $fieldName, string $fieldData): void
     {
+        //====================================================================//
+        // Safety Check
+        if (empty($fieldData)) {
+            return;
+        }
         //====================================================================//
         // Search for first Active Item
         $index = $this->getFirstFulfillmentIndex();
         //====================================================================//
         // Check if Fulfillment Exists
-        if (is_null($index) ) {
+        if (is_null($index)) {
             //====================================================================//
-            // Check if Product Default Stock Location is Selected
-            $locationId = $this->getParameter("LocationId");
-            if (empty($locationId)) {
-                Splash::log()->err('No Default Product Stock Location Selected : Order Update Skipped!!');
+            // Create a New Fulfillment
+            if (!$this->addNewFulfillment()) {
+                return;
             }
-            $this->object->fulfillments[] = array(
-                "location_id" => $locationId,
-                "notify_customer" => false,
-            );
             $index = $this->getFirstFulfillmentIndex();
         }
         //====================================================================//
-        // Check if Field Exists
+        // Check if Field Exists (To Compare)
         if (!isset($this->object->fulfillments[$index][$fieldName])
             || ($this->object->fulfillments[$index][$fieldName] != $fieldData)) {
             $this->object->fulfillments[$index][$fieldName] = $fieldData;
@@ -275,6 +247,18 @@ dump(isset($this->object->fulfillments[$index]["id"]));
     }
 
     /**
+     * Get Main Fulfillment CRUD Base Uri
+     *
+     * @return string
+     */
+    private function getFulfillmentEventUri(array $fulfillment) : string
+    {
+        $uri = 'orders/'.$this->getObjectIdentifier()."/fulfillments";
+        $uri .= "/".$fulfillment["id"]."/events";
+
+        return $uri;
+    }
+    /**
      * Get First Fulfillment CRUD Base Uri
      *
      * @return null|int
@@ -289,8 +273,8 @@ dump(isset($this->object->fulfillments[$index]["id"]));
         //====================================================================//
         // Search for first Active Item
         /** @var array $fulfillment */
-        foreach($this->object->fulfillments as $index => $fulfillment) {
-            if (isset($fulfillment['status']) && $fulfillment['status'] == "cancelled") {
+        foreach ($this->object->fulfillments as $index => $fulfillment) {
+            if (isset($fulfillment['status']) && "cancelled" == $fulfillment['status']) {
                 continue;
             }
 
@@ -299,7 +283,6 @@ dump(isset($this->object->fulfillments[$index]["id"]));
 
         return null;
     }
-
 
     /**
      * Add a New Fulfillment Line
@@ -328,12 +311,10 @@ dump(isset($this->object->fulfillments[$index]["id"]));
         // Check if Product Default Stock Location is Selected
         $this->object->fulfillments[] = array(
             "location_id" => $locationId,
-            "tracking_company" => false,
+            "tracking_company" => $trackingCompany,
             "notify_customer" => (bool) $this->getParameter("LogisticNotify", false),
         );
 
         return true;
     }
-
-
 }

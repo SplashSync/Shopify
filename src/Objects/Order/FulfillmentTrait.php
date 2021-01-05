@@ -15,9 +15,6 @@
 
 namespace Splash\Connectors\Shopify\Objects\Order;
 
-use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
-use Splash\Core\SplashCore as Splash;
-
 trait FulfillmentTrait
 {
     /**
@@ -91,6 +88,8 @@ trait FulfillmentTrait
      * @param string $fieldName Field Identifier / Name
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getFulfillmentFields($key, $fieldName): void
     {
@@ -129,6 +128,7 @@ trait FulfillmentTrait
                         $index,
                         isset($fulfillment[$fieldId]) ? $fulfillment[$fieldId] : null
                     );
+
                     break;
                 default:
                     return;

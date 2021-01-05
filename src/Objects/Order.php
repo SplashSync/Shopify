@@ -17,7 +17,6 @@ namespace Splash\Connectors\Shopify\Objects;
 
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;
 use Splash\Models\Objects\ListsTrait;
 use Splash\Models\Objects\ObjectsTrait;
@@ -47,6 +46,7 @@ class Order extends AbstractStandaloneObject
     use Order\CoreTrait;
     use Order\MainTrait;
     use Order\StatusTrait;
+    use Order\StatusFlagsTrait;
     use Order\ItemsTrait;
     use Order\DeliveryTrait;
     use Order\ShippingTrait;

@@ -42,12 +42,14 @@ class Invoice extends AbstractObject
 
     // Shopify Orders Traits
     use Order\CRUDTrait;
-    use Order\ObjectsListTrait;
     use Order\CoreTrait;
     use Order\MainTrait;
-    use Order\StatusTrait;
     use Order\ItemsTrait;
-    use Order\PaymentsTrait;
+
+    // Shopify Invoices Traits
+    use Invoice\StatusTrait;
+    use Invoice\PaymentsTrait;
+    use Invoice\ObjectsListTrait;
 
     //====================================================================//
     // Object Definition Parameters

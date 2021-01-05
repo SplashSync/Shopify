@@ -150,7 +150,10 @@ trait DeliveryTrait
         }
         //====================================================================//
         // Direct Readings
-        $this->out[$fieldName] = $this->object->shipping_address[$fieldName];
+        $this->out[$fieldName] = isset($this->object->shipping_address)
+            ? $this->object->shipping_address[$fieldName]
+            : null
+        ;
         unset($this->in[$key]);
     }
 
@@ -170,9 +173,12 @@ trait DeliveryTrait
             //====================================================================//
             // Delivery Contact Full Name
             case 'fullname':
-                $this->out[$fieldName] = $this->object->shipping_address["first_name"];
-                $this->out[$fieldName] .= " ";
-                $this->out[$fieldName] .= $this->object->shipping_address["last_name"];
+                $this->out[$fieldName] = "";
+                if (isset($this->object->shipping_address)) {
+                    $this->out[$fieldName] = $this->object->shipping_address["first_name"];
+                    $this->out[$fieldName] .= " ";
+                    $this->out[$fieldName] .= $this->object->shipping_address["last_name"];
+                }
 
                 break;
             case 'note':

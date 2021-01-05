@@ -13,13 +13,13 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\Order;
+namespace   Splash\Connectors\Shopify\Objects\Invoice;
 
 use Slince\Shopify\Manager\Order\Order;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
- * Shopify Product List Functions
+ * Shopify Invoice List Functions
  */
 trait ObjectsListTrait
 {
@@ -41,7 +41,7 @@ trait ObjectsListTrait
         //====================================================================//
         // Request Failed
         if (null === $rawData) {
-            return array( 'meta' => array('current' => 0, 'total' => 0));
+            return array( 'meta' => array('total' => 0, 'current' => 0));
         }
         //====================================================================//
         // Compute Totals
@@ -56,39 +56,16 @@ trait ObjectsListTrait
                 'id' => $order->getId(),
                 'name' => $order->getName(),
                 'created_at' => self::toDateTimeString($order->getProcessedAt()),
-                'updated_at' => self::toDateTimeString($order->getUpdatedAt()),
                 'processed_at' => self::toDateTimeString($order->getProcessedAt()),
+                'updated_at' => self::toDateTimeString($order->getUpdatedAt()),
                 'status' => self::getSplashStatus(
                     $order->isConfirmed(),
                     $order->getCancelledAt(),
-                    $order->getFinancialStatus(),
-                    $order->getFulfillmentStatus(),
-                    $this->getObjectListShippingStatus($order)
+                    $order->getFinancialStatus()
                 ),
             );
         }
 
         return $response;
-    }
-
-    /**
-     * Get First Active Fulfillment Shipping Status
-     *
-     * @param Order $order
-     *
-     * @return null|string
-     */
-    private function getObjectListShippingStatus(Order $order) : ?string
-    {
-        foreach ($order->getFulfillments() as $fulfillment) {
-            $shipmentStatus = $fulfillment->getShipmentStatus();
-            if ("cancelled" == $shipmentStatus) {
-                continue;
-            }
-
-            return $shipmentStatus;
-        }
-
-        return null;
     }
 }

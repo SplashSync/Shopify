@@ -13,9 +13,10 @@
  *  file that was distributed with this source code.
  */
 
-namespace Splash\Connectors\Shopify\Objects\Order;
+namespace Splash\Connectors\Shopify\Objects\Invoice;
 
 use DateTime;
+use Exception;
 
 /**
  * Access to Orders Payments Fields
@@ -58,7 +59,7 @@ trait PaymentsTrait
             ->MicroData("http://schema.org/Invoice", "PaymentMethod")
             ->Group("Payments")
             ->isReadOnly()
-                ;
+        ;
 
         //====================================================================//
         // Payment Line Date
@@ -69,7 +70,7 @@ trait PaymentsTrait
             ->MicroData("http://schema.org/PaymentChargeSpecification", "validFrom")
             ->Group("Payments")
             ->isReadOnly()
-                ;
+        ;
 
         //====================================================================//
         // Payment Line Payment Identifier
@@ -80,7 +81,7 @@ trait PaymentsTrait
             ->MicroData("http://schema.org/Invoice", "paymentMethodId")
             ->Group("Payments")
             ->isReadOnly()
-                ;
+        ;
 
         //====================================================================//
         // Payment Line Amount
@@ -91,7 +92,7 @@ trait PaymentsTrait
             ->MicroData("http://schema.org/PaymentChargeSpecification", "price")
             ->Group("Payments")
             ->isReadOnly()
-                ;
+        ;
     }
 
     /**
@@ -99,6 +100,8 @@ trait PaymentsTrait
      *
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
+     *
+     * @throws Exception
      *
      * @return void
      */

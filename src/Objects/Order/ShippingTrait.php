@@ -96,6 +96,8 @@ trait ShippingTrait
      * @param string $fieldName Field Identifier / Name
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getShippingFields($key, $fieldName): void
     {
@@ -134,6 +136,7 @@ trait ShippingTrait
                         $index,
                         isset($shippingLine[$fieldId]) ? $shippingLine[$fieldId] : null
                     );
+
                     break;
                 default:
                     return;

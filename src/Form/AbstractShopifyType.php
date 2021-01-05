@@ -16,9 +16,9 @@
 namespace Splash\Connectors\Shopify\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -85,26 +85,6 @@ abstract class AbstractShopifyType extends AbstractType
     }
 
     /**
-     * Add Remote Host Url Field.
-     *
-     * @param FormBuilderInterface $builder
-     *
-     * @return self
-     */
-    protected function addWsHost(FormBuilderInterface $builder)
-    {
-        $builder
-            ->add('WsHost', TextType::class, array(
-                'label' => 'var.url.label',
-                // 'help_block' => 'var.url.desc',
-                'translation_domain' => 'ShopifyBundle',
-            ))
-        ;
-
-        return $this;
-    }
-
-    /**
      * Add Logistic Form Fields to FormBuilder
      *
      * @param FormBuilderInterface $builder
@@ -128,6 +108,26 @@ abstract class AbstractShopifyType extends AbstractType
                 // 'help_block' => "var.notify.desc",
                 'required' => false,
                 'translation_domain' => "ShopifyBundle",
+            ))
+        ;
+
+        return $this;
+    }
+
+    /**
+     * Add Remote Host Url Field.
+     *
+     * @param FormBuilderInterface $builder
+     *
+     * @return self
+     */
+    protected function addWsHost(FormBuilderInterface $builder)
+    {
+        $builder
+            ->add('WsHost', TextType::class, array(
+                'label' => 'var.url.label',
+                // 'help_block' => 'var.url.desc',
+                'translation_domain' => 'ShopifyBundle',
             ))
         ;
 
