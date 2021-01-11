@@ -177,8 +177,9 @@ class ShopifyConnector extends AbstractConnector
         // Verify Host is Set
         //====================================================================//
         if (!isset($config["WsHost"]) || empty($config["WsHost"]) || !is_string($config["WsHost"])) {
-            Splash::log()->err("Shop Url is Invalid");
-
+            return Splash::log()->err("Shop Url is Empty or Invalid");
+        }
+        if (!self::isValidShopifyHost($config["WsHost"])) {
             return false;
         }
 
@@ -186,9 +187,7 @@ class ShopifyConnector extends AbstractConnector
         // Verify Token is Set
         //====================================================================//
         if (!isset($config["Token"]) || empty($config["Token"]) || !is_string($config["Token"])) {
-            Splash::log()->err("Shop Credential (App Token) is Invalid");
-
-            return false;
+            return Splash::log()->err("Shop Credential (App Token) is Invalid");
         }
 
         //====================================================================//
@@ -508,6 +507,50 @@ class ShopifyConnector extends AbstractConnector
         return !empty($this->getParameter("LogisticMode"));
     }
 
+    //====================================================================//
+    //  LOW LEVEL PRIVATE FUNCTIONS
+    //====================================================================//
+
+    /**
+     * Validate Shop Url
+     *
+     * @param string $wsHost
+     *
+     * @return bool
+     */
+    public static function isValidShopifyHost(string $wsHost) : bool
+    {
+        //====================================================================//
+        // Url can't be empty
+        if (empty($wsHost)) {
+            return Splash::log()->err("Shop Url is Empty. Please open configuration and fill your shop Url");
+        }
+        //====================================================================//
+        // Explode Url
+        $urlParts = parse_url($wsHost);
+        if (!is_array($urlParts)) {
+            return Splash::log()->err("Unable to decode Shop Url.");
+        }
+        //====================================================================//
+        // Validate Extra Parts
+        if (count(array_keys($urlParts)) > 1) {
+            Splash::log()->err("Shop Url should only include shopify admin domain.");
+
+            return Splash::log()->err("Please remove schema (https://), ports (:80), or extra parameters.");
+        }
+        //====================================================================//
+        // Validate Subdomain
+        if (!isset($urlParts["path"])) {
+            return Splash::log()->err("Unable to detect Shop Url.");
+        }
+        $urlParts["path"] = strtolower($urlParts["path"]);
+        if (false === strpos($urlParts["path"], ".myshopify.com")) {
+            return Splash::log()->err("Shop Url must alike your-shop.myshopify.com.");
+        }
+
+        return true;
+    }
+
     /**
      * Check & Update Shopify Api Account WebHook Configuration.
      *
@@ -552,10 +595,6 @@ class ShopifyConnector extends AbstractConnector
         // Add Splash WebHooks
         return (false !== $manager->create($webhookUrl, $topic));
     }
-
-    //====================================================================//
-    //  LOW LEVEL PRIVATE FUNCTIONS
-    //====================================================================//
 
     /**
      * Get Shopify Shop Countries Informations
