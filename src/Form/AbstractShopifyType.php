@@ -47,7 +47,7 @@ abstract class AbstractShopifyType extends AbstractType
             // Shopify List Option Selector
             ->add('LocationId', ChoiceType::class, array(
                 'label' => "var.location.label",
-                // 'help_block' => "var.location.desc",
+                'help' => "var.location.desc",
                 'required' => true,
                 'translation_domain' => "ShopifyBundle",
                 'choice_translation_domain' => false,
@@ -75,7 +75,7 @@ abstract class AbstractShopifyType extends AbstractType
             // Shopify Api Key Option Authentification
             ->add('Token', TextType::class, array(
                 'label' => "var.token.label",
-                // 'help_block' => "var.token.desc",
+                'help' => "var.token.desc",
                 'required' => false,
                 'translation_domain' => "ShopifyBundle",
             ))
@@ -105,7 +105,7 @@ abstract class AbstractShopifyType extends AbstractType
             // Shopify List Option Selector
             ->add('LogisticNotify', CheckboxType::class, array(
                 'label' => "var.notify.label",
-                // 'help_block' => "var.notify.desc",
+                'help' => "var.notify.desc",
                 'required' => false,
                 'translation_domain' => "ShopifyBundle",
             ))
@@ -126,7 +126,7 @@ abstract class AbstractShopifyType extends AbstractType
         $builder
             ->add('WsHost', TextType::class, array(
                 'label' => 'var.url.label',
-                // 'help_block' => 'var.url.desc',
+                'help' => 'var.url.desc',
                 'translation_domain' => 'ShopifyBundle',
             ))
         ;

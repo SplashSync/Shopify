@@ -3,7 +3,7 @@
 var:
     url:
         label:  Domaine
-        desc:   "Adresse de la boutique"
+        desc:   "Adresse de la boutique. Au format your-shop.myshopify.com."
         
     location:
         label:  Stock par défaut

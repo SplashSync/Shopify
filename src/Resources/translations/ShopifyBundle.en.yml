@@ -3,7 +3,7 @@
 var:
     url:
         label:  Shop Url
-        desc:   "Public Url of your Shop"
+        desc:   "Public Url of your Shop. Must by like your-shop.myshopify.com."
         
     location:
         label:  Default Stock
