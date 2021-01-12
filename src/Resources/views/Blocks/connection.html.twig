@@ -59,7 +59,7 @@
     {{ 'admin.webhooks.label' | trans }}
 </a>
     
-{% elseif selfTest %}
+{% elseif connector.hasValidShopifyHost %}
     
 <a 
     id="node-webhooks-btn" class="btn-lg btn-block btn-primary text-center" 

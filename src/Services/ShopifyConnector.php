@@ -179,9 +179,6 @@ class ShopifyConnector extends AbstractConnector
         if (!isset($config["WsHost"]) || empty($config["WsHost"]) || !is_string($config["WsHost"])) {
             return Splash::log()->err("Shop Url is Empty or Invalid");
         }
-        if (!self::isValidShopifyHost($config["WsHost"])) {
-            return false;
-        }
 
         //====================================================================//
         // Verify Token is Set
@@ -193,6 +190,26 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // Configure Rest API
         return API::configure($config["WsHost"], $config["Token"]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasValidShopifyHost() : bool
+    {
+        $config = $this->getConfiguration();
+
+        //====================================================================//
+        // Verify Host is Set
+        //====================================================================//
+        if (!isset($config["WsHost"]) || empty($config["WsHost"]) || !is_string($config["WsHost"])) {
+            return false;
+        }
+        if (!self::isValidShopifyHost($config["WsHost"])) {
+            return false;
+        }
+
+        return true;
     }
 
     //====================================================================//
