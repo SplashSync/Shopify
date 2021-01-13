@@ -51,11 +51,6 @@ trait ObjectsListTrait
         /** @var Customer $customer */
         foreach ($rawData as $customer) {
             //====================================================================//
-            // Safety Check
-            if (empty($customer->getId())) {
-                continue;
-            }
-            //====================================================================//
             // Parse Meta Dates to Splash Format
             $response[] = array(
                 'id' => $customer->getId(),
