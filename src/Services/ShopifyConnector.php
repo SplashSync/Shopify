@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Services;
 
 use ArrayObject;
+use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Connectors\GenericObjectMapperTrait;
 use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
@@ -25,6 +26,8 @@ use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Objects\WebHook;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Helpers\ImagesHelper;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -59,6 +62,28 @@ class ShopifyConnector extends AbstractConnector
     protected static $widgetsMap = array(
         "SelfTest" => "Splash\\Connectors\\Shopify\\Widgets\\SelfTest",
     );
+
+    /**
+     * @var string
+     */
+    private $cacheDir;
+
+    /**
+     * Class Constructor
+     *
+     * @param KernelInterface          $appKernel
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param LoggerInterface          $logger
+     */
+    public function __construct(
+        KernelInterface $appKernel,
+        EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger
+    ) {
+        parent::__construct($eventDispatcher, $logger);
+
+        $this->cacheDir = $appKernel->getCacheDir();
+    }
 
     /**
      * {@inheritdoc}
@@ -189,7 +214,7 @@ class ShopifyConnector extends AbstractConnector
 
         //====================================================================//
         // Configure Rest API
-        return API::configure($config["WsHost"], $config["Token"]);
+        return API::configure($config["WsHost"], $config["Token"], $this->cacheDir);
     }
 
     /**

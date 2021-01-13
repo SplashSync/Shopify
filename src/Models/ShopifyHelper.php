@@ -49,24 +49,29 @@ class ShopifyHelper
     /**
      * Configure Shopify REST API
      *
-     * @param string $wsHost
-     * @param string $apiToken
+     * @param string $wsHost   Shopify Admin Url
+     * @param string $apiToken Shopify Shop Token
+     * @param string $cacheDir Symfony Cache Dir
      *
      * @return bool
      */
-    public static function configure(string $wsHost, string $apiToken): bool
+    public static function configure(string $wsHost, string $apiToken, string $cacheDir): bool
     {
         try {
             //====================================================================//
             // Store Current Shop Url
             self::$endpoint = self::validateShopUrl($wsHost);
             //====================================================================//
-            // Store Current Shop Creditials
+            // Store Current Shop Credentials
             self::$credential = new PublicAppCredential($apiToken);
+            //====================================================================//
+            // Build Metadata cache dir, required
+            $metaCacheDir = (is_dir($cacheDir) ? $cacheDir : sys_get_temp_dir()).'/shopify';
+
             //====================================================================//
             // Configure Shopify API Client
             self::$client = new Client(self::$credential, self::$endpoint, array(
-                'metaCacheDir' => sys_get_temp_dir().'/shopify',  // Metadata cache dir, required
+                'metaCacheDir' => $metaCacheDir,
             ));
         } catch (Exception $ex) {
             Splash::log()->err($ex->getMessage());
@@ -78,7 +83,7 @@ class ShopifyHelper
     }
 
     /**
-     * Ping Shopify API Url as Annonymous User
+     * Ping Shopify API Url as Anonymous User
      *
      * @return bool
      */
@@ -128,7 +133,7 @@ class ShopifyHelper
      * Shopify API GET Request
      *
      * @param string      $path     API REST Path
-     * @param string      $objectId Shopify Object Id
+     * @param null|string $objectId Shopify Object Id
      * @param array       $query    Request Query
      * @param null|string $resource Response Resource
      *

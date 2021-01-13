@@ -3,8 +3,8 @@ services:
     # SPLASH Shopify Connector Service
     splash.connectors.shopify:
         class: Splash\Connectors\Shopify\Services\ShopifyConnector
-        arguments:  [ "@event_dispatcher", "@logger" ]
-        tags:       
+        autowire: true
+        tags:
             - { name: "splash.connector"}
 
     ################################################################################

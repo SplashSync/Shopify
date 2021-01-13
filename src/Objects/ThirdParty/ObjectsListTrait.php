@@ -37,7 +37,7 @@ trait ObjectsListTrait
             (!empty($filter) ? array("query" => $filter) : array())
         );
         //====================================================================//
-        // Request Failled
+        // Request Failed
         if (null === $rawData) {
             return array( 'meta' => array('current' => 0, 'total' => 0));
         }
@@ -51,11 +51,16 @@ trait ObjectsListTrait
         /** @var Customer $customer */
         foreach ($rawData as $customer) {
             //====================================================================//
+            // Safety Check
+            if (empty($customer->getId())) {
+                continue;
+            }
+            //====================================================================//
             // Parse Meta Dates to Splash Format
             $response[] = array(
                 'id' => $customer->getId(),
-                'created_at' => $customer->getCreatedAt()->format(SPL_T_DATETIMECAST),
-                'updated_at' => $customer->getUpdatedAt()->format(SPL_T_DATETIMECAST),
+                'created_at' => self::toDateTimeString($customer->getCreatedAt()),
+                'updated_at' => self::toDateTimeString($customer->getUpdatedAt()),
                 'email' => $customer->getEmail(),
                 'phone' => $customer->getPhone(),
             );
