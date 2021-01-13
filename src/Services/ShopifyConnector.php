@@ -71,18 +71,17 @@ class ShopifyConnector extends AbstractConnector
     /**
      * Class Constructor
      *
-     * @param KernelInterface          $appKernel
+     * @param string          $cacheDir
      * @param EventDispatcherInterface $eventDispatcher
      * @param LoggerInterface          $logger
      */
     public function __construct(
-        KernelInterface $appKernel,
+        string $cacheDir,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
         parent::__construct($eventDispatcher, $logger);
-
-        $this->cacheDir = $appKernel->getCacheDir();
+        $this->cacheDir = $cacheDir;
     }
 
     /**

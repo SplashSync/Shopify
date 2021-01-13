@@ -67,7 +67,6 @@ class ShopifyHelper
             //====================================================================//
             // Build Metadata cache dir, required
             $metaCacheDir = (is_dir($cacheDir) ? $cacheDir : sys_get_temp_dir()).'/shopify';
-
             //====================================================================//
             // Configure Shopify API Client
             self::$client = new Client(self::$credential, self::$endpoint, array(

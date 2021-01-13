@@ -4,6 +4,8 @@ services:
     splash.connectors.shopify:
         class: Splash\Connectors\Shopify\Services\ShopifyConnector
         autowire: true
+        arguments:
+            - "%kernel.cache_dir%"
         tags:
             - { name: "splash.connector"}
 
