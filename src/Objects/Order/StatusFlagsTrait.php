@@ -58,7 +58,7 @@ trait StatusFlagsTrait
             ->identifier("isvalidated")
             ->group("Meta")
             ->name("is Validated")
-            ->microData("http://schema.org/OrderStatus", "OrderProcessing")
+            ->microData("http://schema.org/OrderStatus", "OrderValidated")
             ->association("isdraft", "iscanceled", "isvalidated", "isclosed")
             ->isReadOnly();
 

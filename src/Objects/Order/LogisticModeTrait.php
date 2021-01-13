@@ -92,7 +92,8 @@ trait LogisticModeTrait
 
                 break;
             case 'tracking_company':
-                $this->out[$fieldName] = $this->getMainShippingCode();
+                $mainShippingCode = $this->getMainShippingCode();
+                $this->out[$fieldName] = $mainShippingCode ? $mainShippingCode : "Default";
 
                 break;
             default:
