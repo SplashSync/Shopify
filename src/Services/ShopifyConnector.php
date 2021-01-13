@@ -27,7 +27,6 @@ use Splash\Connectors\Shopify\Objects\WebHook;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Helpers\ImagesHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -71,7 +70,7 @@ class ShopifyConnector extends AbstractConnector
     /**
      * Class Constructor
      *
-     * @param string          $cacheDir
+     * @param string                   $cacheDir
      * @param EventDispatcherInterface $eventDispatcher
      * @param LoggerInterface          $logger
      */
