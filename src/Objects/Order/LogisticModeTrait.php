@@ -65,7 +65,7 @@ trait LogisticModeTrait
         ;
         //====================================================================//
         // Tracking Url
-        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+        $this->fieldsFactory()->create(SPL_T_URL)
             ->Identifier("tracking_url")
             ->Name("Tracking Url")
             ->MicroData("http://schema.org/ParcelDelivery", "trackingUrl")
@@ -304,8 +304,9 @@ trait LogisticModeTrait
         // Check if Product Default Stock Location is Selected
         $trackingCompany = $this->getMainShippingCode();
         if (empty($trackingCompany)) {
-            return Splash::log()->err(
-                'Unable to Fulfill this Order: No Shipping method detected'
+            $trackingCompany = "default";
+            Splash::log()->war(
+                'No Shipping method detected. Set to Default.'
             );
         }
         //====================================================================//
