@@ -118,7 +118,7 @@ trait LogisticModeTrait
         switch ($fieldName) {
             case 'tracking_number':
             case 'tracking_url':
-                $this->setMainFulfillmentField($fieldName, $fieldData);
+                $this->setMainFulfillmentField($fieldName, (string) $fieldData);
 
                 break;
             default:
