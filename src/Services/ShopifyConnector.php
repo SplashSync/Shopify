@@ -3,7 +3,7 @@
 /*
  *  This file is part of SplashSync Project.
  *
- *  Copyright (C) 2015-2020 Splash Sync  <www.splashsync.com>
+ *  Copyright (C) 2015-2021 Splash Sync  <www.splashsync.com>
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -544,7 +544,27 @@ class ShopifyConnector extends AbstractConnector
      */
     public function hasLogisticMode(): bool
     {
-        return !empty($this->getParameter("LogisticMode"));
+        return !empty($this->getParameter("LogisticMode", false));
+    }
+
+    /**
+     * Check if Happy Commerce Colissimo Plugin is Enabled.
+     *
+     * @return bool
+     */
+    public function hasHappyColissimoPlugin(): bool
+    {
+        return !empty($this->getParameter("HappyColissimo", false));
+    }
+
+    /**
+     * Check if Mondial Relay Plugin is Enabled.
+     *
+     * @return bool
+     */
+    public function hasMondialRelayPlugin(): bool
+    {
+        return !empty($this->getParameter("MondialRelay", false));
     }
 
     //====================================================================//

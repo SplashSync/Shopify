@@ -36,4 +36,7 @@ admin:
         err:    Update of WebHooks Configuration Failed
     logistic:
         enabled:    Logictic Mode is Enabled
-      
+    happy-colissimo:
+        enabled:    Happy Commerce Colissimo Detection is Enabled
+    mondial-relay:
+        enabled:    Mondial Relay Detection is Enabled

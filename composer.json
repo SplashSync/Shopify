@@ -39,11 +39,10 @@
     "require": {
         "php":                                          "^7.3",
         "splash/php-bundle":                            "dev-master",
-        "slince/shopify-api-php":                       "^2.4.3",
+        "slince/shopify-api-php":                       "^2.6",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
-        "multidimensional/oauth2-shopify":              ">1.0",
-        "nategood/httpful":                             "^0.2|^0.3",
-        "guzzlehttp/psr7":                              "^1.5"
+        "nategood/httpful":                             "^0.3",
+        "guzzlehttp/psr7":                              ">1.5"
     },
     
     "require-dev": {

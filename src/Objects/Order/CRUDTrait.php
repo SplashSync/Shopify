@@ -3,7 +3,7 @@
 /*
  *  This file is part of SplashSync Project.
  *
- *  Copyright (C) 2015-2020 Splash Sync  <www.splashsync.com>
+ *  Copyright (C) 2015-2021 Splash Sync  <www.splashsync.com>
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,6 +16,8 @@
 namespace Splash\Connectors\Shopify\Objects\Order;
 
 use ArrayObject;
+use Splash\Connectors\Shopify\Helpers\HappyCommerceHelper;
+use Splash\Connectors\Shopify\Helpers\MondialRelayHelper;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Core\SplashCore      as Splash;
 
@@ -43,6 +45,18 @@ trait CRUDTrait
         // Fetch Object from Shopify
         if (null === $object) {
             return Splash::log()->errTrace("Unable to load Order/Invoice (".$objectId.").");
+        }
+        //====================================================================//
+        // Override Order Infos with Apps Informations
+        if ($this->connector->hasHappyColissimoPlugin()) {
+            HappyCommerceHelper::apply($object, $this->getMetadataFromApi(
+                "orders/".$objectId."/metafields",
+                HappyCommerceHelper::NAMESPACE,
+                HappyCommerceHelper::KEY,
+            ));
+        }
+        if ($this->connector->hasMondialRelayPlugin()) {
+            MondialRelayHelper::apply($object);
         }
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);

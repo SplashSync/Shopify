@@ -29,6 +29,22 @@
             </li>
         {% endif %}
 
+        {% if connector.happyColissimoPlugin %}
+            <li>
+                <h4 class="font-md text-warning">
+                    <i class="fa fa-truck"></i>&nbsp;{{ 'admin.happy-colissimo.enabled'| trans }}
+                </h4>
+            </li>
+        {% endif %}
+
+        {% if connector.mondialRelayPlugin %}
+            <li>
+                <h4 class="font-md text-warning">
+                    <i class="fa fa-truck"></i>&nbsp;{{ 'admin.mondial-relay.enabled'| trans }}
+                </h4>
+            </li>
+        {% endif %}
+
         <li>
             {% if connector.verifyWebHooks %}
             <h4 class="font-md text-success">
