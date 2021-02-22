@@ -25,6 +25,11 @@ use Splash\Core\SplashCore      as Splash;
 trait CRUDTrait
 {
     /**
+     * @var array
+     */
+    private static $deletedCustomers = array();
+
+    /**
      * Load Request Object
      *
      * @param string $objectId Object id
@@ -37,12 +42,17 @@ trait CRUDTrait
         // Stack Trace
         Splash::log()->trace();
         //====================================================================//
+        // PHPUnit => Check if Id is Deleted Customers
+        if (!empty(Splash::input("SPLASH_TRAVIS")) && in_array($objectId, self::$deletedCustomers, true)) {
+            return Splash::log()->errTrace("Loading Deleted Customer (".$objectId.").");
+        }
+        //====================================================================//
         // Get Customer from Api
         $object = API::get('customers', $objectId, array(), "customer");
         //====================================================================//
         // Fetch Object
         if (null === $object) {
-            return Splash::log()->errTrace(" Unable to load Customer (".$objectId.").");
+            return Splash::log()->errTrace("Unable to load Customer (".$objectId.").");
         }
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
@@ -128,8 +138,14 @@ trait CRUDTrait
         Splash::log()->trace();
         //====================================================================//
         // Delete Customer from Api
-        if (null === API::delete('customers/'.$objectId)) {
+        if (false == API::delete('customers/'.$objectId)) {
             return Splash::log()->errTrace(" Unable to Delete Customer (".$objectId.").");
+        }
+        //====================================================================//
+        // PHPUnit => Store Id of Deleted Customers
+        // Deleted Customers are Still Visible...
+        if (!empty(Splash::input("SPLASH_TRAVIS"))) {
+            self::$deletedCustomers[] = $objectId;
         }
 
         return true;

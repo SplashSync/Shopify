@@ -56,6 +56,7 @@ trait ObjectsListTrait
                 'id' => $customer->getId(),
                 'created_at' => self::toDateTimeString($customer->getCreatedAt()),
                 'updated_at' => self::toDateTimeString($customer->getUpdatedAt()),
+                'state' => ("enabled" == $customer->getState()),
                 'email' => $customer->getEmail(),
                 'phone' => $customer->getPhone(),
             );

@@ -46,10 +46,11 @@ trait MainTrait
         //====================================================================//
         // Active
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("status")
+            ->Identifier("state")
             ->Name("Status")
             ->Group("Meta")
             ->MicroData("http://schema.org/Organization", "active")
+            ->isListed()
             ->isReadOnly();
 
         //====================================================================//
@@ -82,7 +83,6 @@ trait MainTrait
     {
         switch ($fieldName) {
             case 'phone':
-            case 'status':
             case 'note':
                 $this->getSimple($fieldName);
 
@@ -93,6 +93,10 @@ trait MainTrait
                 break;
             case 'tax_exempt':
                 $this->out[$fieldName] = !$this->object->{$fieldName};
+
+                break;
+            case 'state':
+                $this->out[$fieldName] = ("enabled" == $this->object->{$fieldName});
 
                 break;
             default:

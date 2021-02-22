@@ -247,10 +247,10 @@ class ShopifyHelper
     /**
      * Shopify API List Request
      *
-     * @param string $resource API REST Path
-     * @param int    $limit    Number of results
-     * @param int    $offset   Results Offset
-     * @param array  $query    Query Parameters
+     * @param string   $resource API REST Path
+     * @param null|int $limit    Number of results
+     * @param null|int $offset   Results Offset
+     * @param array    $query    Query Parameters
      *
      * @return null|array
      */
