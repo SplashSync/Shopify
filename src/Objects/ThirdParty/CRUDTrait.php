@@ -138,7 +138,7 @@ trait CRUDTrait
         Splash::log()->trace();
         //====================================================================//
         // Delete Customer from Api
-        if (false == API::delete('customers/'.$objectId)) {
+        if (null === API::delete('customers/'.$objectId)) {
             return Splash::log()->errTrace(" Unable to Delete Customer (".$objectId.").");
         }
         //====================================================================//
