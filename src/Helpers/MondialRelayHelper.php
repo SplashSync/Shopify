@@ -72,7 +72,7 @@ class MondialRelayHelper
             if (false === strpos($attribute["name"], self::KEY)) {
                 continue;
             }
-            $index = str_replace(self::KEY, "", $attribute["name"]);
+            $index = (string) str_replace(self::KEY, "", $attribute["name"]);
             if (empty($index) || !is_scalar($attribute["value"])) {
                 continue;
             }
