@@ -116,12 +116,12 @@ class MondialRelayHelper
         // Delivery Company
         if (isset($mrData["name"])) {
             $order["shipping_address"]["company"] = (string) $mrData["name"];
+            $order["shipping_address"]["address2"] = (string) $mrData["name"];
         }
         //====================================================================//
-        // Delivery Address 1
+        // Delivery Address
         if (isset($mrData["address"])) {
             $order["shipping_address"]["address1"] = (string) $mrData["address"];
-            $order["shipping_address"]["address2"] = "";
         }
         //====================================================================//
         // Delivery Zip
