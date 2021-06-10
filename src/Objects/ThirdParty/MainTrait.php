@@ -32,17 +32,17 @@ trait MainTrait
         $this->fieldsFactory()->create(SPL_T_PHONE)
             ->Identifier("phone")
             ->Name("Phone")
-            ->isLogged()
             ->MicroData("http://schema.org/PostalAddress", "telephone")
-            ->isListed();
-
+            ->isLogged()
+            ->isListed()
+        ;
         //====================================================================//
         // Note
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->Identifier("note")
             ->Name("Note")
-            ->MicroData("http://schema.org/Organization", "description");
-
+            ->MicroData("http://schema.org/Organization", "description")
+        ;
         //====================================================================//
         // Active
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -51,16 +51,16 @@ trait MainTrait
             ->Group("Meta")
             ->MicroData("http://schema.org/Organization", "active")
             ->isListed()
-            ->isReadOnly();
-
+            ->isReadOnly()
+        ;
         //====================================================================//
         // isVAT
         $this->fieldsFactory()->create(SPL_T_BOOL)
             ->Identifier("tax_exempt")
             ->Name("Uses VAT")
             ->Group("Meta")
-            ->MicroData("http://schema.org/Organization", "UseVAT");
-
+            ->MicroData("http://schema.org/Organization", "UseVAT")
+        ;
         //====================================================================//
         // Is Opt In
         $this->fieldsFactory()->create(SPL_T_BOOL)
@@ -68,7 +68,7 @@ trait MainTrait
             ->Name("Accepts Marketing")
             ->Group("Meta")
             ->MicroData("http://schema.org/Organization", "newsletter")
-                ;
+        ;
     }
 
     /**

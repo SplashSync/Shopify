@@ -17,7 +17,7 @@ namespace Splash\Connectors\Shopify\Helpers;
 
 use Exception;
 use Slince\Shopify\Client;
-use Slince\Shopify\Common\CursorBasedPagination;
+use Slince\Shopify\Service\Common\CursorBasedPagination;
 use Symfony\Component\Cache\Simple\ApcuCache;
 
 /**
@@ -59,6 +59,7 @@ class CachedCursorPagination extends CursorBasedPagination
         //====================================================================//
         // Build Parent Class
         parent::__construct(
+            $client,
             $client->{"get".ucwords($resource)."Manager"}(),
             isset($query['query']) ? $resource."/search" : $resource,
             $query

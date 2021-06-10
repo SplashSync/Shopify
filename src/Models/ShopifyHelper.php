@@ -69,8 +69,8 @@ class ShopifyHelper
             $metaCacheDir = (is_dir($cacheDir) ? $cacheDir : sys_get_temp_dir()).'/shopify';
             //====================================================================//
             // Configure Shopify API Client
-            self::$client = new Client(self::$credential, self::$endpoint, array(
-                'metaCacheDir' => $metaCacheDir,
+            self::$client = new Client(self::$endpoint, self::$credential, array(
+                'meta_cache_dir' => $metaCacheDir,
             ));
         } catch (Exception $ex) {
             Splash::log()->err($ex->getMessage());

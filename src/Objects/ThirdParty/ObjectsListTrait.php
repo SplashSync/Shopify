@@ -15,7 +15,9 @@
 
 namespace   Splash\Connectors\Shopify\Objects\ThirdParty;
 
-use Slince\Shopify\Manager\Customer\Customer;
+use Slince\Shopify\Model\Customers\Customer;
+use Splash\Client\Splash;
+use Splash\Connectors\Shopify\Helpers\TypeErrorCatcher;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -52,14 +54,18 @@ trait ObjectsListTrait
         foreach ($rawData as $customer) {
             //====================================================================//
             // Parse Meta Dates to Splash Format
-            $response[] = array(
-                'id' => $customer->getId(),
-                'created_at' => self::toDateTimeString($customer->getCreatedAt()),
-                'updated_at' => self::toDateTimeString($customer->getUpdatedAt()),
-                'state' => ("enabled" == $customer->getState()),
-                'email' => $customer->getEmail(),
-                'phone' => $customer->getPhone(),
-            );
+            try {
+                $response[] = array(
+                    'id' => $customer->getId(),
+                    'created_at' => self::toDateTimeString($customer->getCreatedAt()),
+                    'updated_at' => self::toDateTimeString($customer->getUpdatedAt()),
+                    'state' => ("enabled" == $customer->getState()),
+                    'email' => $customer->getEmail(),
+                    'phone' => TypeErrorCatcher::get($customer, "getPhone")
+                );
+            } catch (\Throwable $exception) {
+                Splash::log()->err($exception->getMessage());
+            }
         }
 
         return $response;

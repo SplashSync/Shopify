@@ -15,7 +15,9 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Invoice;
 
-use Slince\Shopify\Manager\Order\Order;
+use Exception;
+use Slince\Shopify\Model\Orders\Order;
+use Splash\Connectors\Shopify\Helpers\TypeErrorCatcher;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -27,6 +29,8 @@ trait ObjectsListTrait
      * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @throws Exception
      */
     public function objectsList($filter = null, $params = null)
     {
@@ -60,7 +64,7 @@ trait ObjectsListTrait
                 'updated_at' => self::toDateTimeString($order->getUpdatedAt()),
                 'status' => self::getSplashStatus(
                     $order->isConfirmed(),
-                    $order->getCancelledAt(),
+                    TypeErrorCatcher::getDateTime($order, "getCancelledAt"),
                     $order->getFinancialStatus()
                 ),
             );

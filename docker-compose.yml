@@ -40,6 +40,7 @@ services:
             # Uncomment to use Local Sources instead of Release
             - ./src/:/app/vendor/splash/shopify/src/:ro
             - ./tests/:/app/vendor/splash/shopify/tests/:ro
+            - ./vendor/slince/shopify-api-php/:/app/vendor/slince/shopify-api-php/:ro
         hostname:           toolkit.shopify.local
         networks:
             shopify:        { ipv4_address: 172.115.0.100, aliases: [ toolkit.shopify.local ] }            

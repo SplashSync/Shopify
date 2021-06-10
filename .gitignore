@@ -18,3 +18,4 @@
 /docs/yarn.lock
 /reboot.sh
 /.idea/
+/.php-cs-fixer.cache

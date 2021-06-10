@@ -15,7 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects\Order;
 
-use DateTime;
+use DateTimeInterface;
 use Splash\Core\SplashCore      as Splash;
 use Splash\Models\Objects\Order\Status;
 
@@ -140,11 +140,11 @@ trait StatusTrait
     /**
      * Decode Splash Status from Order Informations
      *
-     * @param bool                 $confirmed
-     * @param null|DateTime|string $cancelledAt
-     * @param null|string          $paymentStatus
-     * @param null|string          $fulfillmentStatus
-     * @param null|string          $shipmentStatus
+     * @param bool                          $confirmed
+     * @param null|DateTimeInterface|string $cancelledAt
+     * @param null|string                   $paymentStatus
+     * @param null|string                   $fulfillmentStatus
+     * @param null|string                   $shipmentStatus
      *
      * @return string
      *

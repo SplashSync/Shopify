@@ -15,8 +15,7 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Address;
 
-use Slince\Shopify\Manager\Customer\Customer;
-use Slince\Shopify\Manager\CustomerAddress\Address;
+use Slince\Shopify\Model\Customers\Customer;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -47,7 +46,6 @@ trait ObjectsListTrait
         $response = array();
         /** @var Customer $customer */
         foreach ($rawData as $customer) {
-            /** @var Address $address */
             foreach ($customer->getAddresses() as $address) {
                 $response[] = array(
                     'id' => $this->getObjectId((string) $customer->getId(), (string) $address->getId()),

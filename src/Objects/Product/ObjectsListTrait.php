@@ -15,8 +15,9 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Product;
 
-use Slince\Shopify\Manager\Product\Product;
-use Slince\Shopify\Manager\ProductVariant\Variant;
+use Exception;
+use Slince\Shopify\Model\Products\Product;
+use Slince\Shopify\Model\Products\Variant;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -26,6 +27,8 @@ trait ObjectsListTrait
 {
     /**
      * {@inheritdoc}
+     *
+     * @throws Exception
      */
     public function objectsList($filter = null, $params = null)
     {

@@ -17,6 +17,7 @@ namespace Splash\Connectors\Shopify\Objects\Core;
 
 use DateTime;
 use DateTimeInterface;
+use Exception;
 
 /**
  * Objects Metadata Fields
@@ -60,9 +61,11 @@ trait DatesTrait
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
      *
+     * @throws Exception
+     *
      * @return void
      */
-    protected function getDatesFields($key, $fieldName): void
+    protected function getDatesFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // Does the Field Exists?
@@ -81,12 +84,17 @@ trait DatesTrait
     /**
      * Convert Date to List DateTime String
      *
-     * @param DateTimeInterface|string $input
+     * @param null|DateTimeInterface|string $input
+     *
+     * @throws Exception
      *
      * @return string
      */
     protected static function toDateTimeString($input): string
     {
+        if (empty($input)) {
+            return "";
+        }
         if ($input instanceof DateTimeInterface) {
             return $input->format(SPL_T_DATETIMECAST);
         }

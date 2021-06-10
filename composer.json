@@ -39,9 +39,9 @@
     "require": {
         "php":                                          "^7.3",
         "splash/php-bundle":                            "dev-master",
-        "slince/shopify-api-php":                       "^2.6",
+        "slince/shopify-api-php":                       "^3.0",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
-        "nategood/httpful":                             "^0.3",
+        "nategood/httpful":                             "@stable",
         "guzzlehttp/psr7":                              ">1.5"
     },
     

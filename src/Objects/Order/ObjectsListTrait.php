@@ -15,7 +15,9 @@
 
 namespace   Splash\Connectors\Shopify\Objects\Order;
 
-use Slince\Shopify\Manager\Order\Order;
+use Exception;
+use Slince\Shopify\Model\Orders\Order;
+use Splash\Connectors\Shopify\Helpers\TypeErrorCatcher;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -27,6 +29,8 @@ trait ObjectsListTrait
      * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @throws Exception
      */
     public function objectsList($filter = null, $params = null)
     {
@@ -60,9 +64,9 @@ trait ObjectsListTrait
                 'processed_at' => self::toDateTimeString($order->getProcessedAt()),
                 'status' => self::getSplashStatus(
                     $order->isConfirmed(),
-                    $order->getCancelledAt(),
+                    TypeErrorCatcher::getDateTime($order, "getCancelledAt"),
                     $order->getFinancialStatus(),
-                    $order->getFulfillmentStatus(),
+                    TypeErrorCatcher::get($order, "getFulfillmentStatus"),
                     $this->getObjectListShippingStatus($order)
                 ),
             );
@@ -81,7 +85,7 @@ trait ObjectsListTrait
     private function getObjectListShippingStatus(Order $order) : ?string
     {
         foreach ($order->getFulfillments() as $fulfillment) {
-            $shipmentStatus = $fulfillment->getShipmentStatus();
+            $shipmentStatus = TypeErrorCatcher::get($fulfillment, "getShipmentStatus");
             if ("cancelled" == $shipmentStatus) {
                 continue;
             }

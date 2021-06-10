@@ -15,8 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects\Invoice;
 
-use DateTime;
-use Splash\Core\SplashCore      as Splash;
+use DateTimeInterface;
 use Splash\Models\Objects\Invoice\Status;
 
 /**
@@ -73,9 +72,9 @@ trait StatusTrait
     /**
      * Decode Splash Status from Order Informations
      *
-     * @param bool                 $confirmed
-     * @param null|DateTime|string $cancelledAt
-     * @param null|string          $paymentStatus
+     * @param bool                          $confirmed
+     * @param null|DateTimeInterface|string $cancelledAt
+     * @param null|string                   $paymentStatus
      *
      * @return string
      *
