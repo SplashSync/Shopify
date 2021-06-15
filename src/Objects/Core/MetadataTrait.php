@@ -35,6 +35,7 @@ trait MetadataTrait
      *
      * @param string      $resourceUrl
      * @param null|string $namespace
+     * @param null|string $key
      *
      * @return array
      */
