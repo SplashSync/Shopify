@@ -17,7 +17,6 @@ namespace   Splash\Connectors\Shopify\Objects\Invoice;
 
 use Exception;
 use Slince\Shopify\Model\Orders\Order;
-use Splash\Connectors\Shopify\Helpers\TypeErrorCatcher;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 /**
@@ -63,8 +62,8 @@ trait ObjectsListTrait
                 'processed_at' => self::toDateTimeString($order->getProcessedAt()),
                 'updated_at' => self::toDateTimeString($order->getUpdatedAt()),
                 'status' => self::getSplashStatus(
-                    $order->isConfirmed(),
-                    TypeErrorCatcher::getDateTime($order, "getCancelledAt"),
+                    (bool) $order->isConfirmed(),
+                    $order->getCancelledAt(),
                     $order->getFinancialStatus()
                 ),
             );
