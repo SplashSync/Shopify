@@ -151,7 +151,7 @@ trait ItemsTrait
                     $this->out,
                     "lines",
                     $fieldName,
-                    count($this->object->line_items) + $index,
+                    (string) (count($this->object->line_items) + $index),
                     $value
                 );
             }
