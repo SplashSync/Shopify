@@ -346,13 +346,13 @@ trait ItemsTrait
     {
         //====================================================================//
         // Line has no Discounts
-        if (!isset($line['discount_amounts']) || empty($line['discount_amounts'])) {
+        if (!isset($line['discount_allocations']) || empty($line['discount_allocations'])) {
             return 0;
         }
         //====================================================================//
-        // Sum Discounts Ammounts
+        // Sum Discounts Amounts
         $amount = 0;
-        foreach ($line['discount_amounts'] as $discount) {
+        foreach ($line['discount_allocations'] as $discount) {
             $amount += $discount['amount'];
         }
         //====================================================================//
