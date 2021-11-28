@@ -37,7 +37,8 @@
     
     
     "require": {
-        "php":                                          "^7.3",
+        "php":                                          "^7.4|^8.0",
+        "ext-json":                                     "*",
         "splash/php-bundle":                            "dev-master",
         "slince/shopify-api-php":                       "^3.0",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
@@ -54,7 +55,7 @@
         "symfony/phpunit-bridge":                       "*",
         "monolog/monolog":                              "^1.0",
         
-        "doctrine/doctrine-bundle":                     "^1.6",
+        "doctrine/doctrine-bundle":                     "^2.6",
         "doctrine/orm":                                 "^2.5"
     },
 

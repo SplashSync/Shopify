@@ -40,6 +40,10 @@ stages:
         - Dedicated
     services:
         - mysql:5.7
+    artifacts:
+            when: always
+            reports:
+                junit: "$CI_PROJECT_DIR/*-report.xml"
     ################################################################################
     # Install & Configure Environment
     before_script:
@@ -62,25 +66,25 @@ stages:
         # Execute Grumphp Testsuite
         - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/grumphp.sh  | sh
         # Execute PhpUnit Tests
-        - vendor/bin/phpunit
+        - vendor/bin/phpunit --log-junit $CI_PROJECT_DIR/full-report.xml
 
     ################################################################################
     # Run After Script
     after_script:
       - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
 
+################################################################################
+# PHP 8.0
+tests:php-8.0:
+    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
+    needs: ["tests:php-7.4"]
+    <<: *core_tests
+
+################################################################################
+# PHP 7.4
 tests:php-7.4:
-  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-7.4
-  <<: *core_tests
-
-#tests:php-7.3:
-#  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-7.3
-#  <<: *core_tests
-
-#tests:php-8.0:
-#  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
-#  allow_failure: true
-#  <<: *core_tests
+    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-7.4
+    <<: *core_tests
 
 ################################################################
 # Build Documentation

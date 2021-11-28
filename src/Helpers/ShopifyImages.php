@@ -15,9 +15,11 @@
 
 namespace Splash\Connectors\Shopify\Helpers;
 
+use Psr\Cache\InvalidArgumentException;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Models\Objects\ImagesTrait as SplashImagesTrait;
-use Symfony\Component\Cache\Simple\ApcuCache;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Shopify Product Images Helper
@@ -42,17 +44,22 @@ class ShopifyImages
     const META_TYPE = "json_string";
 
     /**
-     * @var ApcuCache
+     * @var ApcuAdapter
      */
-    private static $apcu;
+    private static ApcuAdapter $apcu;
 
     /**
      * @var int Image Info Cache Lifetime
      */
-    private static $imgCacheTtl = 604800;
+    private static int $imgCacheTtl = 604800;
 
     /**
-     * Load Product Image Informations Array from Cache or API
+     * @var array Image Info for Cache Building
+     */
+    private static array $shopifyImage;
+
+    /**
+     * Load Product Image Information Array from Cache or API
      *
      * @param array $shopifyImage
      *
@@ -60,40 +67,63 @@ class ShopifyImages
      */
     public static function getInfos(array $shopifyImage): ?array
     {
+        static::$shopifyImage = $shopifyImage;
+        //====================================================================//
+        // Build Image Cache Key
+        $cacheKey = implode(
+            ".",
+            array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src']))
+        );
+        //====================================================================//
+        // Ensure Cache Exists
+        if (!isset(static::$apcu)) {
+            static::$apcu = new ApcuAdapter();
+        }
+
+        try {
+            $fromCache = static::$apcu->get($cacheKey, function (ItemInterface $item) {
+                //====================================================================//
+                // Setup Cache Item
+                $item->expiresAfter(self::$imgCacheTtl);
+                //====================================================================//
+                // Load Splash Image from Api
+                $fromApi = self::getMetadataFromApi(static::$shopifyImage);
+                if ($fromApi) {
+                    return $fromApi;
+                }
+                //====================================================================//
+                // Load Splash Image from Url
+                $fromUrl = self::getMetadataFromUrl(static::$shopifyImage['src'], static::$shopifyImage['alt']);
+                if ($fromUrl) {
+                    //====================================================================//
+                    // Save Splash Image is In Cache & Api
+                    self::setMetadataInApi(static::$shopifyImage, $fromUrl);
+
+                    return $fromUrl;
+                }
+
+                return null;
+            });
+        } catch (InvalidArgumentException $ex) {
+            return null;
+        }
         //====================================================================//
         // Check if Splash Image is In Cache
-        $fromCache = self::getMetadataFromCache($shopifyImage);
         if ($fromCache) {
             return $fromCache;
         }
         //====================================================================//
-        // Load Splash Image from Api
-        $fromApi = self::getMetadataFromApi($shopifyImage);
-        if ($fromApi) {
-            //====================================================================//
-            // Save Splash Image is In Cache
-            self::setMetadataInCache($shopifyImage, $fromApi);
-
-            return $fromApi;
+        // Loading Splash Image Fail
+        try {
+            static::$apcu->delete($cacheKey);
+        } catch (InvalidArgumentException $e) {
         }
-        //====================================================================//
-        // Load Splash Image from Url
-        $fromUrl = self::getMetadataFromUrl($shopifyImage['src'], $shopifyImage['alt']);
-        if ($fromUrl) {
-            //====================================================================//
-            // Save Splash Image is In Cache & Api
-            self::setMetadataInApi($shopifyImage, $fromUrl);
-            self::setMetadataInCache($shopifyImage, $fromUrl);
 
-            return $fromUrl;
-        }
-        //====================================================================//
-        // Loading  Splash Image Fail
         return null;
     }
 
     /**
-     * Create Raw Product Image Informations Array from Splash Raw File Array
+     * Create Raw Product Image Information Array from Splash Raw File Array
      *
      * @param array $splashImage
      * @param array $rawFile
@@ -111,28 +141,28 @@ class ShopifyImages
                 : $rawFile["filename"],
             // Raw Image File Contents
             "attachment" => $rawFile["raw"],
-            // Position will be Setuped After
+            // Position will be Setup After
             "position" => null,
-            // Variants IDs will be Setuped After
+            // Variants IDs will be Setup After
             "variant_ids" => array(),
-            // Add Splash Image Metafields
+            // Add Splash Image Meta fields
             "metafields" => array(self::encodeMetadata($splashImage)),
         );
     }
 
     /**
-     * Load Product Image Informations Array from Url
+     * Load Product Image Information Array from Url
      *
      * @param string      $absoluteUrl
-     * @param null|string $altImageNane
+     * @param null|string $altImageName
      *
      * @return null|array
      */
-    private static function getMetadataFromUrl(string $absoluteUrl, ?string $altImageNane): ?array
+    private static function getMetadataFromUrl(string $absoluteUrl, ?string $altImageName): ?array
     {
         //====================================================================//
         // Build Image File Name
-        $filename = !empty($altImageNane) ? $altImageNane : basename((string) parse_url($absoluteUrl, PHP_URL_PATH));
+        $filename = !empty($altImageName) ? $altImageName : basename((string) parse_url($absoluteUrl, PHP_URL_PATH));
         //====================================================================//
         // Load Image from API
         $splashImage = false;
@@ -159,7 +189,7 @@ class ShopifyImages
     }
 
     /**
-     * Load Product Image Metadatas Array from Cache or API
+     * Load Product Image Metadata Array from Cache or API
      *
      * @param array $shopifyImage
      *
@@ -173,16 +203,16 @@ class ShopifyImages
             "metafield[owner_id]" => (string) $shopifyImage["id"],
             "metafield[owner_resource]" => "product_image",
         );
-        $metadatas = API::get("metafields", null, $query, "metafields");
+        $metaDatas = API::get("metafields", null, $query, "metafields");
         //====================================================================//
         // No Metadata => Exit
-        if (!is_array($metadatas)) {
+        if (!is_array($metaDatas)) {
             return null;
         }
         //====================================================================//
         // Search for Splash Metadata
         $splashMeta = null;
-        foreach ($metadatas as $metadata) {
+        foreach ($metaDatas as $metadata) {
             if (self::META_NAMESPACE != $metadata["namespace"]) {
                 continue;
             }
@@ -208,7 +238,7 @@ class ShopifyImages
     }
 
     /**
-     * Save Product Image Informations in Api
+     * Save Product Image Information in Api
      *
      * @param array $shopifyImage
      * @param array $splashImage
@@ -244,64 +274,8 @@ class ShopifyImages
         return array(
             "key" => self::META_KEY,
             "value" => json_encode($splashImage),
-            //                "value" => $splashImage,
             "value_type" => self::META_TYPE,
             "namespace" => self::META_NAMESPACE,
         );
-    }
-
-    /**
-     * Load Product Image Informations from Cache
-     *
-     * @param array $shopifyImage
-     *
-     * @return null|array
-     */
-    private static function getMetadataFromCache(array  $shopifyImage): ?array
-    {
-        //====================================================================//
-        // Build Image Cache Key
-        $cacheKey = implode(
-            ".",
-            array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src']))
-        );
-        //====================================================================//
-        // Ensure Cache Exists
-        if (!isset(static::$apcu)) {
-            static::$apcu = new ApcuCache();
-        }
-        //====================================================================//
-        // Check if Image is In Cache
-        if (static::$apcu->has($cacheKey)) {
-            return static::$apcu->get($cacheKey);
-        }
-
-        return null;
-    }
-
-    /**
-     * Save Product Image Informations in Cache
-     *
-     * @param array $shopifyImage
-     * @param array $splashImage
-     *
-     * @return void
-     */
-    private static function setMetadataInCache(array $shopifyImage, array $splashImage): void
-    {
-        //====================================================================//
-        // Build Image Cache Key
-        $cacheKey = implode(
-            ".",
-            array("splash.shopify.connector.image.meta", $shopifyImage['id'], md5($shopifyImage['src']))
-        );
-        //====================================================================//
-        // Ensure Cache Exists
-        if (!isset(static::$apcu)) {
-            static::$apcu = new ApcuCache();
-        }
-        //====================================================================//
-        // Store Image In Cache
-        static::$apcu->set($cacheKey, $splashImage, static::$imgCacheTtl);
     }
 }

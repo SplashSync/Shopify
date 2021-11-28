@@ -16,9 +16,11 @@
 namespace Splash\Connectors\Shopify\Helpers;
 
 use Exception;
+use Psr\Cache\InvalidArgumentException;
 use Slince\Shopify\Client;
 use Slince\Shopify\Service\Common\CursorBasedPagination;
-use Symfony\Component\Cache\Simple\ApcuCache;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Override Base Slince Cursor Pagination to Add Links Caching
@@ -32,27 +34,34 @@ class CachedCursorPagination extends CursorBasedPagination
     /**
      * @var int Cache Lifetime
      */
-    private static $cacheTtl = 3600;
+    private static int $cacheTtl = 3600;
 
     /**
      * @var string Cache Key
      */
-    private $cacheKey;
+    private string $cacheKey;
 
     /**
-     * @var ApcuCache
+     * @var ApcuAdapter
      */
-    private $apcuCache;
+    private ApcuAdapter $cacheAdapter;
+
+    /**
+     * @var ItemInterface
+     */
+    private ItemInterface $cacheItem;
 
     /**
      * @var array List of Known Pages Links
      */
-    private $cache;
+    private array $cache;
 
     /**
      * @param Client $client
      * @param string $resource
      * @param array  $query
+     *
+     * @throws Exception
      */
     public function __construct(Client $client, string $resource, array $query)
     {
@@ -68,9 +77,6 @@ class CachedCursorPagination extends CursorBasedPagination
         // Build Unique Cache Key
         $this->cacheKey = $this->getCacheKey($client, $resource, $query);
         //====================================================================//
-        // Connect to Apcu Cache
-        $this->apcuCache = new ApcuCache();
-        //====================================================================//
         // Load Cached Links
         $this->loadCache();
     }
@@ -79,6 +85,8 @@ class CachedCursorPagination extends CursorBasedPagination
      * Load Specified Objects Lists Page
      *
      * @param int $page
+     *
+     * @throws Exception
      *
      * @return array
      */
@@ -170,6 +178,8 @@ class CachedCursorPagination extends CursorBasedPagination
      *
      * @param int $page
      *
+     * @throws Exception
+     *
      * @return string
      */
     private function getLink(int $page): string
@@ -204,27 +214,34 @@ class CachedCursorPagination extends CursorBasedPagination
     /**
      * Load Known Links from Cache
      *
-     * @return array
+     * @return void
      */
-    private function loadCache(): array
+    private function loadCache(): void
     {
         //====================================================================//
         // Safety Check
         if (!is_string($this->cacheKey) || empty($this->cacheKey)) {
-            return array();
+            return;
         }
         //====================================================================//
-        // Check if Links are In Cache
-        if ($this->apcuCache->has($this->cacheKey)) {
-            $this->cache = $this->apcuCache->get($this->cacheKey);
+        // Connect to Apcu Cache
+        $this->cacheAdapter = new ApcuAdapter();
+        //====================================================================//
+        // Load Links from Cache
+        try {
+            $this->cache = $this->cacheAdapter->get($this->cacheKey, function (ItemInterface $item): array {
+                $item->expiresAfter(static::$cacheTtl);
+
+                return array();
+            });
+            $this->cacheItem = $this->cacheAdapter->getItem($this->cacheKey);
+        } catch (InvalidArgumentException $e) {
         }
         //====================================================================//
         // Load Empty Value
-        if (!is_array($this->cache)) {
+        if (!isset($this->cache) || !is_array($this->cache)) {
             $this->cache = array();
         }
-
-        return $this->cache;
     }
 
     /**
@@ -236,15 +253,13 @@ class CachedCursorPagination extends CursorBasedPagination
     {
         //====================================================================//
         // Safety Check
-        if (!is_string($this->cacheKey) || empty($this->cacheKey)) {
-            return;
-        }
-        if (!is_array($this->cache) || empty($this->cache)) {
+        if (!isset($this->cacheItem) || !isset($this->cache) || empty($this->cache)) {
             return;
         }
         //====================================================================//
         // Save Links are In Cache
-        $this->apcuCache->set($this->cacheKey, $this->cache, static::$cacheTtl);
+        $this->cacheItem->set($this->cache);
+        $this->cacheAdapter->save($this->cacheItem);
     }
 
     /**

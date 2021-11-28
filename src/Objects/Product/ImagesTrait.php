@@ -30,17 +30,17 @@ trait ImagesTrait
     /**
      * @var int Image Info Cache Lifetime
      */
-    private static $imgCacheTtl = 3600;
+    private static int $imgCacheTtl = 3600;
 
     /**
      * @var int
      */
-    private $imgPosition = 0;
+    private int $imgPosition = 0;
 
     /**
      * @var array Shopify ID of Already Found Images
      */
-    private $imgFound = array();
+    private array $imgFound = array();
 
     /**
      * Build Fields using FieldFactory
@@ -105,7 +105,7 @@ trait ImagesTrait
      *
      * @return void
      */
-    protected function getImagesFields($key, $fieldName): void
+    protected function getImagesFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -135,7 +135,7 @@ trait ImagesTrait
      *
      * @return void
      */
-    private function setImagesFields($fieldName, $fieldData)
+    private function setImagesFields(string $fieldName, $fieldData)
     {
         //====================================================================//
         // WRITE Field
@@ -166,7 +166,7 @@ trait ImagesTrait
     private function getImgArray(): void
     {
         //====================================================================//
-        // Images List Alraedy Loaded
+        // Images List Already Loaded
         // Images List is Empty
         if (!empty($this->out["images"]) || !is_iterable($this->object->images)) {
             return;
@@ -239,7 +239,7 @@ trait ImagesTrait
             //====================================================================//
             // If STILL Not found, Error
             if (is_null($imgIndex)) {
-                Splash::log()->errTrace("An Error occured while sending an image, please retry.");
+                Splash::log()->errTrace("An Error occurred while sending an image, please retry.");
 
                 return;
             }
@@ -280,7 +280,7 @@ trait ImagesTrait
      *
      * @return null|int
      */
-    private function searchImage($md5): ?int
+    private function searchImage(string $md5): ?int
     {
         if (!is_array($this->object->images)) {
             return null;
@@ -386,7 +386,7 @@ trait ImagesTrait
      *
      * @retrurn     void
      */
-    private function updateImagePosition($imgIndex, $imgArray): void
+    private function updateImagePosition(int $imgIndex, array $imgArray): void
     {
         //====================================================================//
         // Safety Checks
@@ -413,7 +413,7 @@ trait ImagesTrait
      *
      * @retrurn     void
      */
-    private function updateImageCoverFlag($imgIndex, $imgArray): void
+    private function updateImageCoverFlag(int $imgIndex, array $imgArray): void
     {
         //====================================================================//
         // Safety Checks

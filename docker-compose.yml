@@ -45,7 +45,25 @@ services:
         networks:
             shopify:        { ipv4_address: 172.115.0.100, aliases: [ toolkit.shopify.local ] }            
             splashsync:     { aliases: [ toolkit.shopify.local ] }            
-            
+
+    ################################################################################
+    # PHP 8.0
+    php-8.0:
+        image:          registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
+        container_name: shopify-8.0
+        volumes:
+            - ./:/var/www/html
+            - vendor-php80:/var/www/html/vendor
+
+    ################################################################################
+    # PHP 7.4
+    php-7.4:
+        image:          registry.gitlab.com/badpixxel-projects/php-sdk:php-7.4
+        container_name: shopify-7.4
+        volumes:
+            - ./:/var/www/html
+            - vendor-php74:/var/www/html/vendor
+
 networks:
     ################################################################################
     # Default Private Network    
@@ -57,4 +75,8 @@ networks:
     ################################################################################
     # External Splash Network
     splashsync:
-        external: true  
+        external: true
+
+volumes:
+    vendor-php80: ~
+    vendor-php74: ~
