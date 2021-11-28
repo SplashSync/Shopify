@@ -218,6 +218,9 @@ trait ImagesTrait
         // Given List Is Not Empty
         foreach ($data as $inValue) {
             //====================================================================//
+            // Ensure Array
+            $inValue = ($inValue instanceof ArrayObject) ? $inValue->getArrayCopy() : $inValue;
+            //====================================================================//
             // Check Image Array is here
             if (!isset($inValue["image"]) || empty($inValue["image"])) {
                 continue;
