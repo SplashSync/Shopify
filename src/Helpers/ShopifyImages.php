@@ -117,6 +117,7 @@ class ShopifyImages
         try {
             static::$apcu->delete($cacheKey);
         } catch (InvalidArgumentException $e) {
+            return null;
         }
 
         return null;

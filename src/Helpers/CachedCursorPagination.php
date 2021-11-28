@@ -236,6 +236,7 @@ class CachedCursorPagination extends CursorBasedPagination
             });
             $this->cacheItem = $this->cacheAdapter->getItem($this->cacheKey);
         } catch (InvalidArgumentException $e) {
+            $this->cache = array();
         }
         //====================================================================//
         // Load Empty Value
