@@ -88,15 +88,20 @@ trait CRUDTrait
         }
         //====================================================================//
         // Create New Product from Api
-        $response = API::post(
-            "products",
-            array( "product" => array(
-                "title" => $this->in["title"],
-                "body_html" => isset($this->in["body_html"]) ? $this->in["body_html"]: "",
-            ),
-            ),
-            "product"
-        );
+        try {
+            $response = API::post(
+                "products",
+                array( "product" => array(
+                    "title" => $this->in["title"],
+                    "body_html" => isset($this->in["body_html"]) ? $this->in["body_html"]: "",
+                ),
+                ),
+                "product"
+            );
+        } catch (Exception $exception) {
+            return Splash::log()->err($exception->getMessage());
+        }
+
         if (null === $response) {
             return Splash::log()->errTrace(" Unable to Create Product (".$this->in["title"].").");
         }
