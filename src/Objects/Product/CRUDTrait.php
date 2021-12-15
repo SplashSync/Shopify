@@ -155,7 +155,7 @@ trait CRUDTrait
                 }
             }
         } catch (Exception $exception) {
-            return Splash::log()->errTrace($exception->getMessage());
+            return Splash::log()->err($exception->getMessage());
         }
 
         return $objectId;
