@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Product;
 
 use ArrayObject;
+use Exception;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Core\SplashCore      as Splash;
 
@@ -121,8 +122,10 @@ trait CRUDTrait
      * @param bool $needed Is This Update Needed
      *
      * @return false|string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function update($needed)
+    public function update(bool $needed)
     {
         //====================================================================//
         // Stack Trace
@@ -134,22 +137,25 @@ trait CRUDTrait
         }
         $objectId = $this->getObjectIdentifier();
 
-        //====================================================================//
-        // Update Product Variant from Api
-        if ($needed || $this->isToUpdate("variant")) {
-            $this->object->variants[$this->variantIndex] = $this->variant;
-            if (null === API::put(self::getUri($this->productId), array("product" => $this->object))) {
-                return Splash::log()->errTrace(" Unable to Update Product Variant (".$objectId.").");
+        try {
+            //====================================================================//
+            // Update Product Variant from Api
+            if ($needed || $this->isToUpdate("variant")) {
+                $this->object->variants[$this->variantIndex] = $this->variant;
+                if (null === API::put(self::getUri($this->productId), array("product" => $this->object))) {
+                    return Splash::log()->errTrace(" Unable to Update Product Variant (".$objectId.").");
+                }
             }
-        }
-
-        //====================================================================//
-        // Update Inventory Level
-        if ($this->isToUpdate("inventory")) {
-            $newInventorylevel = $this->getNewInventorylevel();
-            if (is_null($newInventorylevel) || (null === API::post('inventory_levels/set', $newInventorylevel))) {
-                return Splash::log()->errTrace(" Unable to Update Product Variant Stock (".$objectId.").");
+            //====================================================================//
+            // Update Inventory Level
+            if ($this->isToUpdate("inventory")) {
+                $newInventorylevel = $this->getNewInventorylevel();
+                if (is_null($newInventorylevel) || (null === API::post('inventory_levels/set', $newInventorylevel))) {
+                    return Splash::log()->errTrace(" Unable to Update Product Variant Stock (".$objectId.").");
+                }
             }
+        } catch (Exception $exception) {
+            return Splash::log()->errTrace($exception->getMessage());
         }
 
         return $objectId;
