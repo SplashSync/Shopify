@@ -72,13 +72,13 @@ class WebHooksController extends Controller
         //==============================================================================
         // Safety Check
         if (!$this->verify($request, $connector)) {
-            throw new BadRequestHttpException('Malformatted or missing data');
+            throw new BadRequestHttpException('Malformed or missing data');
         }
 
         //====================================================================//
         // Read Request Parameters
         if (!$this->extractData($request)) {
-            throw new BadRequestHttpException('Malformatted or missing data');
+            throw new BadRequestHttpException('Malformed or missing data');
         }
 
         //====================================================================//
