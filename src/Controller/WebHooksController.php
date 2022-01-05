@@ -293,9 +293,12 @@ class WebHooksController extends Controller
      *
      * @return bool
      */
-    private function extractData(Request $request)
+    private function extractData(Request $request): bool
     {
-        $this->data = $request->request->all();
+        $this->data = empty($request->request->all())
+            ? json_decode($request->getContent(), true, 512, \JSON_BIGINT_AS_STRING)
+            : $request->request->all()
+        ;
         if (empty($this->data) || !isset($this->data["id"]) || !is_scalar($this->data["id"])) {
             return false;
         }
