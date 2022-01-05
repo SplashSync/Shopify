@@ -19,3 +19,4 @@
 /reboot.sh
 /.idea/
 /.php-cs-fixer.cache
+/.phpunit.result.cache

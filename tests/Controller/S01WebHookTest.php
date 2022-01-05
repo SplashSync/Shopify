@@ -27,6 +27,7 @@ class S01WebHookTest extends TestCase
     const PING_RESPONSE = '{"success":true}';
     const MEMBER = "ThirdParty";
     const FAKE_EMAIL = "fake@exemple.com";
+    const METHOD = "JSON";
 
     /**
      * Test WebHook For Ping
@@ -46,6 +47,7 @@ class S01WebHookTest extends TestCase
         //====================================================================//
         // Ping Action -> POST -> KO
         $this->assertPublicActionFail($connector, null, array(), "POST");
+        $this->assertPublicActionFail($connector, null, array(), self::METHOD);
         //====================================================================//
         // Ping Action -> PUT -> KO
         $this->assertPublicActionFail($connector, null, array(), "PUT");
@@ -112,12 +114,15 @@ class S01WebHookTest extends TestCase
         $this->configure($connector, $topic);
 
         //====================================================================//
-        // Touch Url
+        // POST MODE
         $this->assertPublicActionWorks($connector, null, $data, "POST");
         $this->assertEquals(self::PING_RESPONSE, $this->getResponseContents());
+        $this->assertIsLastCommitted($action, $objectType, $objectId);
 
         //====================================================================//
-        // Verify Response
+        // JSON POST MODE
+        $this->assertPublicActionWorks($connector, null, $data, self::METHOD);
+        $this->assertEquals(self::PING_RESPONSE, $this->getResponseContents());
         $this->assertIsLastCommitted($action, $objectType, $objectId);
     }
 
@@ -180,7 +185,7 @@ class S01WebHookTest extends TestCase
     }
 
     /**
-     * Generate Fake ThirdParty Inputs for WebHook Requets
+     * Generate Fake ThirdParty Inputs for WebHook Request
      *
      * @param string      $action
      * @param string      $eventName
@@ -208,7 +213,7 @@ class S01WebHookTest extends TestCase
     }
 
     /**
-     * Generate Fake Product Inputs for WebHook Requets
+     * Generate Fake Product Inputs for WebHook Request
      *
      * @param string $action
      * @param string $eventName
@@ -233,7 +238,7 @@ class S01WebHookTest extends TestCase
     }
 
     /**
-     * Generate Fake Order & Invoice Inputs for WebHook Requets
+     * Generate Fake Order & Invoice Inputs for WebHook Request
      *
      * @param string $action
      * @param string $eventName
