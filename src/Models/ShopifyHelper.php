@@ -32,6 +32,11 @@ use Splash\Core\SplashCore as Splash;
 class ShopifyHelper
 {
     /**
+     * API Version to Use
+     */
+    const API_VERSION = "2022-01";
+
+    /**
      * @var string
      */
     private static $endpoint;
@@ -71,6 +76,7 @@ class ShopifyHelper
             // Configure Shopify API Client
             self::$client = new Client(self::$endpoint, self::$credential, array(
                 'meta_cache_dir' => $metaCacheDir,
+                'api_version' => self::API_VERSION,
             ));
         } catch (Exception $ex) {
             Splash::log()->err($ex->getMessage());
