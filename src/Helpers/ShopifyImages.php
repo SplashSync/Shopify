@@ -41,7 +41,7 @@ class ShopifyImages
     /**
      * @var string
      */
-    const META_TYPE = "json_string";
+    const META_TYPE = "json";
 
     /**
      * @var ApcuAdapter
@@ -275,7 +275,7 @@ class ShopifyImages
         return array(
             "key" => self::META_KEY,
             "value" => json_encode($splashImage),
-            "value_type" => self::META_TYPE,
+            "type" => self::META_TYPE,
             "namespace" => self::META_NAMESPACE,
         );
     }
