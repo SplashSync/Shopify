@@ -30,44 +30,45 @@ trait MainTrait
         //====================================================================//
         // Phone
         $this->fieldsFactory()->create(SPL_T_PHONE)
-            ->Identifier("phone")
-            ->Name("Phone")
-            ->MicroData("http://schema.org/PostalAddress", "telephone")
+            ->identifier("phone")
+            ->name("Phone")
+            ->microData("http://schema.org/PostalAddress", "telephone")
+            ->addOption("PhoneISO", false)
             ->isLogged()
             ->isListed()
         ;
         //====================================================================//
         // Note
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("note")
-            ->Name("Note")
-            ->MicroData("http://schema.org/Organization", "description")
+            ->identifier("note")
+            ->name("Note")
+            ->microData("http://schema.org/Organization", "description")
         ;
         //====================================================================//
         // Active
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("state")
-            ->Name("Status")
-            ->Group("Meta")
-            ->MicroData("http://schema.org/Organization", "active")
+            ->identifier("state")
+            ->name("Status")
+            ->group("Meta")
+            ->microData("http://schema.org/Organization", "active")
             ->isListed()
             ->isReadOnly()
         ;
         //====================================================================//
         // isVAT
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("tax_exempt")
-            ->Name("Uses VAT")
-            ->Group("Meta")
-            ->MicroData("http://schema.org/Organization", "UseVAT")
+            ->identifier("tax_exempt")
+            ->name("Uses VAT")
+            ->group("Meta")
+            ->microData("http://schema.org/Organization", "UseVAT")
         ;
         //====================================================================//
         // Is Opt In
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("accepts_marketing")
-            ->Name("Accepts Marketing")
-            ->Group("Meta")
-            ->MicroData("http://schema.org/Organization", "newsletter")
+            ->identifier("accepts_marketing")
+            ->name("Accepts Marketing")
+            ->group("Meta")
+            ->microData("http://schema.org/Organization", "newsletter")
         ;
     }
 
