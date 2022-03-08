@@ -34,6 +34,7 @@ trait MainTrait
             ->name("Phone")
             ->microData("http://schema.org/PostalAddress", "telephone")
             ->addOption("PhoneISO", false)
+            ->addOption("PhoneDigits", 10)
             ->isLogged()
             ->isListed()
         ;
