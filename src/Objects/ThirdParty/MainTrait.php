@@ -33,6 +33,7 @@ trait MainTrait
             ->identifier("phone")
             ->name("Phone")
             ->microData("http://schema.org/PostalAddress", "telephone")
+            ->isNotTested()
             ->isLogged()
             ->isListed()
         ;
