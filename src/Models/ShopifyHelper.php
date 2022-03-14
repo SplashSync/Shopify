@@ -106,7 +106,7 @@ class ShopifyHelper
             return false;
         }
 
-        if (($response->code == 103) || ($response->code >= 200) && ($response->code < 500)) {
+        if ((103 == $response->code) || ($response->code >= 200) && ($response->code < 500)) {
             return true;
         }
 
