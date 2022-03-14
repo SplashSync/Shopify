@@ -98,6 +98,7 @@ class ShopifyHelper
         // Perform Ping Test
         try {
             $response = Request::get("https://".self::$endpoint)
+                ->autoParse(false)
                 ->send();
         } catch (ConnectionErrorException $ex) {
             Splash::log()->err($ex->getMessage());
@@ -105,7 +106,7 @@ class ShopifyHelper
             return false;
         }
 
-        if (($response->code >= 200) && ($response->code < 500)) {
+        if (($response->code == 103) || ($response->code >= 200) && ($response->code < 500)) {
             return true;
         }
 
