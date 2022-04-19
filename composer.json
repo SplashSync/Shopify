@@ -39,7 +39,7 @@
     "require": {
         "php":                                          "^7.4|^8.0",
         "ext-json":                                     "*",
-        "splash/php-bundle":                            "dev-master",
+        "splash/php-bundle":                            "~1.0",
         "slince/shopify-api-php":                       "^3.0",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
         "nategood/httpful":                             "@stable",
@@ -47,7 +47,7 @@
     },
     
     "require-dev": {
-        "badpixxel/php-sdk":                            "dev-main",
+        "badpixxel/php-sdk":                            "~1.0",
         "splash/console":                               "dev-master",
 
         "symfony/symfony":                              "^3.4|^4.4",
