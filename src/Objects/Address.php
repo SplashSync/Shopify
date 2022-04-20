@@ -22,7 +22,7 @@ use Splash\Models\Objects\ObjectsTrait;
 use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
- * Shopify Implementation of ThirParty Address
+ * Shopify Implementation of ThirdParty Address
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
