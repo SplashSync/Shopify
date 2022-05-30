@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Core\SplashCore      as Splash;
@@ -24,7 +25,6 @@ use Splash\Models\Objects;
  * Shopify Implementation of Products
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Product extends AbstractStandaloneObject
 {
@@ -54,22 +54,17 @@ class Product extends AbstractStandaloneObject
     /**
      * {@inheritdoc}
      */
-//    protected static    $DISABLED        =  True;
+    protected static string $name = "Product";
 
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "Product";
+    protected static string $description = "Shopify Product Object";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Shopify Product Object";
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static $ICO = "fa fa-product-hunt";
+    protected static string $ico = "fa fa-product-hunt";
 
     //====================================================================//
     // Object Synchronization Recommended Configuration
@@ -78,20 +73,19 @@ class Product extends AbstractStandaloneObject
     //====================================================================//
 
     /**
-     * Enable Creation Of New Local Objects when Not Existing
-     *
-     * @var bool
-     *
-     * @codingStandardsIgnoreStart
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_CREATED = false;
+    protected static bool $enablePushCreated = false;
 
     /**
-     * @codingStandardsIgnoreEnd
-     *
+     * @phpstan-var ArrayObject
+     */
+    protected object $object;
+
+    /**
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     //====================================================================//
     // General Class Variables

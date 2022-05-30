@@ -29,9 +29,9 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function load($objectId)
+    public function load(string $objectId): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
@@ -42,7 +42,7 @@ trait CRUDTrait
         //====================================================================//
         // Fetch Object
         if (null === $object) {
-            return Splash::log()->errTrace("Unable to load Customer Address (".$objectId.").");
+            return Splash::log()->errNull("Unable to load Customer Address (".$objectId.").");
         }
         //====================================================================//
         // Unset Full Name to Avoid Data Duplicates
@@ -54,21 +54,23 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function create()
+    public function create(): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
         Splash::log()->trace();
         //====================================================================//
         // Check Customer Name is given
-        if (empty($this->in["customer_id"])) {
-            return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "customer_id");
+        if (empty($this->in["customer_id"]) || !is_scalar($this->in["customer_id"])) {
+            Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "customer_id");
+
+            return null;
         }
         //====================================================================//
         // Explode Storage Id
-        $customerId = self::objects()->id($this->in["customer_id"]);
+        $customerId = self::objects()->id((string) $this->in["customer_id"]);
         //====================================================================//
         // Create New Customer Address
         $this->object = new ArrayObject(array( "id" => null ), ArrayObject::ARRAY_AS_PROPS);
@@ -83,7 +85,7 @@ trait CRUDTrait
             "customer_address"
         );
         if (null === $newAddress) {
-            return Splash::log()->errTrace("Unable to Create Customer Address.");
+            return Splash::log()->errNull("Unable to Create Customer Address.");
         }
 
         return new ArrayObject($newAddress, ArrayObject::ARRAY_AS_PROPS);
@@ -94,9 +96,9 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return false|string Object Id
+     * @return null|string Object ID
      */
-    public function update($needed)
+    public function update(bool $needed): ?string
     {
         //====================================================================//
         // Stack Trace
@@ -112,20 +114,16 @@ trait CRUDTrait
         //====================================================================//
         // Update Customer Address from Api
         if (null === API::put(self::getUri($objectId), array("customer_address" => $this->object))) {
-            return Splash::log()->errTrace("Unable to Update Customer Address (".$objectId.").");
+            return Splash::log()->errNull("Unable to Update Customer Address (".$objectId.").");
         }
 
         return $objectId;
     }
 
     /**
-     * Delete requested Object
-     *
-     * @param null|string $objectId Object Id.  If NULL, Object needs to be created.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function delete($objectId = null)
+    public function delete(string $objectId): bool
     {
         //====================================================================//
         // Stack Trace
@@ -142,10 +140,10 @@ trait CRUDTrait
     /**
      * {@inheritdoc}
      */
-    public function getObjectIdentifier()
+    public function getObjectIdentifier(): ?string
     {
         if (!isset($this->object->customer_id) || !isset($this->object->id)) {
-            return false;
+            return null;
         }
 
         //====================================================================//
@@ -156,7 +154,7 @@ trait CRUDTrait
     /**
      * Get Object CRUD Base Uri
      *
-     * @param string $objectId Splash Encoded ObjectId
+     * @param string|null $objectId Splash Encoded ObjectId
      *
      * @return string
      */

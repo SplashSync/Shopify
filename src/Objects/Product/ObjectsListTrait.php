@@ -30,19 +30,19 @@ trait ObjectsListTrait
      *
      * @throws Exception
      */
-    public function objectsList($filter = null, $params = null)
+    public function objectsList(string $filter = null, array $params = array()): array
     {
         //====================================================================//
         // Execute Customers List Request
         $rawData = API::list(
             'products',
-            (isset($params["max"]) ? $params["max"] : 0),
-            (isset($params["offset"]) ? $params["offset"] : 0),
+            ($params["max"] ?? 0),
+            ($params["offset"] ?? 0),
             (!empty($filter) ? array("title" => $filter) : array())
         );
         //====================================================================//
         // Request Failed
-        if (false == $rawData) {
+        if (!$rawData) {
             return array( 'meta' => array('current' => 0, 'total' => 0));
         }
         //====================================================================//
@@ -56,6 +56,7 @@ trait ObjectsListTrait
                     'id' => self::getObjectId((string) $product->getId(), (string) $variant->getId()),
                     'title' => $product->getTitle(),
                     'variant_title' => $product->getTitle()." - ".$variant->getTitle(),
+                    /** @phpstan-ignore-next-line  */
                     'published' => !empty($product->getPublishedAt()),
                     'sku' => $variant->getSku(),
                     'price' => $variant->getPrice(),

@@ -27,7 +27,7 @@ trait UnitConverterTrait
     /**
      * @var array
      */
-    private static $wcWeights = array(
+    private static array $wcWeights = array(
         "g" => Units::MASS_GRAM,
         "kg" => Units::MASS_KG,
         "lb" => Units::MASS_LIVRE,
@@ -41,7 +41,7 @@ trait UnitConverterTrait
      *
      * @return self
      */
-    protected function getVariantWheight($fieldName)
+    protected function getVariantWeight(string $fieldName): self
     {
         //====================================================================//
         //  Read Current Weight Unit
@@ -60,7 +60,7 @@ trait UnitConverterTrait
      *
      * @return self
      */
-    protected function setVariantWheight($fieldData)
+    protected function setVariantWeight(float|string $fieldData): self
     {
         //====================================================================//
         //  Normalize Weight
@@ -71,7 +71,6 @@ trait UnitConverterTrait
             $this->variant->grams = $realData;
             unset($this->variant->weight);
             $this->needUpdate("variant");
-//            $this->needUpdate();
         }
 
         return $this;

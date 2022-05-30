@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\Objects\IntelParserTrait;
@@ -22,8 +23,6 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of WebHooks
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class WebHook extends AbstractStandaloneObject
 {
@@ -36,27 +35,32 @@ class WebHook extends AbstractStandaloneObject
     /**
      * {@inheritdoc}
      */
-    protected static $DISABLED = true;
+    protected static bool $disabled = true;
 
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "WebHook";
+    protected static string $name = "WebHook";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Shopify WebHook";
+    protected static string $description = "Shopify WebHook";
 
     /**
      * {@inheritdoc}
      */
-    protected static $ICO = "fa fa-cogs";
+    protected static string $ico = "fa fa-cogs";
+
+    /**
+     * @phpstan-var ArrayObject
+     */
+    protected object $object;
 
     /**
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     /**
      * Class Constructor
@@ -71,9 +75,9 @@ class WebHook extends AbstractStandaloneObject
     /**
      * Check if WebHook Has Requested Parameters.
      *
-     * @param array  $webHook Shopify WebHook Object
-     * @param string $url     Splash WebHook Url
-     * @param string $topic   WebHook Shopify Topic
+     * @param array $webHook Shopify WebHook Object
+     * @param string $url Splash WebHook Url
+     * @param string|null $topic WebHook Shopify Topic
      *
      * @return bool
      */

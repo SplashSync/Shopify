@@ -27,32 +27,32 @@ trait VariantsTrait
     use Variants\AttributesTrait;
 
     /**
-     * Shopify Product Id
+     * Shopify Product ID
      *
      * @var null|string
      */
-    protected $productId;
+    protected ?string $productId;
 
     /**
-     * Shopify Product Variant Id
+     * Shopify Product Variant ID
      *
      * @var null|string
      */
-    protected $variantId;
+    protected ?string $variantId;
 
     /**
      * Shopify Product Variant Object
      *
      * @var ArrayObject
      */
-    protected $variant;
+    protected ArrayObject $variant;
 
     /**
      * Shopify Product Variant Index
      *
-     * @var int
+     * @var null|int
      */
-    protected $variantIndex;
+    protected ?int $variantIndex;
 
     //====================================================================//
     // Product Variants Id Management

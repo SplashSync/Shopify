@@ -17,6 +17,7 @@ namespace Splash\Connectors\Shopify\Models;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Tool\ArrayAccessorTrait;
+use function _PHPStan_c24aa5a16\RingCentral\Psr7\str;
 
 /**
  * Shopify OAuth2 Store Class
@@ -39,13 +40,15 @@ class ShopifyStore implements ResourceOwnerInterface
     }
 
     /**
-     * Get Shop Id
+     * Get Shop ID
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
-        return $this->getValueByKey($this->response, 'shop.id');
+        $shopId = $this->getValueByKey($this->response, 'shop.id');
+
+        return is_scalar($shopId) ? (string) $shopId : "";
     }
 
     /**
@@ -53,9 +56,11 @@ class ShopifyStore implements ResourceOwnerInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
-        return $this->getValueByKey($this->response, 'shop.name');
+        $shopName = $this->getValueByKey($this->response, 'shop.name');
+
+        return is_scalar($shopName) ? (string) $shopName : "";
     }
 
     /**
@@ -63,9 +68,11 @@ class ShopifyStore implements ResourceOwnerInterface
      *
      * @return string
      */
-    public function getEmail()
+    public function getEmail(): string
     {
-        return $this->getValueByKey($this->response, 'shop.email');
+        $shopEmail = $this->getValueByKey($this->response, 'shop.email');
+
+        return is_scalar($shopEmail) ? (string) $shopEmail : "";
     }
 
     /**
@@ -73,9 +80,11 @@ class ShopifyStore implements ResourceOwnerInterface
      *
      * @return string
      */
-    public function getDomain()
+    public function getDomain(): string
     {
-        return $this->getValueByKey($this->response, 'shop.domain');
+        $shopDomain = $this->getValueByKey($this->response, 'shop.domain');
+
+        return is_scalar($shopDomain) ? (string) $shopDomain : "";
     }
 
     /**
@@ -83,9 +92,11 @@ class ShopifyStore implements ResourceOwnerInterface
      *
      * @return null|string
      */
-    public function getCountry()
+    public function getCountry(): ?string
     {
-        return $this->getValueByKey($this->response, 'shop.country_name');
+        $shopCountry = $this->getValueByKey($this->response, 'shop.country_name');
+
+        return is_scalar($shopCountry) ? (string) $shopCountry : null;
     }
 
     /**
@@ -93,9 +104,11 @@ class ShopifyStore implements ResourceOwnerInterface
      *
      * @return null|string
      */
-    public function getShopOwner()
+    public function getShopOwner(): ?string
     {
-        return $this->getValueByKey($this->response, 'shop.shop_owner');
+        $shopOwner = $this->getValueByKey($this->response, 'shop.shop_owner');
+
+        return is_scalar($shopOwner) ? (string) $shopOwner : null;
     }
 
     /**
@@ -103,8 +116,10 @@ class ShopifyStore implements ResourceOwnerInterface
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return $this->getValueByKey($this->response, 'shop');
+        $shopInfo = $this->getValueByKey($this->response, 'shop');
+
+        return is_array($shopInfo) ? $shopInfo : array();
     }
 }

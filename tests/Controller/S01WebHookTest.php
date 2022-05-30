@@ -180,7 +180,9 @@ class S01WebHookTest extends TestCase
      */
     private function configure(ShopifyConnector $connector, string $topic): void
     {
-        $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $connector->getParameter("WsHost"));
+        $wsHost = $connector->getParameter("WsHost");
+        $this->assertIsString($wsHost);
+        $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $wsHost);
         $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
     }
 

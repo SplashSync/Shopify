@@ -37,9 +37,9 @@
     
     
     "require": {
-        "php":                                          "^7.4|^8.0",
+        "php":                                          "^8.0",
         "ext-json":                                     "*",
-        "splash/php-bundle":                            "~1.0",
+        "splash/php-bundle":                            "dev-master",
         "slince/shopify-api-php":                       "^3.0",
         "knpuniversity/oauth2-client-bundle":           ">1.0",
         "nategood/httpful":                             "@stable",
@@ -47,7 +47,7 @@
     },
     
     "require-dev": {
-        "badpixxel/php-sdk":                            "~1.0",
+        "badpixxel/php-sdk":                            "~2.0",
         "splash/console":                               "dev-master",
 
         "symfony/symfony":                              "^3.4|^4.4",
@@ -61,6 +61,7 @@
 
     "scripts": {
         "auto-scripts": [
+            "rm vendor/splash/phpcore/Tests/Tools/TestCase.php",
             "php tests/console cache:clear",
             "cd var/cache/dev && ln -sf testsKernelDevDebugContainer.xml testContainer.xml"
         ],

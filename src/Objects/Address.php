@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use ArrayObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;
@@ -23,8 +24,6 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of ThirdParty Address
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Address extends AbstractObject
 {
@@ -42,22 +41,17 @@ class Address extends AbstractObject
     /**
      * {@inheritdoc}
      */
-    protected static $DISABLED = false;
+    protected static string $name = "Customer Address";
 
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "Customer Address";
+    protected static string $description = "Shopify Customer Address";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Shopify Customer Address";
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static $ICO = "fa fa-envelope-o";
+    protected static string $ico = "fa fa-envelope-o";
 
     //====================================================================//
     // Object Synchronization Recommended Configuration
@@ -66,20 +60,21 @@ class Address extends AbstractObject
     //====================================================================//
 
     /**
-     * Enable Creation Of New Local Objects when Not Existing
-     *
-     * @var bool
-     *
-     * @codingStandardsIgnoreStart
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_CREATED = false;
+    protected static bool $enablePushCreated = false;
+
+    /**
+     * @phpstan-var ArrayObject
+     */
+    protected object $object;
 
     /**
      * @codingStandardsIgnoreEnd
      *
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     /**
      * Class Constructor
@@ -92,7 +87,7 @@ class Address extends AbstractObject
     }
 
     /**
-     * Extract Customer Id from Splash Address Id
+     * Extract Customer ID from Splash Address ID
      *
      * @param string $objectId
      *
@@ -106,7 +101,7 @@ class Address extends AbstractObject
     }
 
     /**
-     * Extract Address Id from Splash Address Id
+     * Extract Address ID from Splash Address ID
      *
      * @param string $objectId
      *
@@ -116,11 +111,11 @@ class Address extends AbstractObject
     {
         $array = explode("-", $objectId);
 
-        return isset($array[1]) ? $array[1] : null;
+        return $array[1] ?? null;
     }
 
     /**
-     * Encode Splash Address Id from Shopify Customer && Address Id
+     * Encode Splash Address ID from Shopify Customer && Address Id
      *
      * @param string $customerId
      * @param string $addressId

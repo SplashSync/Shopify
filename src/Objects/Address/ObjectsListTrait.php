@@ -26,18 +26,18 @@ trait ObjectsListTrait
     /**
      * {@inheritdoc}
      */
-    public function objectsList($filter = null, $params = null)
+    public function objectsList(string $filter = null, array $params = array()): array
     {
         //====================================================================//
         // Execute List Request
         $rawData = API::list(
             'customers',
-            (isset($params["max"]) ? $params["max"] : 0),
-            (isset($params["offset"]) ? $params["offset"] : 0),
+            ($params["max"] ?? 0),
+            ($params["offset"] ?? 0),
             (!empty($filter) ? array("query" => $filter) : array())
         );
         //====================================================================//
-        // Request Failled
+        // Request Failed
         if (null === $rawData) {
             return array( 'meta' => array('current' => 0, 'total' => 0));
         }

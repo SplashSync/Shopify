@@ -52,9 +52,9 @@ class CachedCursorPagination extends CursorBasedPagination
     private ItemInterface $cacheItem;
 
     /**
-     * @var array List of Known Pages Links
+     * @var null|array List of Known Pages Links
      */
-    private array $cache;
+    private ?array $cache;
 
     /**
      * @param Client $client
@@ -153,7 +153,9 @@ class CachedCursorPagination extends CursorBasedPagination
             $this->cache[$page + 1] = (string) $this->links["next"];
         }
 
-        ksort($this->cache);
+        if ($this->cache) {
+            ksort($this->cache);
+        }
         $this->saveCache();
     }
 
@@ -202,7 +204,7 @@ class CachedCursorPagination extends CursorBasedPagination
     {
         $closestPage = null;
         /** @var int $cachedPage */
-        foreach (array_keys($this->cache) as $cachedPage) {
+        foreach (array_keys($this->cache ?? array()) as $cachedPage) {
             if ($cachedPage < $page) {
                 $closestPage = $cachedPage;
             }
@@ -229,11 +231,13 @@ class CachedCursorPagination extends CursorBasedPagination
         //====================================================================//
         // Load Links from Cache
         try {
-            $this->cache = $this->cacheAdapter->get($this->cacheKey, function (ItemInterface $item): array {
-                $item->expiresAfter(static::$cacheTtl);
+            /** @var array $cache */
+            $cache = $this->cacheAdapter->get($this->cacheKey, function (ItemInterface $item): array {
+                $item->expiresAfter(self::$cacheTtl);
 
                 return array();
             });
+            $this->cache = $cache;
             $this->cacheItem = $this->cacheAdapter->getItem($this->cacheKey);
         } catch (InvalidArgumentException $e) {
             $this->cache = array();

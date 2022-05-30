@@ -27,16 +27,16 @@ trait CRUDTrait
     /**
      * @var array
      */
-    private static $deletedCustomers = array();
+    private static array $deletedCustomers = array();
 
     /**
      * Load Request Object
      *
      * @param string $objectId Object id
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function load($objectId)
+    public function load(string $objectId): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
@@ -44,7 +44,7 @@ trait CRUDTrait
         //====================================================================//
         // PHPUnit => Check if Id is Deleted Customers
         if (!empty(Splash::input("SPLASH_TRAVIS")) && in_array($objectId, self::$deletedCustomers, true)) {
-            return Splash::log()->errTrace("Loading Deleted Customer (".$objectId.").");
+            return Splash::log()->errNull("Loading Deleted Customer (".$objectId.").");
         }
         //====================================================================//
         // Get Customer from Api
@@ -52,7 +52,7 @@ trait CRUDTrait
         //====================================================================//
         // Fetch Object
         if (null === $object) {
-            return Splash::log()->errTrace("Unable to load Customer (".$objectId.").");
+            return Splash::log()->errNull("Unable to load Customer (".$objectId.").");
         }
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
@@ -61,17 +61,19 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function create()
+    public function create(): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
         Splash::log()->trace();
         //====================================================================//
         // Check Customer Name is given
-        if (empty($this->in["email"])) {
-            return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "Email");
+        if (empty($this->in["email"]) || !is_string($this->in["email"])) {
+            Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "Email");
+
+            return null;
         }
         //====================================================================//
         // Create New Customer
@@ -94,7 +96,7 @@ trait CRUDTrait
         // Create Customer from Api
         $newCustomer = API::post('customers', array("customer" => $this->object), "customer");
         if (null === $newCustomer) {
-            return Splash::log()->errTrace(" Unable to Create Customer (".$this->in["email"].").");
+            return Splash::log()->errNull(" Unable to Create Customer (".$this->in["email"].").");
         }
 
         return new ArrayObject($newCustomer, ArrayObject::ARRAY_AS_PROPS);
@@ -105,9 +107,9 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return false|string
+     * @return null|string
      */
-    public function update($needed)
+    public function update(bool $needed): ?string
     {
         //====================================================================//
         // Stack Trace
@@ -118,7 +120,7 @@ trait CRUDTrait
         //====================================================================//
         // Update Customer from Api
         if (null === API::put('customers/'.$this->object->id, array("customer" => $this->object))) {
-            return Splash::log()->errTrace(" Unable to Update Customer (".$this->object->id.").");
+            return Splash::log()->errNull(" Unable to Update Customer (".$this->object->id.").");
         }
 
         return $this->getObjectIdentifier();
@@ -127,11 +129,11 @@ trait CRUDTrait
     /**
      * Delete requested Object
      *
-     * @param string $objectId Object Id
+     * @param string $objectId Object ID
      *
      * @return bool
      */
-    public function delete($objectId = null)
+    public function delete(string $objectId): bool
     {
         //====================================================================//
         // Stack Trace
@@ -154,10 +156,10 @@ trait CRUDTrait
     /**
      * {@inheritdoc}
      */
-    public function getObjectIdentifier()
+    public function getObjectIdentifier(): ?string
     {
         if (!isset($this->object->id)) {
-            return false;
+            return null;
         }
 
         return (string) $this->object->id;

@@ -29,9 +29,9 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function load($objectId)
+    public function load(string $objectId): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
@@ -43,7 +43,7 @@ trait CRUDTrait
         //====================================================================//
         // Fetch Object
         if (null == $shWebHook) {
-            return Splash::log()->errTrace(" Unable to load WebHook (".$objectId.").");
+            return Splash::log()->errNull(" Unable to load WebHook (".$objectId.").");
         }
 
         return new ArrayObject($shWebHook, ArrayObject::ARRAY_AS_PROPS);
@@ -52,12 +52,12 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @param string $url
-     * @param string $topic
+     * @param string|null $url
+     * @param string|null $topic
      *
-     * @return ArrayObject|false New Object
+     * @return ArrayObject|null
      */
-    public function create(string $url = null, string $topic = null)
+    public function create(string $url = null, string $topic = null): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
@@ -66,21 +66,27 @@ trait CRUDTrait
         //====================================================================//
         // Check WebHook Url is given
         if (empty($url) && empty($this->in["address"])) {
-            return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "address");
+            Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "address");
+
+            return null;
         }
+        /** @var string $webhookUrl */
         $webhookUrl = empty($url) ? $this->in["address"] : $url;
         //====================================================================//
         // Check WebHook Topic is given
         if (empty($topic) && empty($this->in["topic"])) {
-            return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "topic");
+            Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "topic");
+
+            return null;
         }
+        /** @var string $webhookTopic */
         $webhookTopic = empty($topic) ? $this->in["topic"] : $topic;
 
         //====================================================================//
         // Create Object
         $newWebhook = API::post('webhooks', self::getWebHooksConfiguration($webhookUrl, $webhookTopic), "webhook");
         if (is_null($newWebhook)) {
-            return Splash::log()->errTrace(" Unable to Create WebHook");
+            return Splash::log()->errNull(" Unable to Create WebHook");
         }
 
         return new ArrayObject($newWebhook, ArrayObject::ARRAY_AS_PROPS);
@@ -91,9 +97,9 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return false|string Object Id of False if Failed to Update
+     * @return null|string Object ID of NULL if Failed to Update
      */
-    public function update(bool $needed)
+    public function update(bool $needed): ?string
     {
         //====================================================================//
         // Stack Trace
@@ -107,7 +113,7 @@ trait CRUDTrait
         if (Splash::isDebugMode()) {
             $response = API::put(self::getUri($this->object->id), array("webhook" => $this->object));
             if (null === $response) {
-                return Splash::log()->errTrace(" Unable to Update WebHook (".$this->object->id.").");
+                return Splash::log()->errNull(" Unable to Update WebHook (".$this->object->id.").");
             }
         }
 
@@ -121,11 +127,11 @@ trait CRUDTrait
     /**
      * Delete requested Object
      *
-     * @param string $objectId Object Id
+     * @param string $objectId Object ID
      *
      * @return bool
      */
-    public function delete($objectId = null)
+    public function delete(string $objectId): bool
     {
         //====================================================================//
         // Stack Trace
@@ -143,10 +149,10 @@ trait CRUDTrait
     /**
      * {@inheritdoc}
      */
-    public function getObjectIdentifier()
+    public function getObjectIdentifier(): ?string
     {
         if (!isset($this->object->id)) {
-            return false;
+            return null;
         }
 
         return (string) $this->object->id;
@@ -155,7 +161,7 @@ trait CRUDTrait
     /**
      * Get Object CRUD Uri
      *
-     * @param string $objectId
+     * @param string|null $objectId
      *
      * @return string
      */

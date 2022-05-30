@@ -26,9 +26,9 @@ use Splash\Core\SplashCore as Splash;
 trait MetadataTrait
 {
     /**
-     * @var array
+     * @var null|array
      */
-    private $metadata;
+    private ?array $metadata;
 
     /**
      * Load Object Metadata from API

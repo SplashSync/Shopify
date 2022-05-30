@@ -32,17 +32,17 @@ class WebHooksController extends Controller
     /**
      * @var AbstractConnector
      */
-    private $connector;
+    private AbstractConnector $connector;
 
     /**
      * @var string
      */
-    private $topic;
+    private string $topic;
 
     /**
      * @var array
      */
-    private $data;
+    private array $data;
 
     //====================================================================//
     //  SHOPIFY WEBHOOKS MANAGEMENT
@@ -59,7 +59,7 @@ class WebHooksController extends Controller
      *
      * @return JsonResponse
      */
-    public function indexAction(LoggerInterface $logger, Request $request, AbstractConnector $connector)
+    public function indexAction(LoggerInterface $logger, Request $request, AbstractConnector $connector): JsonResponse
     {
         //====================================================================//
         // For Shopify ping GET
@@ -295,13 +295,15 @@ class WebHooksController extends Controller
      */
     private function extractData(Request $request): bool
     {
-        $this->data = empty($request->request->all())
+        $data = empty($request->request->all())
             ? json_decode($request->getContent(), true, 512, \JSON_BIGINT_AS_STRING)
             : $request->request->all()
         ;
-        if (empty($this->data) || !isset($this->data["id"]) || !is_scalar($this->data["id"])) {
+        if (!is_array($data) || empty($data["id"]) || !is_scalar($data["id"])) {
             return false;
         }
+
+        $this->data = $data;
 
         return true;
     }

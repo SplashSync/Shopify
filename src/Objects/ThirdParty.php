@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use ArrayObject;
 use Splash\Connectors\Shopify\Objects\Core\DatesTrait;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
@@ -23,8 +24,6 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of ThirdParty
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class ThirdParty extends AbstractObject
 {
@@ -45,22 +44,22 @@ class ThirdParty extends AbstractObject
     /**
      * {@inheritdoc}
      */
-    protected static $DISABLED = false;
+    protected static bool $disabled = false;
 
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "Customer";
+    protected static string $name = "Customer";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Shopify Customer";
+    protected static string $description = "Shopify Customer";
 
     /**
      * {@inheritdoc}
      */
-    protected static $ICO = "fa fa-user";
+    protected static string $ico = "fa fa-user";
 
     //====================================================================//
     // Object Synchronization Recommended Configuration
@@ -72,17 +71,18 @@ class ThirdParty extends AbstractObject
      * Enable Creation Of New Local Objects when Not Existing
      *
      * @var bool
-     *
-     * @codingStandardsIgnoreStart
      */
-    protected static $ENABLE_PUSH_CREATED = false;
+    protected static bool $enablePushCreated = false;
 
     /**
-     * @codingStandardsIgnoreEnd
-     *
+     * @phpstan-var  ArrayObject
+     */
+    protected object $object;
+
+    /**
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     /**
      * Class Constructor

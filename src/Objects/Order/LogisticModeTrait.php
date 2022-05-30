@@ -23,7 +23,7 @@ trait LogisticModeTrait
     /**
      * @var string[]
      */
-    protected static $fulfillmentFields = array(
+    protected static array $fulfillmentFields = array(
         "status",
         "tracking_company", "tracking_number", "tracking_url",
         "location_id", "notify_customer",
@@ -59,16 +59,16 @@ trait LogisticModeTrait
         //====================================================================//
         // Tracking Number
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("tracking_number")
-            ->Name("Tracking Number")
-            ->MicroData("http://schema.org/ParcelDelivery", "trackingNumber")
+            ->identifier("tracking_number")
+            ->name("Tracking Number")
+            ->microData("http://schema.org/ParcelDelivery", "trackingNumber")
         ;
         //====================================================================//
         // Tracking Url
         $this->fieldsFactory()->create(SPL_T_URL)
-            ->Identifier("tracking_url")
-            ->Name("Tracking Url")
-            ->MicroData("http://schema.org/ParcelDelivery", "trackingUrl")
+            ->identifier("tracking_url")
+            ->name("Tracking Url")
+            ->microData("http://schema.org/ParcelDelivery", "trackingUrl")
         ;
     }
 
@@ -80,7 +80,7 @@ trait LogisticModeTrait
      *
      * @return void
      */
-    protected function getLogisticFields($key, $fieldName): void
+    protected function getLogisticFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -93,7 +93,7 @@ trait LogisticModeTrait
                 break;
             case 'tracking_company':
                 $mainShippingCode = $this->getMainShippingCode();
-                $this->out[$fieldName] = $mainShippingCode ? $mainShippingCode : "Default";
+                $this->out[$fieldName] = $mainShippingCode ?: "Default";
 
                 break;
             default:
@@ -107,18 +107,18 @@ trait LogisticModeTrait
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
-     * @param mixed  $fieldData Field Data
+     * @param string $fieldData Field Data
      *
      * @return void
      */
-    protected function setFulfillmentFields($fieldName, $fieldData): void
+    protected function setFulfillmentFields(string $fieldName, string $fieldData): void
     {
         //====================================================================//
         // WRITE Field
         switch ($fieldName) {
             case 'tracking_number':
             case 'tracking_url':
-                $this->setMainFulfillmentField($fieldName, (string) $fieldData);
+                $this->setMainFulfillmentField($fieldName, $fieldData);
 
                 break;
             default:
@@ -249,6 +249,8 @@ trait LogisticModeTrait
 
     /**
      * Get Main Fulfillment CRUD Base Uri
+     *
+     * @param array $fulfillment
      *
      * @return string
      */

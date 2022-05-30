@@ -31,14 +31,14 @@ trait ObjectsListTrait
      *
      * @throws Exception
      */
-    public function objectsList($filter = null, $params = null)
+    public function objectsList(string $filter = null, array $params = array()): array
     {
         //====================================================================//
         // Execute List Request
         $rawData = API::list(
             'orders',
-            (isset($params["max"]) ? $params["max"] : 0),
-            (isset($params["offset"]) ? $params["offset"] : 0),
+            ($params["max"] ?? 0),
+            ($params["offset"] ?? 0),
             array("status" => "any")
         );
         //====================================================================//

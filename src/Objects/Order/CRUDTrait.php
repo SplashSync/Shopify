@@ -31,9 +31,9 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function load($objectId)
+    public function load(string $objectId): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
@@ -44,7 +44,7 @@ trait CRUDTrait
         //====================================================================//
         // Fetch Object from Shopify
         if (null === $object) {
-            return Splash::log()->errTrace("Unable to load Order/Invoice (".$objectId.").");
+            return Splash::log()->errNull("Unable to load Order/Invoice (".$objectId.").");
         }
         //====================================================================//
         // Override Order Infos with Apps Informations
@@ -65,7 +65,7 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @return false
+     * @return null
      */
     public function create()
     {
@@ -73,7 +73,7 @@ trait CRUDTrait
         // Stack Trace
         Splash::log()->trace();
 
-        return Splash::log()->err("Splash API Cannot Create Shopify Orders!");
+        return Splash::log()->errNull("Splash API Cannot Create Shopify Orders!");
     }
 
     /**
@@ -81,11 +81,9 @@ trait CRUDTrait
      *
      * @param bool $needed Is This Update Needed
      *
-     * @return bool|string Object Id
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return null|string Object ID
      */
-    public function update($needed)
+    public function update(bool $needed): ?string
     {
         //====================================================================//
         // Stack Trace
@@ -102,22 +100,18 @@ trait CRUDTrait
         //====================================================================//
         // Order Information Update is Forbidden
         if ($needed) {
-            return Splash::log()->err("Splash API Cannot Update Shopify Orders!");
+            return Splash::log()->errNull("Splash API Cannot Update Shopify Orders!");
         }
 
         return $this->getObjectIdentifier();
     }
 
     /**
-     * Delete requested Object
-     *
-     * @param string $objectId Object Id.
-     *
-     * @return bool
+     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function delete($objectId = null)
+    public function delete(string $objectId): bool
     {
         //====================================================================//
         // Stack Trace
@@ -129,10 +123,10 @@ trait CRUDTrait
     /**
      * {@inheritdoc}
      */
-    public function getObjectIdentifier()
+    public function getObjectIdentifier(): ?string
     {
         if (!isset($this->object->id)) {
-            return false;
+            return null;
         }
 
         return (string) $this->object->id;

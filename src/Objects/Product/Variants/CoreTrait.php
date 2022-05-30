@@ -36,11 +36,12 @@ trait CoreTrait
         //====================================================================//
         // Product Variation Parent Link
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("id")
-            ->Name("Parent Product")
-            ->Group("Meta")
-            ->MicroData("http://schema.org/Product", "isVariationOf")
-            ->isReadOnly();
+            ->identifier("id")
+            ->name("Parent Product")
+            ->group("Meta")
+            ->microData("http://schema.org/Product", "isVariationOf")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // CHILD PRODUCTS INFORMATIONS
@@ -48,30 +49,33 @@ trait CoreTrait
 
         //====================================================================//
         // Product Variation List - Product Link
-        $this->fieldsFactory()->Create((string) self::objects()->Encode("Product", SPL_T_ID))
-            ->Identifier("id")
-            ->Name("Variants")
-            ->InList("variants")
-            ->MicroData("http://schema.org/Product", "Variants")
-            ->isNotTested();
+        $this->fieldsFactory()->create((string) self::objects()->Encode("Product", SPL_T_ID))
+            ->identifier("id")
+            ->name("Variants")
+            ->inList("variants")
+            ->microData("http://schema.org/Product", "Variants")
+            ->isNotTested()
+        ;
 
         //====================================================================//
         // Product Variation List - Product SKU
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("sku")
-            ->Name("SKU")
-            ->InList("variants")
-            ->MicroData("http://schema.org/Product", "VariationName")
-            ->isReadOnly();
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("sku")
+            ->name("SKU")
+            ->inList("variants")
+            ->microData("http://schema.org/Product", "VariationName")
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // Product Variation List - Variation Attribute
         $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("options")
-            ->Name("Options")
-            ->InList("variants")
-            ->MicroData("http://schema.org/Product", "VariationAttribute")
-            ->isReadOnly();
+            ->identifier("options")
+            ->name("Options")
+            ->inList("variants")
+            ->microData("http://schema.org/Product", "VariationAttribute")
+            ->isReadOnly()
+        ;
     }
 
     /**
@@ -82,7 +86,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function getVariantsCoreFields($key, $fieldName): void
+    protected function getVariantsCoreFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -106,7 +110,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function getVariantsListFields($key, $fieldName): void
+    protected function getVariantsListFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
@@ -155,7 +159,9 @@ trait CoreTrait
         unset($this->in[$key]);
         //====================================================================//
         // Sort Attributes by Code
-        ksort($this->out["variants"]);
+        if (is_array($this->out["variants"])) {
+            ksort($this->out["variants"]);
+        }
     }
 
     /**
@@ -166,7 +172,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function setVariantsListFields($fieldName, $fieldData): void
+    protected function setVariantsListFields(string $fieldName, mixed $fieldData): void
     {
         //====================================================================//
         // Safety Check
@@ -177,11 +183,11 @@ trait CoreTrait
     }
 
     /**
-     * Identify Default Variant Product Id
+     * Identify Default Variant Product ID
      *
      * @return null|string
      */
-    private function getParentProductId()
+    private function getParentProductId(): ?string
     {
         //====================================================================//
         // Not a Variable Product => No default
@@ -193,7 +199,7 @@ trait CoreTrait
         foreach ($this->in["variants"] as $variant) {
             //====================================================================//
             // Safety Check => Id is Here
-            if (!isset($variant['id']) || !is_scalar($variant['id'])) {
+            if (!is_array($variant) || empty($variant['id']) || !is_scalar($variant['id'])) {
                 continue;
             }
             //====================================================================//

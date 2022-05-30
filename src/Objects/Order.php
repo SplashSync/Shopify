@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\Objects\IntelParserTrait;
@@ -25,8 +26,6 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of Customer Orders
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Order extends AbstractStandaloneObject
 {
@@ -61,22 +60,17 @@ class Order extends AbstractStandaloneObject
     /**
      * {@inheritdoc}
      */
-//    protected static    $DISABLED        =  True;
+    protected static string $name = "Customer Order";
 
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "Customer Order";
+    protected static string $description = "Shopify Customers Order Object";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Shopify Customers Order Object";
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static $ICO = "fa fa-shopping-cart ";
+    protected static string $ico = "fa fa-shopping-cart ";
 
     //====================================================================//
     // Object Synchronization Limitations
@@ -84,27 +78,19 @@ class Order extends AbstractStandaloneObject
     //====================================================================//
 
     /**
-     * Allow Creation Of New Local Objects
-     *
-     * @var bool
-     *
-     * @codingStandardsIgnoreStart
+     * {@inheritdoc}
      */
-    protected static $ALLOW_PUSH_CREATED = false;
+    protected static bool $allowPushCreated = false;
 
     /**
-     * Allow Update Of Existing Local Objects
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ALLOW_PUSH_UPDATED = false;
+    protected static bool $allowPushUpdated = false;
 
     /**
-     * Allow Delete Of Existing Local Objects
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ALLOW_PUSH_DELETED = false;
+    protected static bool $allowPushDeleted = false;
 
     //====================================================================//
     // Object Synchronization Recommended Configuration
@@ -113,32 +99,29 @@ class Order extends AbstractStandaloneObject
     //====================================================================//
 
     /**
-     * Enable Creation Of New Local Objects when Not Existing
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_CREATED = false;
+    protected static bool $enablePushCreated = false;
 
     /**
-     * Enable Update Of Existing Local Objects when Modified Remotely
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_UPDATED = false;
+    protected static bool $enablePushUpdated = false;
 
     /**
-     * Enable Delete Of Existing Local Objects when Deleted Remotely
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_DELETED = false;
+    protected static bool $enablePushDeleted = false;
 
     /**
-     * @codingStandardsIgnoreEnd
-     *
+     * @phpstan-var ArrayObject
+     */
+    protected object $object;
+
+    /**
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     /**
      * Class Constructor
@@ -153,10 +136,10 @@ class Order extends AbstractStandaloneObject
     /**
      * {@inheritdoc}
      */
-    public function description()
+    public function description(): array
     {
-        static::$ALLOW_PUSH_UPDATED = $this->connector->hasLogisticMode();
-        static::$ENABLE_PUSH_UPDATED = static::$ALLOW_PUSH_UPDATED;
+        self::$allowPushUpdated = $this->connector->hasLogisticMode();
+        self::$enablePushUpdated = self::$allowPushUpdated;
 
         return parent::description();
     }

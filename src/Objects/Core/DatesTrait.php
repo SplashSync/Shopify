@@ -38,21 +38,22 @@ trait DatesTrait
         //====================================================================//
         // Creation Date
         $this->fieldsFactory()->create(SPL_T_DATETIME)
-            ->Identifier("created_at")
-            ->Name("Date Created")
-            ->Group("Meta")
-            ->MicroData("http://schema.org/DataFeedItem", "dateCreated")
+            ->identifier("created_at")
+            ->name("Date Created")
+            ->group("Meta")
+            ->microData("http://schema.org/DataFeedItem", "dateCreated")
             ->isListed()
-            ->isReadOnly();
-
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Last Change Date
         $this->fieldsFactory()->create(SPL_T_DATETIME)
-            ->Identifier("updated_at")
-            ->Name("Last modification")
-            ->Group("Meta")
-            ->MicroData("http://schema.org/DataFeedItem", "dateModified")
-            ->isReadOnly();
+            ->identifier("updated_at")
+            ->name("Last modification")
+            ->group("Meta")
+            ->microData("http://schema.org/DataFeedItem", "dateModified")
+            ->isReadOnly()
+        ;
     }
 
     /**
@@ -74,8 +75,12 @@ trait DatesTrait
         }
         //====================================================================//
         // Insert in Response
-        $date = new DateTime($this->object[$fieldName]);
-        $this->out[$fieldName] = $date->format(SPL_T_DATETIMECAST);
+        if (is_scalar($this->object[$fieldName])) {
+            $date = new DateTime((string) $this->object[$fieldName]);
+            $this->out[$fieldName] = $date->format(SPL_T_DATETIMECAST);
+        } else {
+            $this->out[$fieldName] = null;
+        }
         //====================================================================//
         // Clear Key Flag
         unset($this->in[$key]);

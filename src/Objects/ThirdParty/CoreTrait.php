@@ -30,37 +30,38 @@ trait CoreTrait
         //====================================================================//
         // Email
         $this->fieldsFactory()->create(SPL_T_EMAIL)
-            ->Identifier("email")
-            ->Name("Email")
-            ->MicroData("http://schema.org/ContactPoint", "email")
+            ->identifier("email")
+            ->name("Email")
+            ->microData("http://schema.org/ContactPoint", "email")
             ->isRequired()
-            ->AddOption("emailDomain", "exemple")
-            ->AddOption("emailExtension", "com")
-            ->isListed();
-
+            ->addOption("emailDomain", "exemple")
+            ->addOption("emailExtension", "com")
+            ->isListed()
+        ;
         //====================================================================//
         // Firstname
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("first_name")
-            ->Name("Firstname")
-            ->MicroData("http://schema.org/Person", "familyName")
-            ->isLogged();
-
+            ->identifier("first_name")
+            ->name("Firstname")
+            ->microData("http://schema.org/Person", "familyName")
+            ->isLogged()
+        ;
         //====================================================================//
         // Lastname
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("last_name")
-            ->Name("Lastname")
-            ->MicroData("http://schema.org/Person", "givenName")
-            ->isLogged();
-
+            ->identifier("last_name")
+            ->name("Lastname")
+            ->microData("http://schema.org/Person", "givenName")
+            ->isLogged()
+        ;
         //====================================================================//
         // Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("company")
-            ->Name("Company Name")
-            ->MicroData("http://schema.org/Organization", "legalName")
-            ->isReadOnly();
+            ->identifier("company")
+            ->name("Company Name")
+            ->microData("http://schema.org/Organization", "legalName")
+            ->isReadOnly()
+        ;
     }
 
     /**
@@ -71,7 +72,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function getCoreFields($key, $fieldName): void
+    protected function getCoreFields(string $key, string $fieldName): void
     {
         switch ($fieldName) {
             case 'email':
@@ -81,11 +82,13 @@ trait CoreTrait
 
                 break;
             case 'company':
-                if (isset($this->object['default_address']['company'])
-                    && !empty($this->object['default_address']['company'])) {
-                    $this->out[$fieldName] = $this->object['default_address']['company'];
+                if (isset($this->object['default_address']) && is_array($this->object['default_address'])) {
+                    /** @var null|string $company */
+                    $company = $this->object['default_address']['company'] ?? null;
+                } else {
+                    $company = null;
                 }
-                $this->out[$fieldName] = "Shopify (".$this->object->id.")";
+                $this->out[$fieldName] = $company ?: "Shopify (".$this->object->id.")";
 
                 break;
             default:
@@ -104,7 +107,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function setCoreFields($fieldName, $fieldData): void
+    protected function setCoreFields(string $fieldName, $fieldData): void
     {
         switch ($fieldName) {
             case 'email':

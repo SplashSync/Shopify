@@ -74,16 +74,16 @@ stages:
       - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
 
 ################################################################################
+# PHP 8.1
+#tests:php-8.1:
+#    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+#    needs: ["tests:php-8.0"]
+#    <<: *core_tests
+
+################################################################################
 # PHP 8.0
 tests:php-8.0:
     image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
-    needs: ["tests:php-7.4"]
-    <<: *core_tests
-
-################################################################################
-# PHP 7.4
-tests:php-7.4:
-    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-7.4
     <<: *core_tests
 
 ################################################################

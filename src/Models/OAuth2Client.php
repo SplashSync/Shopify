@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Models;
 
+use JetBrains\PhpStorm\ArrayShape;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -33,19 +34,19 @@ class OAuth2Client extends AbstractProvider
      *
      * @link https://help.shopify.com/api/guides/authentication/oauth#asking-for-permission
      */
-    protected $shop;
+    protected string $shop;
 
     /**
      * @var string If set, this will be sent to shopify as the "per-user" parameter.
      *
      * @link https://help.shopify.com/api/guides/authentication/oauth#asking-for-permission
      */
-    protected $accessType;
+    protected string $accessType;
 
     /**
      * @var array
      */
-    private static $config = array(
+    private static array $config = array(
         // Shopify OAuth2 Provider
         "type" => "generic",
         "provider_class" => OAuth2Client::class,
@@ -64,9 +65,9 @@ class OAuth2Client extends AbstractProvider
      *
      * @return array
      */
-    public static function getConfig()
+    public static function getConfig(): array
     {
-        return static::$config;
+        return self::$config;
     }
 
     /**
@@ -76,11 +77,13 @@ class OAuth2Client extends AbstractProvider
      *
      * @return $this
      */
-    public function configure(AbstractConnector $connector)
+    public function configure(AbstractConnector $connector): self
     {
         //==============================================================================
         // Configure Shopify Shop Url
-        $this->shop = $connector->getParameter("WsHost");
+        /** @var string $shop */
+        $shop = $connector->getParameter("WsHost");
+        $this->shop = $shop;
 
         return $this;
     }
@@ -88,7 +91,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getBaseAuthorizationUrl()
+    public function getBaseAuthorizationUrl(): string
     {
         return 'https://'.$this->shop.'/admin/oauth/authorize';
     }
@@ -96,7 +99,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl(array $params): string
     {
         return 'https://'.$this->shop.'/admin/oauth/access_token';
     }
@@ -104,7 +107,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
         return 'https://'.$this->shop.'/admin/shop.json';
     }
@@ -112,7 +115,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getAuthorizationParameters(array $options)
+    public function getAuthorizationParameters(array $options): array
     {
         $option = (!empty($this->accessType) && 'offline' != $this->accessType) ? 'per-user' : null;
 
@@ -127,7 +130,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getDefaultScopes()
+    public function getDefaultScopes(): array
     {
         return array(
             // Access to Customer and Saved Search.
@@ -146,7 +149,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getScopeSeparator()
+    public function getScopeSeparator(): string
     {
         return ',';
     }
@@ -164,7 +167,7 @@ class OAuth2Client extends AbstractProvider
     /**
      * Returns the authorization headers used by this provider.
      *
-     * Typically this is "Bearer" or "MAC". For more information see:
+     * Typically, this is "Bearer" or "MAC". For more information see:
      * http://tools.ietf.org/html/rfc6749#section-7.1
      *
      * No default is provided, providers must overload this method to activate
@@ -174,9 +177,12 @@ class OAuth2Client extends AbstractProvider
      *
      * @return array
      */
-    public function getAuthorizationHeaders($token = null)
+    public function getAuthorizationHeaders($token = null): array
     {
-        return array('X-Shopify-Access-Token' => $token->getToken());
+        return ($token instanceof AccessToken)
+            ? array('X-Shopify-Access-Token' => $token->getToken())
+            : array()
+        ;
     }
 
     /**

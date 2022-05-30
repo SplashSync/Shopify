@@ -28,7 +28,7 @@ trait AttributesTrait
      *
      * @var array
      */
-    private static $optionsList = array(
+    private static array $optionsList = array(
         0 => 'option1',
         1 => 'option2',
         2 => 'option3'
@@ -50,33 +50,34 @@ trait AttributesTrait
         //====================================================================//
         // Product Variation List - Variation Attribute Code
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("code")
-            ->Name("Code")
-            ->InList("attributes")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/Product", "VariantAttributeCode")
+            ->identifier("code")
+            ->name("Code")
+            ->inList("attributes")
+            ->group($groupName)
+            ->microData("http://schema.org/Product", "VariantAttributeCode")
             ->isReadOnly(empty(Splash::input('SPLASH_TRAVIS')))
-            ->isNotTested();
-
+            ->isNotTested()
+        ;
         //====================================================================//
         // Product Variation List - Variation Attribute Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("name")
-            ->Name("Name")
-            ->InList("attributes")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/Product", "VariantAttributeName")
-            ->isNotTested();
-
+            ->identifier("name")
+            ->name("Name")
+            ->inList("attributes")
+            ->group($groupName)
+            ->microData("http://schema.org/Product", "VariantAttributeName")
+            ->isNotTested()
+        ;
         //====================================================================//
         // Product Variation List - Variation Attribute Value
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("value")
-            ->Name("Value")
-            ->InList("attributes")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/Product", "VariantAttributeValue")
-            ->isNotTested();
+            ->identifier("value")
+            ->name("Value")
+            ->inList("attributes")
+            ->group($groupName)
+            ->microData("http://schema.org/Product", "VariantAttributeValue")
+            ->isNotTested()
+        ;
     }
 
     //====================================================================//
@@ -91,7 +92,7 @@ trait AttributesTrait
      *
      * @return void
      */
-    protected function getVariantsAttributesFields($key, $fieldName): void
+    protected function getVariantsAttributesFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
@@ -119,22 +120,24 @@ trait AttributesTrait
         unset($this->in[$key]);
         //====================================================================//
         // Sort Attributes by Code
-        ksort($this->out["attributes"]);
+        if (is_array($this->out["attributes"])) {
+            ksort($this->out["attributes"]);
+        }
     }
 
     //====================================================================//
-    // Fields Writting Functions
+    // Fields Writing Functions
     //====================================================================//
 
     /**
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
-     * @param mixed  $fieldData Field Data
+     * @param array  $fieldData Field Data
      *
      * @return void
      */
-    protected function setVariantsAttributesFields($fieldName, $fieldData): void
+    protected function setVariantsAttributesFields(string $fieldName, array $fieldData): void
     {
         //====================================================================//
         // Safety Check
@@ -148,17 +151,16 @@ trait AttributesTrait
         foreach ($fieldData as $item) {
             //====================================================================//
             // Check Product Attributes is Valid & Not More than 3 Options!
-            if (!$this->isValidAttributeDefinition($item) && ($index < 3)) {
+            if (!is_array($item) || !$this->isValidAttributeDefinition($item) && ($index < 3)) {
                 continue;
             }
-
             //====================================================================//
             // Build Attribute Name
             // Travis Mode => Encode Code & Name
             $attrName = !empty(Splash::input('SPLASH_TRAVIS'))
                     ? $item["code"]."@".$item["name"]
-                    : $item["name"];
-
+                    : $item["name"]
+            ;
             //====================================================================//
             // Update Attribute Name
             if (!isset($this->object->options[$index])) {
@@ -168,11 +170,9 @@ trait AttributesTrait
                 );
             }
             $this->object->options[$index]["name"] = $attrName;
-
             //====================================================================//
             // Update Attribute Value
             $this->setSimple("option".($index + 1), $item["value"], "variant");
-
             //====================================================================//
             // Inc. Attribute Index
             $index++;
@@ -188,25 +188,20 @@ trait AttributesTrait
     /**
      * Check if Attribute Array is Valid for Writing
      *
-     * @param mixed $attrData Attribute Array
+     * @param array $attrData Attribute Array
      *
      * @return bool
      */
-    private function isValidAttributeDefinition($attrData)
+    private function isValidAttributeDefinition(array $attrData): bool
     {
         //====================================================================//
-        // Check Attribute is Array
-        if (!is_array($attrData) && !($attrData instanceof ArrayObject)) {
-            return false;
-        }
-        //====================================================================//
         // Check Attributes Names are Given
-        if (!isset($attrData["name"]) || !is_scalar($attrData["name"]) || empty($attrData["name"])) {
+        if (!is_scalar($attrData["name"]) || empty($attrData["name"])) {
             return Splash::log()->errTrace("Product Attribute Public Name is Not Valid.");
         }
         //====================================================================//
         // Check Attributes Values are Given
-        if (!isset($attrData["value"]) || !is_scalar($attrData["value"]) || empty($attrData["value"])) {
+        if (!is_scalar($attrData["value"]) || empty($attrData["value"])) {
             return Splash::log()->errTrace("Product Attribute Value Name is Not Valid.");
         }
 

@@ -42,9 +42,9 @@ class ShopifyConnector extends AbstractConnector
     /**
      * Objects Type Class Map
      *
-     * @var array
+     * @var array<string, class-string>
      */
-    protected static $objectsMap = array(
+    protected static array $objectsMap = array(
         "ThirdParty" => Objects\ThirdParty::class,
         "Address" => Objects\Address::class,
         "Product" => Objects\Product::class,
@@ -56,16 +56,16 @@ class ShopifyConnector extends AbstractConnector
     /**
      * Widgets Type Class Map
      *
-     * @var array
+     * @var array<string, class-string>
      */
-    protected static $widgetsMap = array(
+    protected static array $widgetsMap = array(
         "SelfTest" => "Splash\\Connectors\\Shopify\\Widgets\\SelfTest",
     );
 
     /**
      * @var string
      */
-    private $cacheDir;
+    private string $cacheDir;
 
     /**
      * Class Constructor
@@ -199,14 +199,14 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // Verify Host is Set
         //====================================================================//
-        if (!isset($config["WsHost"]) || empty($config["WsHost"]) || !is_string($config["WsHost"])) {
+        if (empty($config["WsHost"]) || !is_string($config["WsHost"])) {
             return Splash::log()->err("Shop Url is Empty or Invalid");
         }
 
         //====================================================================//
         // Verify Token is Set
         //====================================================================//
-        if (!isset($config["Token"]) || empty($config["Token"]) || !is_string($config["Token"])) {
+        if (empty($config["Token"]) || !is_string($config["Token"])) {
             return Splash::log()->err("Shop Credential (App Token) is Invalid");
         }
 
@@ -225,7 +225,7 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // Verify Host is Set
         //====================================================================//
-        if (!isset($config["WsHost"]) || empty($config["WsHost"]) || !is_string($config["WsHost"])) {
+        if (empty($config["WsHost"]) || !is_string($config["WsHost"])) {
             return false;
         }
         if (!self::isValidShopifyHost($config["WsHost"])) {
@@ -246,12 +246,12 @@ class ShopifyConnector extends AbstractConnector
     /**
      * {@inheritdoc}
      */
-    public function getFile(string $filePath, string $fileMd5)
+    public function getFile(string $filePath, string $fileMd5): ?array
     {
         //====================================================================//
         // Safety Check => Verify Self test Pass
         if (!$this->selfTest()) {
-            return false;
+            return null;
         }
 
         //====================================================================//
@@ -260,7 +260,7 @@ class ShopifyConnector extends AbstractConnector
         if (!is_array($response) || ($response["md5"] != $fileMd5)) {
             Splash::log()->err("Unable to read Shopify Image: ".$filePath);
 
-            return false;
+            return null;
         }
 
         //====================================================================//
@@ -275,7 +275,7 @@ class ShopifyConnector extends AbstractConnector
     //====================================================================//
 
     /**
-     * @abstract   Get Connector Profile Informations
+     * @abstract   Get Connector Profile Information
      *
      * @return array
      */
@@ -375,6 +375,7 @@ class ShopifyConnector extends AbstractConnector
         }
         //====================================================================//
         // Generate WebHook Url
+        /** @var string $webHookServer */
         $webHookServer = filter_input(INPUT_SERVER, 'SERVER_NAME');
         //====================================================================//
         // When Running on a Local Server
@@ -441,6 +442,7 @@ class ShopifyConnector extends AbstractConnector
         }
         //====================================================================//
         // Generate WebHook Url
+        /** @var string $webHookServer */
         $webHookServer = filter_input(INPUT_SERVER, 'SERVER_NAME');
         $webHookUrl = (string) $router->generate(
             'splash_connector_action',
@@ -482,9 +484,9 @@ class ShopifyConnector extends AbstractConnector
     /**
      * Get Shop Default Vat Rate
      *
-     * @return int
+     * @return float|int
      */
-    public function getDefaultVatRate()
+    public function getDefaultVatRate(): float|int
     {
         //====================================================================//
         // Get Shop Informations
@@ -492,7 +494,7 @@ class ShopifyConnector extends AbstractConnector
         $countries = $this->getParameter("Countries");
         //====================================================================//
         // Safety Checks
-        if (!isset($storeInfos["country"]) || empty($storeInfos["country"]) || !is_array($countries)) {
+        if (!is_array($storeInfos) || empty($storeInfos["country"]) || !is_array($countries)) {
             return 0;
         }
         //====================================================================//
@@ -516,7 +518,10 @@ class ShopifyConnector extends AbstractConnector
     {
         //====================================================================//
         // Get Shop Informations
-        return (string) $this->getParameter("currency", "EUR", "ShopInformations");
+        /** @var null|string $currency */
+        $currency = $this->getParameter("currency", "EUR", "ShopInformations");
+
+        return (string) $currency;
     }
 
     /**
@@ -526,15 +531,16 @@ class ShopifyConnector extends AbstractConnector
      */
     public function getShopifyDomain(): string
     {
-        $wsHost = (string) $this->getParameter("WsHost");
+        /** @var string $wsHost */
+        $wsHost = $this->getParameter("WsHost");
         //====================================================================//
         // If Url Domain is found
-        if (parse_url($wsHost, PHP_URL_HOST)) {
-            return (string) parse_url($wsHost, PHP_URL_HOST);
+        if (parse_url((string) $wsHost, PHP_URL_HOST)) {
+            return (string) parse_url((string) $wsHost, PHP_URL_HOST);
         }
         //====================================================================//
         // Raw Domain was found
-        return $wsHost;
+        return (string) $wsHost;
     }
 
     /**

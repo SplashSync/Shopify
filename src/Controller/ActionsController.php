@@ -21,7 +21,7 @@ use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Local\ActionsTrait;
 use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +32,7 @@ use Symfony\Component\Translation\Translator;
 /**
  * Splash Shopify Connector Actions Controller
  */
-class ActionsController extends Controller
+class ActionsController extends AbstractController
 {
     use ActionsTrait;
 
@@ -88,13 +88,13 @@ class ActionsController extends Controller
     ) {
         //==============================================================================
         // Get Connector WebService Id from Session
+        /** @var string $webserviceId */
         $webserviceId = $session->get("shopify_oauth2_wsid");
         //====================================================================//
         // Perform Identify Pointed Server
         if (false === $connector->identify($webserviceId)) {
             return self::getDefaultResponse();
         }
-
         //==============================================================================
         // Load Shopify OAuth2 Client
         $client = $registry->getClient("shopify");

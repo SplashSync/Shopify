@@ -21,15 +21,13 @@ use Splash\Core\SplashCore      as Splash;
 
 /**
  * Shopify Config SelfTest
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class SelfTest extends AbstractStandaloneWidget
 {
     //====================================================================//
     // Define Standard Options for this Widget
     // Override this array to change default options for your widget
-    public static $OPTIONS = array(
+    public static array $options = array(
         "Width" => self::SIZE_DEFAULT,
         'UseCache' => true,
         'CacheLifeTime' => 1,
@@ -38,22 +36,22 @@ class SelfTest extends AbstractStandaloneWidget
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "Server SelfTest";
+    protected static string $name = "Server SelfTest";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Results of your Server SelfTests";
+    protected static string $description = "Results of your Server SelfTests";
 
     /**
      * {@inheritdoc}
      */
-    protected static $ICO = "fa fa-info-circle";
+    protected static string $ico = "fa fa-info-circle";
 
     /**
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     /**
      * Class Constructor
@@ -66,15 +64,11 @@ class SelfTest extends AbstractStandaloneWidget
     }
 
     /**
-     * Return requested Customer Data
-     *
-     * @param array $params Widget Inputs Parameters
-     *
-     * @return array
+     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function get($params = null)
+    public function get(array $parameters = array()): array
     {
         //====================================================================//
         // Stack Trace

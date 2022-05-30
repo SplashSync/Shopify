@@ -41,21 +41,22 @@ trait MainTrait
 
         //====================================================================//
         // Reference | SKU
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("sku")
-            ->Name("Product SKU")
-            ->Description("A unique identifier for the product variant in the shop.")
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("sku")
+            ->name("Product SKU")
+            ->description("A unique identifier for the product variant in the shop.")
             ->isListed()
-            ->MicroData("http://schema.org/Product", "model");
-
+            ->microData("http://schema.org/Product", "model")
+        ;
         //====================================================================//
         // Name with Options
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("variant_title")
-            ->Name("Title with Options")
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("variant_title")
+            ->name("Title with Options")
+            ->microData("http://schema.org/Product", "name")
             ->isListed()
-            ->MicroData("http://schema.org/Product", "name")
-            ->isReadOnly();
+            ->isReadOnly()
+        ;
 
         //====================================================================//
         // PRICES INFORMATIONS
@@ -63,10 +64,11 @@ trait MainTrait
 
         //====================================================================//
         // Product Selling Price
-        $this->fieldsFactory()->Create(SPL_T_PRICE)
-            ->Identifier("price")
-            ->Name("Price ".($taxIncluded ? "(tax incl.)" : "(tax excl.)"))
-            ->MicroData("http://schema.org/Product", "price");
+        $this->fieldsFactory()->create(SPL_T_PRICE)
+            ->identifier("price")
+            ->name("Price ".($taxIncluded ? "(tax incl.)" : "(tax excl.)"))
+            ->microData("http://schema.org/Product", "price")
+        ;
 
         //====================================================================//
         // PRODUCT SPECIFICATIONS
@@ -74,10 +76,11 @@ trait MainTrait
 
         //====================================================================//
         // Weight
-        $this->fieldsFactory()->Create(SPL_T_DOUBLE)
-            ->Identifier("grams")
-            ->Name("Product weight (Kg)")
-            ->MicroData("http://schema.org/Product", "weight");
+        $this->fieldsFactory()->create(SPL_T_DOUBLE)
+            ->identifier("grams")
+            ->name("Product weight (Kg)")
+            ->microData("http://schema.org/Product", "weight")
+        ;
 
         //====================================================================//
         // PRODUCT BARCODES
@@ -86,9 +89,10 @@ trait MainTrait
         //====================================================================//
         // UPC
         $this->fieldsFactory()->Create(SPL_T_INT)
-            ->Identifier("barcode")
-            ->Name("UPC | ISBN BarCode")
-            ->MicroData("http://schema.org/Product", "gtin12");
+            ->identifier("barcode")
+            ->name("UPC | ISBN BarCode")
+            ->microData("http://schema.org/Product", "gtin12")
+        ;
     }
 
     /**
@@ -99,7 +103,7 @@ trait MainTrait
      *
      * @return void
      */
-    protected function getMainFields($key, $fieldName): void
+    protected function getMainFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -108,6 +112,7 @@ trait MainTrait
             // PRODUCT DESCRIPTIONS
             //====================================================================//
             case 'sku':
+            case 'barcode':
                 $this->getSimple($fieldName, "variant");
 
                 break;
@@ -129,7 +134,7 @@ trait MainTrait
                 $tax = (float) ($this->variant->taxable ? $this->getLocalVatRate() : 0);
                 //====================================================================//
                 // Build Price Array
-                $this->out[$fieldName] = self::prices()->Encode(
+                $this->out[$fieldName] = self::prices()->encode(
                     $priceHT,
                     $tax,
                     $priceTTC,
@@ -141,14 +146,7 @@ trait MainTrait
             // PRODUCT SPECIFICATIONS
             //====================================================================//
             case 'grams':
-                $this->getVariantWheight($fieldName);
-
-                break;
-            //====================================================================//
-            // PRODUCT BARCODES
-            //====================================================================//
-            case 'barcode':
-                $this->getSimple($fieldName, "variant");
+                $this->getVariantWeight($fieldName);
 
                 break;
             default:
@@ -162,11 +160,11 @@ trait MainTrait
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
-     * @param mixed  $fieldData Field Data
+     * @param scalar|null $fieldData Field Data
      *
      * @return void
      */
-    protected function setMainFields($fieldName, $fieldData): void
+    protected function setMainFields(string $fieldName, float|bool|int|string|null $fieldData): void
     {
         //====================================================================//
         // WRITE Field
@@ -175,13 +173,41 @@ trait MainTrait
             // PRODUCT DESCRIPTIONS
             //====================================================================//
             case 'sku':
+            case 'barcode':
                 $this->setSimple($fieldName, $fieldData, "variant");
 
                 break;
             //====================================================================//
+            // PRODUCT SPECIFICATIONS
+            //====================================================================//
+            case 'grams':
+                $this->setVariantWeight((float) $fieldData);
+
+                break;
+            default:
+                return;
+        }
+        unset($this->in[$fieldName]);
+    }
+
+    /**
+     * Write Given Fields
+     *
+     * @param string $fieldName Field Identifier / Name
+     * @param array|null $fieldData Field Data
+     *
+     * @return void
+     */
+    protected function setMainPriceFields(string $fieldName, ?array $fieldData): void
+    {
+        //====================================================================//
+        // WRITE Field
+        switch ($fieldName) {
+            //====================================================================//
             // PRICES INFORMATIONS
             //====================================================================//
             case 'price':
+                $fieldData = $fieldData ?? array();
                 //====================================================================//
                 // Read Price Tax Mode
                 $taxIncluded = (bool) $this->getParameter("taxes_included", null, "ShopInformations");
@@ -192,20 +218,6 @@ trait MainTrait
                     : self::prices()->taxExcluded($fieldData);
                 $this->setSimple($fieldName, $price, "variant");
                 $this->setSimple('taxable', !empty(self::prices()->taxPercent($fieldData)), "variant");
-
-                break;
-            //====================================================================//
-            // PRODUCT SPECIFICATIONS
-            //====================================================================//
-            case 'grams':
-                $this->setVariantWheight($fieldData);
-
-                break;
-            //====================================================================//
-            // PRODUCT BARCODES
-            //====================================================================//
-            case 'barcode':
-                $this->setSimple($fieldName, $fieldData, "variant");
 
                 break;
             default:

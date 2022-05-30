@@ -25,17 +25,18 @@ use Splash\Core\SplashCore      as Splash;
 trait CRUDTrait
 {
     /**
-     * Load Product Variants Informations
+     * Load Product Variants Information
      *
      * @param array $product Shopify Product Object
      *
      * @return bool
      */
-    public function loadVariant($product)
+    public function loadVariant(array $product): bool
     {
         //====================================================================//
         // Stack Trace
         Splash::log()->trace();
+        $this->variantIndex = null;
         //====================================================================//
         // Identify Variant
         foreach ($product['variants'] as $index => $variant) {
@@ -49,7 +50,7 @@ trait CRUDTrait
         }
         //====================================================================//
         // NO Variant found => Return False
-        if (!isset($this->variant)) {
+        if (!isset($this->variantIndex)) {
             return Splash::log()->errTrace(" Unable to load Product Variant (".$this->variantId.").");
         }
 
@@ -59,9 +60,9 @@ trait CRUDTrait
     /**
      * Create New Product Variant
      *
-     * @return ArrayObject|false
+     * @return ArrayObject|null
      */
-    public function createVariant()
+    public function createVariant(): ?ArrayObject
     {
         //====================================================================//
         // Stack Trace
@@ -70,22 +71,25 @@ trait CRUDTrait
         // Load Existing Parent Id
         $productId = $this->getParentProductId();
         if (null === $productId) {
-            return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
+            return Splash::log()->errNull(" Unable to Create Product Variant (".$productId.").");
         }
         //====================================================================//
         // Check Options are Given
         if (!isset($this->in["attributes"]) || empty($this->in["attributes"])) {
-            return Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "Variant Options");
+            Splash::log()->err("ErrLocalFieldMissing", __CLASS__, __FUNCTION__, "Variant Options");
+
+            return null;
         }
         //====================================================================//
         // Create Variant With Options
-        $variant = new ArrayObject();
+        $variant = new ArrayObject(array("inventory_management"));
         $variant["inventory_management"] = "shopify";
         $index = 0;
-        foreach ($this->in["attributes"] as $item) {
+        $attributes = is_array($this->in["attributes"]) ? $this->in["attributes"] : array();
+        foreach ($attributes as $item) {
             //====================================================================//
             // Check Product Attributes is Valid & Not More than 3 Options!
-            if (!$this->isValidAttributeDefinition($item) && ($index < 3)) {
+            if (!is_array($item) || !$this->isValidAttributeDefinition($item) && ($index < 3)) {
                 continue;
             }
             //====================================================================//
@@ -103,7 +107,7 @@ trait CRUDTrait
             "product"
         );
         if (null === $response) {
-            return Splash::log()->errTrace(" Unable to Create Product Variant (".$productId.").");
+            return Splash::log()->errNull(" Unable to Create Product Variant (".$productId.").");
         }
 
         return $this->load(self::getObjectId($response["variant"]["product_id"], $response["variant"]["id"]));

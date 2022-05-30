@@ -23,9 +23,9 @@ use ArrayObject;
 trait AddressTrait
 {
     /**
-     * @var ArrayObject
+     * @var null|ArrayObject
      */
-    protected $address;
+    protected ?ArrayObject $address;
 
     /**
      * Build Address Fields using FieldFactory
@@ -37,73 +37,74 @@ trait AddressTrait
         $groupName = "Address";
 
         //====================================================================//
-        // Addess
+        // Address
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("address1")
-            ->Name("Street 1")
-            ->Group($groupName)
+            ->identifier("address1")
+            ->name("Street 1")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "streetAddress")
             ->isReadOnly()
-            ->MicroData("http://schema.org/PostalAddress", "streetAddress");
-
+        ;
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("address2")
-            ->Name("Street 2")
-            ->Group($groupName)
+            ->identifier("address2")
+            ->name("Street 2")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "streetAddress2")
             ->isReadOnly()
-            ->MicroData("http://schema.org/PostalAddress", "streetAddress2");
-
+        ;
         //====================================================================//
         // Zip Code
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("zip")
-            ->Name("Zip")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "postalCode")
-            ->AddOption('maxLength', (string) 18)
-            ->isReadOnly();
-
+            ->identifier("zip")
+            ->name("Zip")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "postalCode")
+            ->addOption('maxLength', "18")
+            ->isReadOnly()
+        ;
         //====================================================================//
         // City Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("city")
-            ->Name("Town")
-            ->Group($groupName)
+            ->identifier("city")
+            ->name("Town")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "addressLocality")
             ->isReadOnly()
-            ->MicroData("http://schema.org/PostalAddress", "addressLocality");
-
+        ;
         //====================================================================//
         // Country Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("country_name")
-            ->Name("Country")
-            ->Group($groupName)
-            ->isReadOnly();
-
+            ->identifier("country_name")
+            ->name("Country")
+            ->group($groupName)
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Country ISO Code
         $this->fieldsFactory()->create(SPL_T_COUNTRY)
-            ->Identifier("country_code")
-            ->Name("Country Code")
-            ->Group($groupName)
+            ->identifier("country_code")
+            ->name("Country Code")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "addressCountry")
             ->isReadOnly()
-            ->MicroData("http://schema.org/PostalAddress", "addressCountry");
-
+        ;
         //====================================================================//
         // State Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("province")
-            ->Group($groupName)
-            ->Name("State")
-            ->isReadOnly();
-
+            ->identifier("province")
+            ->group($groupName)
+            ->name("State")
+            ->isReadOnly()
+        ;
         //====================================================================//
         // State code
         $this->fieldsFactory()->create(SPL_T_STATE)
-            ->Identifier("province_code")
-            ->Name("State Code")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "addressRegion")
-            ->isReadOnly();
+            ->identifier("province_code")
+            ->name("State Code")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "addressRegion")
+            ->isReadOnly()
+        ;
     }
 
     /**
@@ -116,11 +117,13 @@ trait AddressTrait
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getAddressFields($key, $fieldName): void
+    protected function getAddressFields(string $key, string $fieldName): void
     {
         if (!isset($this->address)) {
             $this->address = new ArrayObject(
-                isset($this->object['default_address']) ? $this->object['default_address'] : array(),
+                (isset($this->object['default_address']) && is_array($this->object['default_address']))
+                    ? $this->object['default_address']
+                    : array(),
                 ArrayObject::ARRAY_AS_PROPS
             );
         }

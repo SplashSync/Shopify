@@ -25,14 +25,14 @@ trait StockTrait
     /**
      * @var null|array
      */
-    private $newInventoryLevel;
+    private ?array $newInventoryLevel;
 
     /**
      * Get Stock Updated data
      *
      * @return null|array
      */
-    protected function getNewInventorylevel()
+    protected function getNewInventorylevel(): ?array
     {
         $response = $this->newInventoryLevel;
         $this->newInventoryLevel = null;
@@ -54,18 +54,19 @@ trait StockTrait
         //====================================================================//
         // Stock Reel
         $this->fieldsFactory()->Create(SPL_T_INT)
-            ->Identifier("inventory_quantity")
-            ->Name("Stock")
-            ->MicroData("http://schema.org/Offer", "inventoryLevel")
-            ->isListed();
-
+            ->identifier("inventory_quantity")
+            ->name("Stock")
+            ->microData("http://schema.org/Offer", "inventoryLevel")
+            ->isListed()
+        ;
         //====================================================================//
         // Out of Stock Flag
         $this->fieldsFactory()->Create(SPL_T_BOOL)
-            ->Identifier("outofstock")
-            ->Name("Out of stock")
-            ->MicroData("http://schema.org/ItemAvailability", "OutOfStock")
-            ->isReadOnly();
+            ->identifier("outofstock")
+            ->name("Out of stock")
+            ->microData("http://schema.org/ItemAvailability", "OutOfStock")
+            ->isReadOnly()
+        ;
     }
 
     /**
@@ -76,7 +77,7 @@ trait StockTrait
      *
      * @return void
      */
-    protected function getStockFields($key, $fieldName): void
+    protected function getStockFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -92,7 +93,7 @@ trait StockTrait
             //====================================================================//
             // Out Of Stock
             case 'outofstock':
-                $this->out[$fieldName] = ($this->variant->inventory_quantity > 0) ? false : true;
+                $this->out[$fieldName] = !($this->variant->inventory_quantity > 0);
 
                 break;
             default:
@@ -106,11 +107,11 @@ trait StockTrait
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
-     * @param mixed  $fieldData Field Data
+     * @param scalar|null $fieldData Field Data
      *
      * @return void
      */
-    protected function setStockFields($fieldName, $fieldData): void
+    protected function setStockFields(string $fieldName, float|bool|int|string|null $fieldData): void
     {
         //====================================================================//
         // WRITE Field
@@ -134,6 +135,7 @@ trait StockTrait
                 }
                 //====================================================================//
                 // Check if Product Default Stock Location is Selected => Cancel Product Stock Update
+                /** @var null|int $locationId */
                 $locationId = $this->getParameter("LocationId");
                 if (empty($locationId)) {
                     Splash::log()->war('No Default Product Stock Location Selected : Stock Update Skipped!!');
@@ -148,7 +150,7 @@ trait StockTrait
                     "available" => (int) $fieldData,
                 );
                 //====================================================================//
-                // Store Chantges on Inventory Level for Post Set Update
+                // Store Changes on Inventory Level for Post Set Update
                 $this->needUpdate("inventory");
                 $this->newInventoryLevel = $inventoryLevel;
 

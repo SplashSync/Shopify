@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects;
 
+use ArrayObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;
@@ -25,8 +26,6 @@ use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of Customer Invoice
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Invoice extends AbstractObject
 {
@@ -59,22 +58,17 @@ class Invoice extends AbstractObject
     /**
      * {@inheritdoc}
      */
-//    protected static    $DISABLED        =  True;
+    protected static string $name = "Customer Invoice";
 
     /**
      * {@inheritdoc}
      */
-    protected static $NAME = "Customer Invoice";
+    protected static string $description = "Shopify Customers Invoice Object";
 
     /**
      * {@inheritdoc}
      */
-    protected static $DESCRIPTION = "Shopify Customers Invoice Object";
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static $ICO = "fa fa-money";
+    protected static string $ico = "fa fa-money";
 
     //====================================================================//
     // Object Synchronization Limitations
@@ -82,27 +76,19 @@ class Invoice extends AbstractObject
     //====================================================================//
 
     /**
-     * Allow Creation Of New Local Objects
-     *
-     * @var bool
-     *
-     * @codingStandardsIgnoreStart
+     * {@inheritdoc}
      */
-    protected static $ALLOW_PUSH_CREATED = false;
+    protected static bool $allowPushCreated = false;
 
     /**
-     * Allow Update Of Existing Local Objects
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ALLOW_PUSH_UPDATED = false;
+    protected static bool $allowPushUpdated = false;
 
     /**
-     * Allow Delete Of Existing Local Objects
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ALLOW_PUSH_DELETED = false;
+    protected static bool $allowPushDeleted = false;
 
     //====================================================================//
     // Object Synchronization Recommended Configuration
@@ -111,35 +97,32 @@ class Invoice extends AbstractObject
     //====================================================================//
 
     /**
-     * Enable Creation Of New Local Objects when Not Existing
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_CREATED = false;
+    protected static bool $enablePushCreated = false;
 
     /**
-     * Enable Update Of Existing Local Objects when Modified Remotly
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_UPDATED = false;
+    protected static bool $enablePushUpdated = false;
 
     /**
-     * Enable Delete Of Existing Local Objects when Deleted Remotly
-     *
-     * @var bool
+     * {@inheritdoc}
      */
-    protected static $ENABLE_PUSH_DELETED = false;
+    protected static bool $enablePushDeleted = false;
 
     /**
-     * @codingStandardsIgnoreEnd
-     *
+     * @phpstan-var ArrayObject
+     */
+    protected object $object;
+
+    /**
      * @var ShopifyConnector
      */
-    protected $connector;
+    protected ShopifyConnector $connector;
 
     /**
-     * Class Cosntructor
+     * Class Constructor
      *
      * @param ShopifyConnector $connector
      */

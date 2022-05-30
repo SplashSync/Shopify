@@ -131,30 +131,16 @@ trait ImagesTrait
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
-     * @param mixed  $fieldData Field Data
+     * @param array $fieldData Field Data
      *
      * @return void
      */
-    private function setImagesFields(string $fieldName, $fieldData)
+    protected function setImagesFields(string $fieldName, array $fieldData): void
     {
-        //====================================================================//
-        // WRITE Field
-        switch ($fieldName) {
-            //====================================================================//
-            // PRODUCT IMAGES
-            //====================================================================//
-            case 'images':
-                //==============================================================================
-                // Detect ArrayObjects
-                if ($fieldData instanceof ArrayObject) {
-                    $fieldData = $fieldData->getArrayCopy();
-                }
-                $this->setImgArray($fieldData);
-
-                break;
-            default:
-                return;
+        if ('images' != $fieldName) {
+            return;
         }
+        $this->setImgArray($fieldData);
         unset($this->in[$fieldName]);
     }
 
@@ -207,7 +193,7 @@ trait ImagesTrait
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    private function setImgArray(array $data)
+    private function setImgArray(array $data): void
     {
         //====================================================================//
         // Init
@@ -222,7 +208,7 @@ trait ImagesTrait
             $inValue = ($inValue instanceof ArrayObject) ? $inValue->getArrayCopy() : $inValue;
             //====================================================================//
             // Check Image Array is here
-            if (!isset($inValue["image"]) || empty($inValue["image"])) {
+            if (empty($inValue["image"])) {
                 continue;
             }
             //====================================================================//
@@ -299,7 +285,7 @@ trait ImagesTrait
             // Load Image Metadata from Cache | API | Url
             $splashImage = ShopifyImages::getInfos($shopifyImage);
             if (null == $splashImage) {
-                Splash::log()->errTrace("An Error Occured while writting images, please retry");
+                Splash::log()->errTrace("An Error Occurred while writing images, please retry");
 
                 return null;
             }
@@ -321,17 +307,12 @@ trait ImagesTrait
     /**
      * Add Product Image
      *
-     * @param array|ArrayObject $splashImage
+     * @param array $splashImage
      *
      * @return null|int
      */
-    private function addImage($splashImage): ?int
+    private function addImage(array $splashImage): ?int
     {
-        //==============================================================================
-        // Detect ArrayObjects
-        if ($splashImage instanceof ArrayObject) {
-            $splashImage = $splashImage->getArrayCopy();
-        }
         //==============================================================================
         // Try Reading of File on Local System
         $rawFile = $this->connector->file($splashImage["file"], $splashImage["md5"]);

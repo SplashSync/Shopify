@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Helpers;
 
 use DateTimeInterface;
+use function _PHPStan_c24aa5a16\RingCentral\Psr7\str;
 
 /**
  * Execute Object Getter & Filter Type Errors
@@ -49,7 +50,9 @@ class TypeErrorCatcher
      */
     public static function getString(object $object, string $method): ?string
     {
-        return self::get($object, $method);
+        $value = self::get($object, $method);
+
+        return is_scalar($value) ? (string) $value : null;
     }
 
     /**
@@ -62,6 +65,8 @@ class TypeErrorCatcher
      */
     public static function getDateTime(object $object, string $method): ?DateTimeInterface
     {
-        return self::get($object, $method);
+        $value = self::get($object, $method);
+
+        return ($value instanceof DateTimeInterface) ? $value : null;
     }
 }

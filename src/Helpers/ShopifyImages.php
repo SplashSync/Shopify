@@ -67,7 +67,7 @@ class ShopifyImages
      */
     public static function getInfos(array $shopifyImage): ?array
     {
-        static::$shopifyImage = $shopifyImage;
+        self::$shopifyImage = $shopifyImage;
         //====================================================================//
         // Build Image Cache Key
         $cacheKey = implode(
@@ -76,28 +76,28 @@ class ShopifyImages
         );
         //====================================================================//
         // Ensure Cache Exists
-        if (!isset(static::$apcu)) {
-            static::$apcu = new ApcuAdapter();
+        if (!isset(self::$apcu)) {
+            self::$apcu = new ApcuAdapter();
         }
 
         try {
-            $fromCache = static::$apcu->get($cacheKey, function (ItemInterface $item) {
+            $fromCache = self::$apcu->get($cacheKey, function (ItemInterface $item) {
                 //====================================================================//
                 // Setup Cache Item
                 $item->expiresAfter(self::$imgCacheTtl);
                 //====================================================================//
                 // Load Splash Image from Api
-                $fromApi = self::getMetadataFromApi(static::$shopifyImage);
+                $fromApi = self::getMetadataFromApi(self::$shopifyImage);
                 if ($fromApi) {
                     return $fromApi;
                 }
                 //====================================================================//
                 // Load Splash Image from Url
-                $fromUrl = self::getMetadataFromUrl(static::$shopifyImage['src'], static::$shopifyImage['alt']);
+                $fromUrl = self::getMetadataFromUrl(self::$shopifyImage['src'], self::$shopifyImage['alt']);
                 if ($fromUrl) {
                     //====================================================================//
                     // Save Splash Image is In Cache & Api
-                    self::setMetadataInApi(static::$shopifyImage, $fromUrl);
+                    self::setMetadataInApi(self::$shopifyImage, $fromUrl);
 
                     return $fromUrl;
                 }
@@ -109,13 +109,13 @@ class ShopifyImages
         }
         //====================================================================//
         // Check if Splash Image is In Cache
-        if ($fromCache) {
+        if (is_array($fromCache)) {
             return $fromCache;
         }
         //====================================================================//
         // Loading Splash Image Fail
         try {
-            static::$apcu->delete($cacheKey);
+            self::$apcu->delete($cacheKey);
         } catch (InvalidArgumentException $e) {
             return null;
         }
