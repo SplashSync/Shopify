@@ -55,46 +55,46 @@ trait ImagesTrait
 
         //====================================================================//
         // Product Images List
-        $this->fieldsFactory()->Create(SPL_T_IMG)
-            ->Identifier("image")
-            ->InList("images")
-            ->Name("Image")
-            ->Group("Images")
-            ->MicroData("http://schema.org/Product", "image");
-
+        $this->fieldsFactory()->create(SPL_T_IMG)
+            ->identifier("image")
+            ->inList("images")
+            ->name("Image")
+            ->group("Images")
+            ->microData("http://schema.org/Product", "image")
+        ;
         //====================================================================//
         // Product Images => Image Position In List
         $this->fieldsFactory()->create(SPL_T_INT)
-            ->Identifier("position")
-            ->InList("images")
-            ->Name("Position")
-            ->Group("Images")
-            ->Description("Image Order for this Product Variant")
-            ->MicroData("http://schema.org/Product", "positionImage")
-            ->isNotTested();
-
+            ->identifier("position")
+            ->inList("images")
+            ->name("Position")
+            ->group("Images")
+            ->description("Image Order for this Product Variant")
+            ->microData("http://schema.org/Product", "positionImage")
+            ->isNotTested()
+        ;
         //====================================================================//
         // Product Images => Is Cover
-        $this->fieldsFactory()->Create(SPL_T_BOOL)
-            ->Identifier("cover")
-            ->InList("images")
-            ->Name("Is Cover")
-            ->Group("Images")
-            ->MicroData("http://schema.org/Product", "isCover")
-            ->isNotTested();
-
+        $this->fieldsFactory()->create(SPL_T_BOOL)
+            ->identifier("cover")
+            ->inList("images")
+            ->name("Is Cover")
+            ->group("Images")
+            ->microData("http://schema.org/Product", "isCover")
+            ->isNotTested()
+        ;
         //====================================================================//
         // Product Images => Is Visible Image
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("visible")
-            ->InList("images")
-            ->Name("Visible")
-            ->Group("Images")
-            ->Description("Image is visible for this Product Variant")
-            ->MicroData("http://schema.org/Product", "isVisibleImage")
-            ->Group("Images")
-//            ->isReadOnly()
-            ->isNotTested();
+            ->identifier("visible")
+            ->inList("images")
+            ->name("Visible")
+            ->group("Images")
+            ->description("Image is visible for this Product Variant")
+            ->microData("http://schema.org/Product", "isVisibleImage")
+            ->group("Images")
+            ->isNotTested()
+        ;
     }
 
     /**
