@@ -3,7 +3,7 @@
 /*
  *  This file is part of SplashSync Project.
  *
- *  Copyright (C) 2015-2021 Splash Sync  <www.splashsync.com>
+ *  Copyright (C) Splash Sync  <www.splashsync.com>
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,7 +29,7 @@ trait CRUDTrait
      *
      * @param string $objectId Object id
      *
-     * @return ArrayObject|null
+     * @return null|ArrayObject
      */
     public function load(string $objectId): ?ArrayObject
     {
@@ -52,10 +52,10 @@ trait CRUDTrait
     /**
      * Create Request Object
      *
-     * @param string|null $url
-     * @param string|null $topic
+     * @param null|string $url
+     * @param null|string $topic
      *
-     * @return ArrayObject|null
+     * @return null|ArrayObject
      */
     public function create(string $url = null, string $topic = null): ?ArrayObject
     {
@@ -161,7 +161,7 @@ trait CRUDTrait
     /**
      * Get Object CRUD Uri
      *
-     * @param string|null $objectId
+     * @param null|string $objectId
      *
      * @return string
      */
