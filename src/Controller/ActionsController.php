@@ -179,4 +179,53 @@ class ActionsController extends Controller
 
         return new RedirectResponse($referer);
     }
+
+    //==============================================================================
+    // TOKEN REFRESH
+    //==============================================================================
+
+    /**
+     * Refresh User Access Token
+     *
+     * @param Request           $request
+     * @param AbstractConnector $connector
+     *
+     * @return Response
+     */
+    public function refreshAction(Request $request, AbstractConnector $connector)
+    {
+        $result = false;
+        //====================================================================//
+        // Safety Check
+        $refreshToken = $request->get("token");
+        if (empty($refreshToken) || !is_string($refreshToken)) {
+            return new Response("Please provide Refresh Token");
+        }
+        //====================================================================//
+        // Connector SelfTest
+        if (($connector instanceof ShopifyConnector) && $connector->selfTest()) {
+            $result = $connector->refreshAccessToken($refreshToken);
+        }
+        //====================================================================//
+        // Inform User
+        /** @var Translator $translator */
+        $translator = $this->get('translator');
+        $this->addFlash(
+            $result ? "success" : "danger",
+            $translator->trans(
+                $result ? "Access Token Updated" : "Access Token Update Fail",
+                array(),
+                "ShopifyBundle"
+            )
+        );
+        //====================================================================//
+        // Redirect Response
+        /** @var string $referer */
+        $referer = $request->headers->get('referer');
+        if (empty($referer)) {
+            return self::getDefaultResponse();
+        }
+
+        return new RedirectResponse($referer);
+    }
 }

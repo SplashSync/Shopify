@@ -228,6 +228,39 @@ class ShopifyHelper
     }
 
     /**
+     * Shopify API POST Request
+     *
+     * @param string      $path     API REST Path
+     * @param array       $data     Request Data
+     * @param null|string $resource Response Resource
+     *
+     * @return null|array
+     */
+    public static function postRaw(string $path, array $data, string $resource = null): ?array
+    {
+        //====================================================================//
+        // Perform Request
+        try {
+            $response = self::$client->createRequest(
+                "POST",
+                sprintf('https://%s/admin/%s.json', self::$endpoint, $path),
+                $data
+            );
+        } catch (ClientException $ex) {
+            Splash::log()->err($ex->getMessage());
+
+            return null;
+        }
+        //====================================================================//
+        // Return Response
+        if (!is_null($resource) && isset($response[$resource])) {
+            return $response[$resource];
+        }
+
+        return  $response;
+    }
+
+    /**
      * Shopify API DELETE Request
      *
      * @param string $resource API REST Path

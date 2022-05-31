@@ -30,9 +30,9 @@ version: "3.2"
 
 services:
     ################################################################################
-    # Splash Toolkit Container   
+    # Splash Toolkit Container
     shopify:
-        image: 'splashsync/toolkit'
+        image: 'splashsync/toolkit:1.0'
         container_name: shopify-toolkit
         volumes:
             # Specify Local Configuration File
