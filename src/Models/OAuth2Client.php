@@ -51,7 +51,7 @@ class OAuth2Client extends AbstractProvider
         "provider_class" => OAuth2Client::class,
         // Shopify Public App Options!
         "client_id" => "32324733c73b1ea6e98bd2266c1ec089",
-        "client_secret" => "f4e625818548cf851d0ebbd6bf05fb53",
+        "client_secret" => "bce11735c28597e4e90973694b3f58ea",
         // Shopify Redirect Route Definition
         "redirect_route" => "splash_connector_action_master",
         "redirect_params" => array(
