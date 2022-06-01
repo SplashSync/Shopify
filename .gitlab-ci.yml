@@ -58,6 +58,7 @@ stages:
     ################################################################################
     # Run Test Script
     script:
+        - php bin/console debug:container --env-vars
         # Execute Grumphp Testsuite
         - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/grumphp.sh  | sh
         # Execute PhpUnit Tests
