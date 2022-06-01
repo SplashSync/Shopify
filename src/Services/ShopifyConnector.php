@@ -59,14 +59,14 @@ class ShopifyConnector extends AbstractConnector
      *
      * @var array
      */
-    protected static $widgetsMap = array(
+    protected static array $widgetsMap = array(
         "SelfTest" => "Splash\\Connectors\\Shopify\\Widgets\\SelfTest",
     );
 
     /**
      * @var string
      */
-    private $cacheDir;
+    private string $cacheDir;
 
     /**
      * Class Constructor
@@ -77,10 +77,12 @@ class ShopifyConnector extends AbstractConnector
      */
     public function __construct(
         string $cacheDir,
+        string $apiSecret,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
         parent::__construct($eventDispatcher, $logger);
+        OAuth2Client::init($apiSecret);
         $this->cacheDir = $cacheDir;
     }
 
@@ -200,19 +202,31 @@ class ShopifyConnector extends AbstractConnector
         //====================================================================//
         // Verify Host is Set
         //====================================================================//
-        if (!isset($config["WsHost"]) || empty($config["WsHost"]) || !is_string($config["WsHost"])) {
+        if (empty($config["WsHost"]) || !is_string($config["WsHost"])) {
             return Splash::log()->err("Shop Url is Empty or Invalid");
         }
-
         //====================================================================//
         // Verify Token is Set
         //====================================================================//
-        if (!isset($config["Token"]) || empty($config["Token"]) || !is_string($config["Token"])) {
+        if (empty($config["Token"]) || !is_string($config["Token"])) {
             return Splash::log()->err("Shop Credential (App Token) is Invalid");
         }
-
         //====================================================================//
-        // Configure Rest API
+        // Verify Private API Key is Set
+        //====================================================================//
+        if (!empty($config["apiKey"]) && !empty($config["apiSecret"])) {
+            //====================================================================//
+            // Configure PRIVATE API
+            return API::configurePrivate(
+                $config["WsHost"],
+                $config["apiKey"],
+                $config["Token"],
+                $config["apiSecret"],
+                $this->cacheDir
+            );
+        }
+        //====================================================================//
+        // Configure Public API
         return API::configure($config["WsHost"], $config["Token"], $this->cacheDir);
     }
 

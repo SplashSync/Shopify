@@ -1,3 +1,6 @@
+parameters:
+    splash.connectors.shopify.api-secret: '%env(resolve:SHOPIFY_API_SECRET)%'
+
 services:
     ################################################################################
     # SPLASH Shopify Connector Service
@@ -6,6 +9,7 @@ services:
         autowire: true
         arguments:
             - "%kernel.cache_dir%"
+            - "%splash.connectors.shopify.api-secret%"
         tags:
             - { name: "splash.connector"}
 

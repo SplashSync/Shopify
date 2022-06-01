@@ -19,7 +19,9 @@ use Exception;
 use Httpful\Exception\ConnectionErrorException;
 use Httpful\Request;
 use Slince\Shopify\Client;
+use Slince\Shopify\CredentialInterface;
 use Slince\Shopify\Exception\ClientException;
+use Slince\Shopify\PrivateAppCredential;
 use Slince\Shopify\PublicAppCredential;
 use Splash\Connectors\Shopify\Helpers\CachedCursorPagination;
 use Splash\Core\SplashCore as Splash;
@@ -39,20 +41,20 @@ class ShopifyHelper
     /**
      * @var string
      */
-    private static $endpoint;
+    private static string $endpoint;
 
     /**
-     * @var PublicAppCredential
+     * @var PrivateAppCredential|PublicAppCredential
      */
-    private static $credential;
+    private static CredentialInterface $credential;
 
     /**
      * @var Client
      */
-    private static $client;
+    private static Client $client;
 
     /**
-     * Configure Shopify REST API
+     * Configure Shopify REST Public APP API
      *
      * @param string $wsHost   Shopify Admin Url
      * @param string $apiToken Shopify Shop Token
@@ -69,6 +71,49 @@ class ShopifyHelper
             //====================================================================//
             // Store Current Shop Credentials
             self::$credential = new PublicAppCredential($apiToken);
+            //====================================================================//
+            // Build Metadata cache dir, required
+            $metaCacheDir = (is_dir($cacheDir) ? $cacheDir : sys_get_temp_dir()).'/shopify';
+            //====================================================================//
+            // Configure Shopify API Client
+            self::$client = new Client(self::$endpoint, self::$credential, array(
+                'meta_cache_dir' => $metaCacheDir,
+                'api_version' => self::API_VERSION,
+            ));
+        } catch (Exception $ex) {
+            Splash::log()->err($ex->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Configure Shopify REST Private APP API
+     *
+     * @param string $wsHost    Shopify Admin Url
+     * @param string $apiKey    Private API Key
+     * @param string $apiSecret Private API Secret
+     * @param string $apiToken  Private Shop Token
+     * @param string $cacheDir  Symfony Cache Dir
+     *
+     * @return bool
+     */
+    public static function configurePrivate(
+        string $wsHost,
+        string $apiKey,
+        string $apiSecret,
+        string $apiToken,
+        string $cacheDir
+    ): bool {
+        try {
+            //====================================================================//
+            // Store Current Shop Url
+            self::$endpoint = self::validateShopUrl($wsHost);
+            //====================================================================//
+            // Store Current Shop Credentials
+            self::$credential = new PrivateAppCredential($apiKey, $apiSecret, $apiToken);
             //====================================================================//
             // Build Metadata cache dir, required
             $metaCacheDir = (is_dir($cacheDir) ? $cacheDir : sys_get_temp_dir()).'/shopify';

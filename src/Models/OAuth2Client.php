@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Models;
 
+use Exception;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -51,7 +52,6 @@ class OAuth2Client extends AbstractProvider
         "provider_class" => OAuth2Client::class,
         // Shopify Public App Options!
         "client_id" => "32324733c73b1ea6e98bd2266c1ec089",
-        "client_secret" => "bce11735c28597e4e90973694b3f58ea",
         // Shopify Redirect Route Definition
         "redirect_route" => "splash_connector_action_master",
         "redirect_params" => array(
@@ -67,6 +67,25 @@ class OAuth2Client extends AbstractProvider
     public static function getConfig()
     {
         return static::$config;
+    }
+
+    /**
+     * Init OAuth2 Client for All Connectors
+     *
+     * @param string $apiSecret
+     *
+     * @throws Exception
+     *
+     * @return void
+     */
+    public static function init(string $apiSecret): void
+    {
+        //==============================================================================
+        // Safety Check
+        if (empty($apiSecret)) {
+            throw new Exception("SHOPIFY: No Api Secret Provided");
+        }
+        self::$config['client_secret'] = $apiSecret;
     }
 
     /**
