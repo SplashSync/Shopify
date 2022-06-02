@@ -1,5 +1,4 @@
 parameters:
-    env(SHOPIFY_API_SECRET): ""
     splash.connectors.shopify.api-secret: '%env(resolve:SHOPIFY_API_SECRET)%'
 
 services:
