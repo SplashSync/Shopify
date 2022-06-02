@@ -28,7 +28,7 @@ splash:
             host:               false
             connector:          shopify
             config:  
-                WsHost:         api-connector.myshopify.com
-                LocationId:     ThisIsShopifyLocationId
-                Token:          ThisIsShopifyApiToken
+                WsHost:         '%env(resolve:SHOPIFY_URL)%'
+                LocationId:     '%env(resolve:SHOPIFY_LOCATION)%'
                 LogisticMode:   false
+                Token:          '%env(resolve:SHOPIFY_PRIVATE_TOKEN)%'

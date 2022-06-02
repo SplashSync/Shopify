@@ -34,8 +34,10 @@ admin:
         desc:   Detect & Update Splash Sync WebHooks Configuration
         msg:    WebHook Configuration Updated
         err:    Update of WebHooks Configuration Failed
+    privateApp:
+        enabled:    This Server uses Private App Credentials
     logistic:
-        enabled:    Logictic Mode is Enabled
+        enabled:    Logistic Mode is Enabled
     happy-colissimo:
         enabled:    Happy Commerce Colissimo Detection is Enabled
     mondial-relay:

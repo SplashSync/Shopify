@@ -35,7 +35,8 @@ services:
         image: 'splashsync/toolkit'
         container_name: shopify-toolkit
         volumes:
-            # Specify Local Configuration File
+            # Specify Local Configuration Files
+            - ./.env:/app/.env:ro
             - ./docker/toolkit/splash.yml:/app/config/packages/splash.yml:ro
             # Uncomment to use Local Sources instead of Release
             - ./src/:/app/vendor/splash/shopify/src/:ro

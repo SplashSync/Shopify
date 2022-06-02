@@ -34,5 +34,11 @@ admin:
         desc:   Détecte et Configure les WebHooks pour Splash Sync
         msg:    Configuration des WebHooks Réussie
         err:    La Configuration des WebHooks a échouée
+    privateApp:
+        enabled: This Server uses Private App Credentials
     logistic:
-        enabled:    Le mode Logicticien est activé
+        enabled:    Le mode Logisticien est activé
+    happy-colissimo:
+        enabled:    Happy Commerce Colissimo détection activée
+    mondial-relay:
+        enabled:    Mondial Relay détection activé

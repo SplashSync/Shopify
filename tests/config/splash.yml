@@ -12,6 +12,6 @@ splash:
             server_host:        "%splash_host%"
             connector:          shopify
             config:
-                WsHost:         ThisIsShopUrl
-                Token:          ThisIsSecretToken
-                LocationId:     ThisIsLocationId
+                WsHost:         '%env(resolve:SHOPIFY_URL)%'
+                LocationId:     '%env(resolve:SHOPIFY_LOCATION)%'
+                Token:          '%env(resolve:SHOPIFY_TOKEN)%'

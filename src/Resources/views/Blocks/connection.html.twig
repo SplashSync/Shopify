@@ -21,6 +21,15 @@
             </h4>
         </li>
 
+
+        {% if connector.privateAppCredentials %}
+            <li>
+                <h4 class="font-md text-warning">
+                    <i class="fa fa-user-secret"></i>&nbsp;{{ 'admin.privateApp.enabled'| trans }}
+                </h4>
+            </li>
+        {% endif %}
+
         {% if connector.logisticMode %}
             <li>
                 <h4 class="font-md text-warning">

@@ -16,11 +16,13 @@
 namespace Splash\Connectors\Shopify\Services;
 
 use ArrayObject;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Connectors\GenericObjectMapperTrait;
 use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
+use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
 use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\Objects;
@@ -39,6 +41,7 @@ class ShopifyConnector extends AbstractConnector
 {
     use GenericObjectMapperTrait;
     use GenericWidgetMapperTrait;
+    use ConnectorConfigurationsTrait;
 
     /**
      * Objects Type Class Map
@@ -72,15 +75,20 @@ class ShopifyConnector extends AbstractConnector
      * Class Constructor
      *
      * @param string                   $cacheDir
+     * @param string                   $apiSecret
      * @param EventDispatcherInterface $eventDispatcher
      * @param LoggerInterface          $logger
+     *
+     * @throws Exception
      */
     public function __construct(
         string $cacheDir,
+        string $apiSecret,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
         parent::__construct($eventDispatcher, $logger);
+        OAuth2Client::init($apiSecret);
         $this->cacheDir = $cacheDir;
     }
 
@@ -210,7 +218,20 @@ class ShopifyConnector extends AbstractConnector
         if (empty($config["Token"]) || !is_string($config["Token"])) {
             return Splash::log()->err("Shop Credential (App Token) is Invalid");
         }
-
+        //====================================================================//
+        // Verify Private API Key is Set
+        //====================================================================//
+        if ($this->hasPrivateAppCredentials()) {
+            //====================================================================//
+            // Configure PRIVATE API
+            return API::configurePrivate(
+                $config["WsHost"],
+                $config["apiKey"] ?? "",
+                $config["Token"],
+                $config["apiSecret"] ?? "",
+                $this->cacheDir
+            );
+        }
         //====================================================================//
         // Configure Rest API
         return API::configure($config["WsHost"], $config["Token"], $this->cacheDir);
@@ -520,98 +541,6 @@ class ShopifyConnector extends AbstractConnector
         }
 
         return true;
-    }
-
-    /**
-     * Get Shop Default Vat Rate
-     *
-     * @return float|int
-     */
-    public function getDefaultVatRate(): float|int
-    {
-        //====================================================================//
-        // Get Shop Informations
-        $storeInfos = $this->getParameter("ShopInformations");
-        $countries = $this->getParameter("Countries");
-        //====================================================================//
-        // Safety Checks
-        if (!is_array($storeInfos) || empty($storeInfos["country"]) || !is_array($countries)) {
-            return 0;
-        }
-        //====================================================================//
-        // Search for Shop Country Tax
-        foreach ($countries as $country) {
-            if ($country['code'] == $storeInfos["country"]) {
-                return 100 * $country['tax'];
-            }
-        }
-        //====================================================================//
-        // Tax was not Found
-        return 0;
-    }
-
-    /**
-     * Get Shop Default Currency
-     *
-     * @return string
-     */
-    public function getDefaultCurrency() : string
-    {
-        //====================================================================//
-        // Get Shop Informations
-        /** @var null|string $currency */
-        $currency = $this->getParameter("currency", "EUR", "ShopInformations");
-
-        return (string) $currency;
-    }
-
-    /**
-     * Get Shopify Host Domain.
-     *
-     * @return string
-     */
-    public function getShopifyDomain(): string
-    {
-        /** @var string $wsHost */
-        $wsHost = $this->getParameter("WsHost");
-        //====================================================================//
-        // If Url Domain is found
-        if (parse_url((string) $wsHost, PHP_URL_HOST)) {
-            return (string) parse_url((string) $wsHost, PHP_URL_HOST);
-        }
-        //====================================================================//
-        // Raw Domain was found
-        return (string) $wsHost;
-    }
-
-    /**
-     * Check if Shopify Logistic is Enabled.
-     *
-     * @return bool
-     */
-    public function hasLogisticMode(): bool
-    {
-        return !empty($this->getParameter("LogisticMode", false));
-    }
-
-    /**
-     * Check if Happy Commerce Colissimo Plugin is Enabled.
-     *
-     * @return bool
-     */
-    public function hasHappyColissimoPlugin(): bool
-    {
-        return !empty($this->getParameter("HappyColissimo", false));
-    }
-
-    /**
-     * Check if Mondial Relay Plugin is Enabled.
-     *
-     * @return bool
-     */
-    public function hasMondialRelayPlugin(): bool
-    {
-        return !empty($this->getParameter("MondialRelay", false));
     }
 
     //====================================================================//
