@@ -34,7 +34,7 @@ trait ItemsTrait
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->identifier("title")
             ->inList("lines")
-            ->name("Description")
+            ->name("[L] Description")
             ->group("Items")
             ->microData("http://schema.org/partOfInvoice", "description")
             ->association("title@lines", "quantity@lines", "price@lines")
@@ -45,9 +45,20 @@ trait ItemsTrait
         $this->fieldsFactory()->create((string) self::objects()->Encode("Product", SPL_T_ID))
             ->identifier("product_id")
             ->inList("lines")
-            ->name("Product")
+            ->name("[L] Product")
             ->group("Items")
             ->microData("http://schema.org/Product", "productID")
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
+        //====================================================================//
+        // Order Line Product SKU
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("sku")
+            ->inList("lines")
+            ->name("[L] SKU")
+            ->group("Items")
+            ->microData("http://schema.org/Product", "sku")
             ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
@@ -170,6 +181,8 @@ trait ItemsTrait
             // Order Line Description
             case 'title@lines':
                 return  $line['title']." - ".$line['variant_title'];
+            case 'sku@lines':
+                return  $line['sku'];
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
@@ -184,7 +197,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
-                return (int) $line['quantity'];
+                return (int) $line['quantity'] - $this->getItemRefundedQty($line);
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -222,6 +235,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
+            case 'sku@lines':
                 return null;
             //====================================================================//
             // Order Line Quantity
@@ -355,5 +369,29 @@ trait ItemsTrait
         }
 
         return 100 * ($amount / $line['price']);
+    }
+
+    /**
+     * Get Item Refunded Quantity
+     *
+     * @param array $line
+     *
+     * @return int
+     */
+    private function getItemRefundedQty(array $line): int
+    {
+        //====================================================================//
+        // Walk on Refunds
+        foreach ($this->object->refunds ?? array() as $refund) {
+            //====================================================================//
+            // Walk on Refunds Items
+            foreach ($refund["refund_line_items"] ?? array() as $refundLine) {
+                if ($refundLine['line_item_id'] == $line['id']) {
+                    return (int) $refundLine['quantity'];
+                }
+            }
+        }
+
+        return 0;
     }
 }

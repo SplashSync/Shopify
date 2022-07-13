@@ -41,9 +41,9 @@
         "ext-json":                                     "*",
         "splash/php-bundle":                            "dev-master",
         "slince/shopify-api-php":                       "^3.0",
-        "knpuniversity/oauth2-client-bundle":           ">1.0",
+        "knpuniversity/oauth2-client-bundle":           "~2.0",
         "nategood/httpful":                             "@stable",
-        "guzzlehttp/psr7":                              ">1.5"
+        "guzzlehttp/psr7":                              "~2.0"
     },
     
     "require-dev": {
@@ -71,5 +71,10 @@
         "post-update-cmd": [
             "@auto-scripts"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "phpro/grumphp": true
+        }
     }
 }

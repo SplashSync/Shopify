@@ -37,16 +37,12 @@ trait LogisticModeTrait
     protected function buildLogisticFields(): void
     {
         //====================================================================//
-        // Check if Logistic Mode is Active
-        if (!$this->connector->hasLogisticMode()) {
-            return;
-        }
-        //====================================================================//
         // Tracking Company
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->identifier("tracking_company")
             ->name("Carrier")
             ->MicroData("http://schema.org/ParcelDelivery", "identifier")
+            ->group("Tracking")
             ->isReadOnly()
         ;
         //====================================================================//
@@ -54,6 +50,7 @@ trait LogisticModeTrait
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->identifier("shipment_status")
             ->name("Shipping Status")
+            ->group("Tracking")
             ->isReadOnly()
         ;
         //====================================================================//
@@ -62,6 +59,8 @@ trait LogisticModeTrait
             ->identifier("tracking_number")
             ->name("Tracking Number")
             ->microData("http://schema.org/ParcelDelivery", "trackingNumber")
+            ->group("Tracking")
+            ->isReadOnly(!$this->connector->hasLogisticMode())
         ;
         //====================================================================//
         // Tracking Url
@@ -69,6 +68,8 @@ trait LogisticModeTrait
             ->identifier("tracking_url")
             ->name("Tracking Url")
             ->microData("http://schema.org/ParcelDelivery", "trackingUrl")
+            ->group("Tracking")
+            ->isReadOnly(!$this->connector->hasLogisticMode())
         ;
     }
 
