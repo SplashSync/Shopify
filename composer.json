@@ -42,8 +42,7 @@
         "splash/php-bundle":                            "dev-master",
         "slince/shopify-api-php":                       "^3.0",
         "knpuniversity/oauth2-client-bundle":           "~2.0",
-        "nategood/httpful":                             "@stable",
-        "guzzlehttp/psr7":                              "~2.0"
+        "nategood/httpful":                             "@stable"
     },
     
     "require-dev": {
