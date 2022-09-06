@@ -163,8 +163,9 @@ trait ImagesTrait
         //====================================================================//
         // Create Images List
         foreach ($this->object->images as $key => $shopifyImage) {
+            $key = (string) $key;
             //====================================================================//
-            // Load Image Informations from cache or from API
+            // Load Image Information's from cache or from API
             $splashImage = ShopifyImages::getInfos($shopifyImage);
             //====================================================================//
             // Init Image List Item
