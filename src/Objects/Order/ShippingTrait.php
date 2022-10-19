@@ -38,53 +38,49 @@ trait ShippingTrait
         //====================================================================//
         // Shipping Title
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("title")
-            ->Name("Name")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
-            ->MicroData("http://schema.org/ParcelDelivery", "name")
+            ->identifier("title")
+            ->name("Name")
+            ->inList(self::$shippingListName)
+            ->group(ucfirst(self::$shippingListName))
+            ->microData("http://schema.org/ParcelDelivery", "name")
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Shipping Code
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("code")
-            ->Name("Code")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
-            ->MicroData("http://schema.org/ParcelDelivery", "provider")
+            ->identifier("code")
+            ->name("Code")
+            ->inList(self::$shippingListName)
+            ->group(ucfirst(self::$shippingListName))
+            ->microData("http://schema.org/ParcelDelivery", "provider")
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Shipping Source
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("source")
-            ->Name("Source")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
+            ->identifier("source")
+            ->name("Source")
+            ->inList(self::$shippingListName)
+            ->group(ucfirst(self::$shippingListName))
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Shipping Price
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("price")
-            ->Name("Price")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
+            ->identifier("price")
+            ->name("Price")
+            ->inList(self::$shippingListName)
+            ->group(ucfirst(self::$shippingListName))
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Shipping Carrier ID
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("carrier_identifier")
-            ->Name("Carrier ID")
-            ->InList(self::$shippingListName)
-            ->Group(ucfirst(self::$shippingListName))
-            ->MicroData("http://schema.org/ParcelDelivery", "identifier")
+            ->identifier("carrier_identifier")
+            ->name("Carrier ID")
+            ->inList(self::$shippingListName)
+            ->group(ucfirst(self::$shippingListName))
+            ->microData("http://schema.org/ParcelDelivery", "identifier")
             ->isReadOnly()
         ;
     }
@@ -99,7 +95,7 @@ trait ShippingTrait
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getShippingFields($key, $fieldName): void
+    protected function getShippingFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array

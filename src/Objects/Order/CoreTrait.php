@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Order;
 
 use DateTime;
+use Exception;
 use Splash\Connectors\Shopify\Objects\Invoice;
 
 /**
@@ -34,43 +35,46 @@ trait CoreTrait
     {
         //====================================================================//
         // Customer Object
-        $this->fieldsFactory()->create((string) self::objects()->Encode("ThirdParty", SPL_T_ID))
-            ->Identifier("customer")
-            ->Name("Customer")
+        $this->fieldsFactory()->create((string) self::objects()->encode("ThirdParty", SPL_T_ID))
+            ->identifier("customer")
+            ->name("Customer")
             ->isReadOnly()
         ;
         if ($this instanceof Invoice) {
-            $this->fieldsFactory()->MicroData("http://schema.org/Invoice", "customer");
+            $this->fieldsFactory()->microData("http://schema.org/Invoice", "customer");
         } else {
-            $this->fieldsFactory()->MicroData("http://schema.org/Organization", "ID");
+            $this->fieldsFactory()->microData("http://schema.org/Organization", "ID");
         }
 
         //====================================================================//
         // Customer Email
         $this->fieldsFactory()->create(SPL_T_EMAIL)
-            ->Identifier("email")
-            ->Name("Customer Email")
-            ->MicroData("http://schema.org/ContactPoint", "email")
-            ->isReadOnly();
-
+            ->identifier("email")
+            ->name("Customer Email")
+            ->microData("http://schema.org/ContactPoint", "email")
+            ->isIndexed()
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Reference
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("name")
-            ->Name("Reference")
-            ->MicroData("http://schema.org/Order", "orderNumber")
+            ->identifier("name")
+            ->name("Reference")
+            ->microData("http://schema.org/Order", "orderNumber")
             ->isReadOnly()
-            ->isListed();
-
+            ->isPrimary()
+            ->isIndexed()
+            ->isListed()
+        ;
         //====================================================================//
         // UUID
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("uuid")
-            ->Name("UUID")
+            ->identifier("uuid")
+            ->name("UUID")
             ->description("Order Unique Reference")
-            ->MicroData("http://schema.org/Order", "orderNumberID")
-            ->isReadOnly();
-
+            ->microData("http://schema.org/Order", "orderNumberID")
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Order Date
         $this->fieldsFactory()->create(SPL_T_DATE)
@@ -78,7 +82,8 @@ trait CoreTrait
             ->Name("Order Date")
             ->MicroData("http://schema.org/Order", "orderDate")
             ->isReadOnly()
-            ->isListed();
+            ->isListed()
+        ;
     }
 
     /**
@@ -87,9 +92,11 @@ trait CoreTrait
      * @param string $key       Input List Key
      * @param string $fieldName Field Identifier / Name
      *
+     * @throws Exception
+     *
      * @return void
      */
-    private function getCoreFields($key, $fieldName): void
+    private function getCoreFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields

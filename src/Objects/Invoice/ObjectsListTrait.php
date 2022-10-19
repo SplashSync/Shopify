@@ -34,12 +34,18 @@ trait ObjectsListTrait
     public function objectsList(string $filter = null, array $params = array()): array
     {
         //====================================================================//
+        // Prepare Query Parameters
+        $query = array_merge(
+            array("status" => "any"),
+            $filter ? array("name" => $filter) : array()
+        );
+        //====================================================================//
         // Execute List Request
         $rawData = API::list(
             'orders',
             ($params["max"] ?? 0),
             ($params["offset"] ?? 0),
-            array("status" => "any")
+            $query
         );
         //====================================================================//
         // Request Failed
@@ -49,7 +55,10 @@ trait ObjectsListTrait
         //====================================================================//
         // Compute Totals
         $response = array(
-            'meta' => array('current' => count($rawData), 'total' => API::count('orders')),
+            'meta' => array(
+                'current' => count($rawData),
+                'total' => API::count('orders', $query)
+            ),
         );
         //====================================================================//
         // Parse Data in response

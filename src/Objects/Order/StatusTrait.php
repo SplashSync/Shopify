@@ -34,17 +34,18 @@ trait StatusTrait
         //====================================================================//
         // Order Current Status
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("status")
-            ->Name("Order Status")
-            ->MicroData("http://schema.org/Order", "orderStatus")
+            ->identifier("status")
+            ->name("Order Status")
+            ->microData("http://schema.org/Order", "orderStatus")
             ->isListed()
-            ->AddChoice(Status::CANCELED, "Canceled")
-            ->AddChoice(Status::DRAFT, "Draft")
-            ->AddChoice(Status::PROCESSING, "Processing")
-            ->AddChoice(Status::IN_TRANSIT, "Shipped")
-            ->AddChoice(Status::DELIVERED, "Delivered")
-            ->AddChoice(Status::PROBLEM, "Problem")
-            ->AddChoice(Status::RETURNED, "Returned")
+            ->isIndexed()
+            ->addChoice(Status::CANCELED, "Canceled")
+            ->addChoice(Status::DRAFT, "Draft")
+            ->addChoice(Status::PROCESSING, "Processing")
+            ->addChoice(Status::IN_TRANSIT, "Shipped")
+            ->addChoice(Status::DELIVERED, "Delivered")
+            ->addChoice(Status::PROBLEM, "Problem")
+            ->addChoice(Status::RETURNED, "Returned")
         ;
     }
 

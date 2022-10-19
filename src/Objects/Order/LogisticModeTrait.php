@@ -60,6 +60,7 @@ trait LogisticModeTrait
             ->name("Tracking Number")
             ->microData("http://schema.org/ParcelDelivery", "trackingNumber")
             ->group("Tracking")
+            ->isIndexed()
             ->isReadOnly(!$this->connector->hasLogisticMode())
         ;
         //====================================================================//
