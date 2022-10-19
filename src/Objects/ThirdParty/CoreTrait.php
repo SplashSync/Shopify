@@ -34,6 +34,7 @@ trait CoreTrait
             ->name("Email")
             ->microData("http://schema.org/ContactPoint", "email")
             ->isRequired()
+            ->isPrimary()
             ->addOption("emailDomain", "exemple")
             ->addOption("emailExtension", "com")
             ->isListed()

@@ -20,12 +20,13 @@ use Splash\Connectors\Shopify\Objects\Core\DatesTrait;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Models\AbstractObject;
 use Splash\Models\Objects\IntelParserTrait;
+use Splash\Models\Objects\PrimaryKeysAwareInterface;
 use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of ThirdParty
  */
-class ThirdParty extends AbstractObject
+class ThirdParty extends AbstractObject implements PrimaryKeysAwareInterface
 {
     // Splash Php Core Traits
     use IntelParserTrait;
@@ -37,6 +38,7 @@ class ThirdParty extends AbstractObject
     // Shopify Customer Traits
     use ThirdParty\CRUDTrait;
     use ThirdParty\ObjectsListTrait;
+    use ThirdParty\PrimaryTrait;
     use ThirdParty\CoreTrait;
     use ThirdParty\MainTrait;
     use ThirdParty\AddressTrait;

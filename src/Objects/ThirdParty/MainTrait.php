@@ -36,6 +36,7 @@ trait MainTrait
             ->isNotTested()
             ->isLogged()
             ->isListed()
+            ->isIndexed()
         ;
         //====================================================================//
         // Note

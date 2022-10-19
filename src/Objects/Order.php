@@ -22,12 +22,13 @@ use Splash\Models\Objects\IntelParserTrait;
 use Splash\Models\Objects\ListsTrait;
 use Splash\Models\Objects\ObjectsTrait;
 use Splash\Models\Objects\PricesTrait;
+use Splash\Models\Objects\PrimaryKeysAwareInterface;
 use Splash\Models\Objects\SimpleFieldsTrait;
 
 /**
  * Shopify Implementation of Customer Orders
  */
-class Order extends AbstractStandaloneObject
+class Order extends AbstractStandaloneObject implements PrimaryKeysAwareInterface
 {
     // Splash Php Core Traits
     use IntelParserTrait;
@@ -43,6 +44,7 @@ class Order extends AbstractStandaloneObject
     // Shopify Orders Traits
     use Order\CRUDTrait;
     use Order\ObjectsListTrait;
+    use Order\PrimaryTrait;
     use Order\CoreTrait;
     use Order\MainTrait;
     use Order\StatusTrait;

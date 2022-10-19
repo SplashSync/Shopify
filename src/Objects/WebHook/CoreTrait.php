@@ -35,8 +35,8 @@ trait CoreTrait
 
         // Products Events
         "products/create" => "On Product Created",
-        "products/delete" => "On Product Updated",
-        "products/update" => "On Product Deleted",
+        "products/update" => "On Product Updated",
+        "products/delete" => "On Product Deleted",
 
         // Orders Events
         "orders/cancelled" => "On Order Canceled",
@@ -46,6 +46,18 @@ trait CoreTrait
         "orders/paid" => "On Order Paid",
         "orders/partially_fulfilled" => "On Order Partially Shipped",
         "orders/updated" => "On Order Updated",
+    );
+
+    /**
+     * Shopify WebHooks Names used by Splash
+     *
+     * @var array
+     */
+    protected static $gpdrTopics = array(
+        // GPDR Events
+        "customers/data_request" => "GPDR - Customers request their data from a store owner",
+        "customers/redact" => "GPDR - Request that data is deleted on behalf of a customer",
+        "shop/redact" => "GPDR - 48 hours after a store owner uninstalls your app"
     );
 
     /**
@@ -65,7 +77,17 @@ trait CoreTrait
      */
     public static function getTopics() : array
     {
-        return array_keys(static::$topics);
+        return array_keys(array_merge(static::$topics, static::$gpdrTopics));
+    }
+
+    /**
+     * Get List of GPDR WebHooks Topics
+     *
+     * @return array
+     */
+    public static function getGpdrTopics() : array
+    {
+        return array_keys(static::$gpdrTopics);
     }
 
     /**
@@ -78,26 +100,27 @@ trait CoreTrait
         //====================================================================//
         // WebHook Url
         $this->fieldsFactory()->create(SPL_T_URL)
-            ->Identifier("address")
-            ->Name("Address")
+            ->identifier("address")
+            ->name("Address")
             ->isRequired()
-            ->isListed();
-
+            ->isListed()
+        ;
         //====================================================================//
         // WebHook Topic (Event Type)
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("topic")
-            ->Name("Topic (Shopify Event Type)")
-            ->addChoices(static::$topics)
+            ->identifier("topic")
+            ->name("Topic (Shopify Event Type)")
+            ->addChoices(array_merge(static::$topics, static::$gpdrTopics))
             ->isRequired()
-            ->isListed();
-
+            ->isListed()
+        ;
         //====================================================================//
         // WebHook Format
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("format")
-            ->Name("Data Format")
-            ->addChoices(static::$format);
+            ->identifier("format")
+            ->name("Data Format")
+            ->addChoices(static::$format)
+        ;
     }
 
     /**
@@ -108,7 +131,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function getCoreFields($key, $fieldName): void
+    protected function getCoreFields(string $key, string $fieldName): void
     {
         switch ($fieldName) {
             case 'address':
@@ -134,7 +157,7 @@ trait CoreTrait
      *
      * @return void
      */
-    protected function setCoreFields($fieldName, $fieldData): void
+    protected function setCoreFields(string $fieldName, $fieldData): void
     {
         switch ($fieldName) {
             case 'address':
