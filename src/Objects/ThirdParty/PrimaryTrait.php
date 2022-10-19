@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\ThirdParty;
 
 use Slince\Shopify\Model\Customers\Customer;
+use Splash\Client\Splash;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
 trait PrimaryTrait
@@ -25,6 +26,11 @@ trait PrimaryTrait
      */
     public function getByPrimary(array $keys): ?string
     {
+        //====================================================================//
+        // Add a Min Test delay in Phpunit Tests
+        if (Splash::isDebugMode()) {
+            sleep(3);
+        }
         //====================================================================//
         // Safety Checks
         $keys = array_filter($keys);
