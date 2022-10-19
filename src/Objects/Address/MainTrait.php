@@ -32,67 +32,70 @@ trait MainTrait
         //====================================================================//
         // Addess
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("address1")
-            ->Name("Street 1")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "streetAddress");
-
+            ->identifier("address1")
+            ->name("Street 1")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "streetAddress")
+            ->isIndexed()
+        ;
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("address2")
-            ->Name("Street 2")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "streetAddress2");
-
+            ->identifier("address2")
+            ->name("Street 2")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "streetAddress2")
+        ;
         //====================================================================//
         // Zip Code
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("zip")
-            ->Name("Zip")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "postalCode")
-            ->AddOption('maxLength', (string) 18);
-
+            ->identifier("zip")
+            ->name("Zip")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "postalCode")
+            ->isIndexed()
+            ->addOption('maxLength', (string) 18)
+        ;
         //====================================================================//
         // City Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("city")
-            ->Name("Town")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "addressLocality");
-
+            ->identifier("city")
+            ->name("Town")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "addressLocality")
+        ;
         //====================================================================//
         // Country Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("country_name")
-            ->Name("Country")
-            ->Group($groupName)
-            ->isReadOnly();
-
+            ->identifier("country_name")
+            ->name("Country")
+            ->group($groupName)
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Country ISO Code
         $this->fieldsFactory()->create(SPL_T_COUNTRY)
-            ->Identifier("country_code")
-            ->Name("Country Code")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "addressCountry");
-
+            ->identifier("country_code")
+            ->name("Country Code")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "addressCountry")
+        ;
         //====================================================================//
         // State Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("province")
-            ->Group($groupName)
-            ->Name("State")
-            ->isReadOnly();
-
+            ->identifier("province")
+            ->group($groupName)
+            ->name("State")
+            ->isReadOnly()
+        ;
         //====================================================================//
         // State code
         $this->fieldsFactory()->create(SPL_T_STATE)
-            ->Identifier("province_code")
-            ->Name("State Code")
-            ->Group($groupName)
-            ->MicroData("http://schema.org/PostalAddress", "addressRegion")
+            ->identifier("province_code")
+            ->name("State Code")
+            ->group($groupName)
+            ->microData("http://schema.org/PostalAddress", "addressRegion")
             ->isReadOnly()
-            ->isNotTested();
+            ->isNotTested()
+        ;
     }
 
     /**

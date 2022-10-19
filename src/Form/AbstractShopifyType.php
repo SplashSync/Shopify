@@ -34,7 +34,7 @@ abstract class AbstractShopifyType extends AbstractType
      *
      * @return self
      */
-    public function addWarehouseField(FormBuilderInterface $builder, array $options)
+    public function addWarehouseField(FormBuilderInterface $builder, array $options): self
     {
         //==============================================================================
         // Check Shopify Locations Lists is Available
@@ -68,7 +68,7 @@ abstract class AbstractShopifyType extends AbstractType
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addTokenField(FormBuilderInterface $builder, array $options)
+    public function addTokenField(FormBuilderInterface $builder, array $options): self
     {
         $builder
             //==============================================================================
@@ -92,7 +92,7 @@ abstract class AbstractShopifyType extends AbstractType
      *
      * @return self
      */
-    public function addLogisticFields(FormBuilderInterface $builder, array $options)
+    public function addLogisticFields(FormBuilderInterface $builder, array $options): self
     {
         //==============================================================================
         // Check Shopify Locations Lists is Available
@@ -121,13 +121,90 @@ abstract class AbstractShopifyType extends AbstractType
      *
      * @return self
      */
-    protected function addWsHost(FormBuilderInterface $builder)
+    protected function addWsHost(FormBuilderInterface $builder): self
     {
         $builder
             ->add('WsHost', TextType::class, array(
                 'label' => 'var.url.label',
                 'help' => 'var.url.desc',
                 'translation_domain' => 'ShopifyBundle',
+            ))
+        ;
+
+        return $this;
+    }
+
+    /**
+     * Add Private API Key.
+     *
+     * @param FormBuilderInterface $builder
+     *
+     * @return self
+     */
+    protected function addPrivateApiEnable(FormBuilderInterface $builder): self
+    {
+        $builder
+            ->add('apiPrivate', CheckboxType::class, array(
+                'label' => 'var.api-private.label',
+                'help' => 'var.api-private.desc',
+                'translation_domain' => 'ShopifyBundle',
+                'required' => false,
+            ))
+        ;
+
+        return $this;
+    }
+
+    /**
+     * Add Private API Key.
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return self
+     */
+    protected function addPrivateApiKey(FormBuilderInterface $builder, array $options): self
+    {
+        //==============================================================================
+        // Check Shopify Private API is Enabled
+        if (empty($options["data"]["apiPrivate"])) {
+            return $this;
+        }
+
+        $builder
+            ->add('apiKey', TextType::class, array(
+                'label' => 'var.api-key.label',
+                'help' => 'var.api-key.desc',
+                'translation_domain' => 'ShopifyBundle',
+                'required' => false,
+            ))
+        ;
+
+        return $this;
+    }
+
+    /**
+     * Add Private API Secret.
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return self
+     */
+    protected function addPrivateApiSecret(FormBuilderInterface $builder, array $options): self
+    {
+        //==============================================================================
+        // Check Shopify Private API is Enabled
+        if (empty($options["data"]["apiPrivate"])) {
+            return $this;
+        }
+
+        $builder
+            ->add('apiSecret', TextType::class, array(
+                'label' => 'var.api-secret.label',
+                'help' => 'var.api-secret.desc',
+                'translation_domain' => 'ShopifyBundle',
+                'required' => false,
             ))
         ;
 

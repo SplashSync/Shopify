@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * Splash Shopify Connector WebHooks Controller
  */
-class WebHooksController extends Controller
+class WebHooksController extends AbstractController
 {
     /**
      * @var AbstractConnector
@@ -153,6 +153,9 @@ class WebHooksController extends Controller
             case 'orders/delete':
                 $this->executeOrderCommit($this->data, SPL_A_DELETE, "Deleted");
 
+            //====================================================================//
+            // RGPD WebHooks
+            //====================================================================//
                 return;
             default:
                 return;
@@ -295,10 +298,17 @@ class WebHooksController extends Controller
      */
     private function extractData(Request $request): bool
     {
+        //====================================================================//
+        // Detect GPDR Topics
+        if (in_array($this->topic, Objects\WebHook::getGpdrTopics(), true)) {
+            return true;
+        }
+
         $data = empty($request->request->all())
             ? json_decode($request->getContent(), true, 512, \JSON_BIGINT_AS_STRING)
             : $request->request->all()
         ;
+
         if (!is_array($data) || empty($data["id"]) || !is_scalar($data["id"])) {
             return false;
         }

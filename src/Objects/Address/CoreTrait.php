@@ -31,35 +31,35 @@ trait CoreTrait
     {
         //====================================================================//
         // Customer
-        $this->fieldsFactory()->create((string) self::objects()->Encode("ThirdParty", SPL_T_ID))
-            ->Identifier("customer_id")
-            ->Name("Customer")
-            ->MicroData("http://schema.org/Organization", "ID")
+        $this->fieldsFactory()->create((string) self::objects()->encode("ThirdParty", SPL_T_ID))
+            ->identifier("customer_id")
+            ->name("Customer")
+            ->microData("http://schema.org/Organization", "ID")
             ->isRequired()
             ->isNotTested()
-                ;
-
+        ;
         //====================================================================//
         // Firstname
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("first_name")
-            ->Name("Firstname")
-            ->MicroData("http://schema.org/Person", "familyName")
+            ->identifier("first_name")
+            ->name("Firstname")
+            ->microData("http://schema.org/Person", "familyName")
             ->isRequired()
+            ->isIndexed()
             ->isLogged()
             ->isListed()
-                ;
-
+        ;
         //====================================================================//
         // Lastname
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("last_name")
-            ->Name("Lastname")
-            ->MicroData("http://schema.org/Person", "givenName")
+            ->identifier("last_name")
+            ->name("Lastname")
+            ->microData("http://schema.org/Person", "givenName")
             ->isRequired()
+            ->isIndexed()
             ->isLogged()
             ->isListed()
-                ;
+        ;
     }
 
     /**

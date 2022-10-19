@@ -376,12 +376,12 @@ class ShopifyHelper
      *
      * @return null|int
      */
-    public static function count(string $resource): ?int
+    public static function count(string $resource, array $query = array()): ?int
     {
         //====================================================================//
         // Perform Request
         try {
-            $response = self::$client->get($resource."/count");
+            $response = self::$client->get($resource."/count", $query);
         } catch (ClientException $ex) {
             Splash::log()->err($ex->getMessage());
 
