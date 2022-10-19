@@ -47,6 +47,7 @@ trait MainTrait
             ->description("A unique identifier for the product variant in the shop.")
             ->isListed()
             ->microData("http://schema.org/Product", "model")
+            ->isIndexed()
         ;
         //====================================================================//
         // Name with Options
@@ -55,6 +56,7 @@ trait MainTrait
             ->name("Title with Options")
             ->microData("http://schema.org/Product", "name")
             ->isListed()
+            ->isIndexed()
             ->isReadOnly()
         ;
 

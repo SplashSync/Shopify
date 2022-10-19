@@ -69,7 +69,7 @@ trait CoreTrait
 
         //====================================================================//
         // Product Variation List - Variation Attribute
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->identifier("options")
             ->name("Options")
             ->inList("variants")

@@ -29,39 +29,41 @@ trait CoreTrait
     {
         //====================================================================//
         // Name without Options
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("title")
-            ->Name("Title")
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("title")
+            ->name("Title")
             ->isRequired()
-            ->MicroData("http://schema.org/Product", "alternateName");
-
+            ->microData("http://schema.org/Product", "alternateName")
+            ->isIndexed()
+        ;
         //====================================================================//
         // Availability Date
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->Identifier("published")
-            ->Name("Is Published")
-            ->MicroData("http://schema.org/Product", "offered")
+            ->identifier("published")
+            ->name("Is Published")
+            ->microData("http://schema.org/Product", "offered")
             ->isListed()
-            ->isNotTested();
-
+            ->isNotTested()
+        ;
         //====================================================================//
         // Long Description
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("body_html")
-            ->Name("Description")
-            ->Description("A description of the product. Supports HTML formatting.")
-            ->MicroData("http://schema.org/Product", "description");
-
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("body_html")
+            ->name("Description")
+            ->description("A description of the product. Supports HTML formatting.")
+            ->microData("http://schema.org/Product", "description")
+        ;
         //====================================================================//
         // Meta Url
-        $this->fieldsFactory()->Create(SPL_T_VARCHAR)
-            ->Identifier("handle")
-            ->Name("Friendly URL")
-            ->Description(
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("handle")
+            ->name("Friendly URL")
+            ->description(
                 "A unique human-friendly string for the product. Automatically generated from the product's title."
             )
             ->addOption("isLowerCase")
-            ->MicroData("http://schema.org/Product", "urlRewrite");
+            ->microData("http://schema.org/Product", "urlRewrite")
+        ;
     }
 
     /**
@@ -72,7 +74,7 @@ trait CoreTrait
      *
      * @return void
      */
-    private function getCoreFields($key, $fieldName): void
+    private function getCoreFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // READ Fields
@@ -102,7 +104,7 @@ trait CoreTrait
      *
      * @return void
      */
-    private function setCoreFields($fieldName, $fieldData): void
+    private function setCoreFields(string $fieldName, $fieldData): void
     {
         //====================================================================//
         // WRITE Field

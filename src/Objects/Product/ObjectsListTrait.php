@@ -33,7 +33,7 @@ trait ObjectsListTrait
     public function objectsList(string $filter = null, array $params = array()): array
     {
         //====================================================================//
-        // Execute Customers List Request
+        // Execute Product List Request
         $rawData = API::list(
             'products',
             ($params["max"] ?? 0),
