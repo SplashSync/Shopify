@@ -32,8 +32,8 @@ services:
     ################################################################################
     # Splash Toolkit Container   
     shopify:
-        image: 'splashsync/toolkit'
-        container_name: shopify-toolkit
+        image: 'splashsync/toolkit:alpine'
+        container_name: toolkit.shopify.local
         volumes:
             # Specify Local Configuration Files
             - ./.env:/app/.env:ro
@@ -51,7 +51,7 @@ services:
     # PHP 8.0
     php-8.0:
         image:          registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
-        container_name: shopify-8.0
+        container_name: php-8.0.shopify.local
         volumes:
             - ./:/var/www/html
             - vendor-php80:/var/www/html/vendor
@@ -60,7 +60,7 @@ services:
     # PHP 7.4
     php-7.4:
         image:          registry.gitlab.com/badpixxel-projects/php-sdk:php-7.4
-        container_name: shopify-7.4
+        container_name: php-7.4.shopify.local
         volumes:
             - ./:/var/www/html
             - vendor-php74:/var/www/html/vendor

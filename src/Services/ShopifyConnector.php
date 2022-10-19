@@ -18,8 +18,10 @@ namespace Splash\Connectors\Shopify\Services;
 use ArrayObject;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Splash\Bundle\Interfaces\Connectors\PrimaryKeysInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Connectors\GenericObjectMapperTrait;
+use Splash\Bundle\Models\Connectors\GenericObjectPrimaryMapperTrait;
 use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
@@ -37,9 +39,10 @@ use Symfony\Component\Routing\RouterInterface;
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class ShopifyConnector extends AbstractConnector
+class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
 {
     use GenericObjectMapperTrait;
+    use GenericObjectPrimaryMapperTrait;
     use GenericWidgetMapperTrait;
     use ConnectorConfigurationsTrait;
 
