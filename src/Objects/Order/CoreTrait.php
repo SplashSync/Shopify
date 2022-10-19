@@ -62,6 +62,7 @@ trait CoreTrait
             ->name("Reference")
             ->microData("http://schema.org/Order", "orderNumber")
             ->isReadOnly()
+            ->isRequired()
             ->isPrimary()
             ->isIndexed()
             ->isListed()
