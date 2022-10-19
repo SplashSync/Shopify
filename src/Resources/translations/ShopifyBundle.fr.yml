@@ -13,6 +13,18 @@ var:
         label:  Token Publique
         desc:   "La clé d'API Shopify nous permets d'accéder à votre compte."
 
+    api-private:
+        label:  Application Privée
+        desc:   "Connecter Splash en tant qu'application shopify privée."
+
+    api-key:
+        label:  Clé d'API privée
+        desc:   "La clé d'API privée de votre application, fournie par Shopify."
+
+    api-secret:
+        label:  Secret d'API privée
+        desc:   "La clé Secrete de votre application, fournie par Shopify."
+
     notify:
         label:  Envoyer les Notifications
         desc:   "Send Notifications on Shipping status Changes."

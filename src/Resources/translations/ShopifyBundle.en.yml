@@ -10,9 +10,21 @@ var:
         desc:   "The Shopify stock Location you want to synchronize with Splash."
 
     token:
-        label:  Public API Token
+        label:  API Token
         desc:   "API Token provide full access to your account, so keep it safe."
         
+    api-private:
+        label:  Private Application
+        desc:   "Connect Splash as a Private Shopify Application."
+
+    api-key:
+        label:  Private API Key
+        desc:   "Private API Key provided by Shopify."
+
+    api-secret:
+        label:  Private API Secret
+        desc:   "Private API Secret provided by Shopify."
+
     notify:
         label:  Send Notifications
         desc:   "Send Notifications on Shipping status Changes."
