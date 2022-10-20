@@ -29,7 +29,7 @@ trait PrimaryTrait
         //====================================================================//
         // Add a Min Test delay in Phpunit Tests
         if (Splash::isDebugMode()) {
-            sleep(3);
+            sleep(5);
         }
         //====================================================================//
         // Safety Checks
