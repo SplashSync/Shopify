@@ -214,7 +214,7 @@ trait ItemsTrait
                 return self::objects()->encode(
                     "Product",
                     Product::getObjectId($line['product_id'], $line['variant_id'])
-                );
+                ) ?: null;
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
