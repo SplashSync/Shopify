@@ -42,7 +42,7 @@ trait ItemsTrait
         ;
         //====================================================================//
         // Order Line Product Identifier
-        $this->fieldsFactory()->create((string) self::objects()->Encode("Product", SPL_T_ID))
+        $this->fieldsFactory()->create((string) self::objects()->encode("Product", SPL_T_ID))
             ->identifier("product_id")
             ->inList("lines")
             ->name("[L] Product")
@@ -67,9 +67,28 @@ trait ItemsTrait
         $this->fieldsFactory()->create(SPL_T_INT)
             ->identifier("quantity")
             ->inList("lines")
-            ->name("Quantity")
+            ->name("[L] Quantity")
+            ->description("[L] Absolute Ordered Quantity")
             ->group("Items")
-            ->microData("http://schema.org/QuantitativeValue", "value")
+            ->microData(
+                "http://schema.org/QuantitativeValue",
+                $this->connector->hasLogisticMode() ? "toShip" : "value"
+            )
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
+        //====================================================================//
+        // Order Line Quantity
+        $this->fieldsFactory()->create(SPL_T_INT)
+            ->identifier("quantity_with_refunds")
+            ->inList("lines")
+            ->name("[L] Qty with refunds")
+            ->description("[L] Ordered Quantity minus Refunded Quantities")
+            ->group("Items")
+            ->microData(
+                "http://schema.org/QuantitativeValue",
+                $this->connector->hasLogisticMode() ? "value" : "toShip"
+            )
             ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
@@ -171,6 +190,8 @@ trait ItemsTrait
      * @param string $fieldName Field Identifier / Name
      *
      * @return null|array|float|int|string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function getItemField(array $line, string $fieldName)
     {
@@ -197,7 +218,9 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
-                return (int) $line['quantity'] - $this->getItemRefundedQty($line);
+                return (int) $line['quantity'];
+            case 'quantity_with_refunds@lines':
+                return (int) ($line['quantity'] - $this->getItemRefundedQty($line));
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -240,6 +263,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
+            case 'quantity_with_refunds@lines':
                 return 1;
             //====================================================================//
             // Order Line Price
