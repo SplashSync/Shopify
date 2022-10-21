@@ -70,5 +70,10 @@
         "post-update-cmd": [
             "@auto-scripts"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "phpro/grumphp": true
+        }
     }
 }
