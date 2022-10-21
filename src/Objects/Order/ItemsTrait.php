@@ -32,72 +32,97 @@ trait ItemsTrait
         //====================================================================//
         // Order Line Description
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("title")
-            ->InList("lines")
-            ->Name("Description")
-            ->Group("Items")
-            ->MicroData("http://schema.org/partOfInvoice", "description")
-            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->identifier("title")
+            ->inList("lines")
+            ->name("[L] Description")
+            ->group("Items")
+            ->microData("http://schema.org/partOfInvoice", "description")
+            ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Order Line Product Identifier
         $this->fieldsFactory()->create((string) self::objects()->Encode("Product", SPL_T_ID))
-            ->Identifier("product_id")
-            ->InList("lines")
-            ->Name("Product")
-            ->Group("Items")
-            ->MicroData("http://schema.org/Product", "productID")
-            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->identifier("product_id")
+            ->inList("lines")
+            ->name("[L] Product")
+            ->group("Items")
+            ->microData("http://schema.org/Product", "productID")
+            ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
-
+        //====================================================================//
+        // Order Line Product SKU
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("sku")
+            ->inList("lines")
+            ->name("[L] SKU")
+            ->group("Items")
+            ->microData("http://schema.org/Product", "sku")
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Order Line Quantity
         $this->fieldsFactory()->create(SPL_T_INT)
-            ->Identifier("quantity")
-            ->InList("lines")
-            ->Name("Quantity")
-            ->Group("Items")
-            ->MicroData("http://schema.org/QuantitativeValue", "value")
-            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->identifier("quantity")
+            ->inList("lines")
+            ->name("[L] Quantity")
+            ->description("[L] Absolute Ordered Quantity")
+            ->group("Items")
+            ->microData(
+                "http://schema.org/QuantitativeValue",
+                $this->connector->hasLogisticMode() ? "toShip" : "value"
+            )
+            ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
-
+        //====================================================================//
+        // Order Line Quantity
+        $this->fieldsFactory()->create(SPL_T_INT)
+            ->identifier("quantity_with_refunds")
+            ->inList("lines")
+            ->name("[L] Qty with refunds")
+            ->description("[L] Ordered Quantity minus Refunded Quantities")
+            ->group("Items")
+            ->microData(
+                "http://schema.org/QuantitativeValue",
+                $this->connector->hasLogisticMode() ? "value" : "toShip"
+            )
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
         //====================================================================//
         // Order Line Discount
         $this->fieldsFactory()->create(SPL_T_DOUBLE)
-            ->Identifier("discount")
-            ->InList("lines")
-            ->Name("Discount %")
-            ->Group("Items")
-            ->MicroData("http://schema.org/Order", "discount")
-            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->identifier("discount")
+            ->inList("lines")
+            ->name("Discount %")
+            ->group("Items")
+            ->microData("http://schema.org/Order", "discount")
+            ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Order Line Unit Price
         $this->fieldsFactory()->create(SPL_T_PRICE)
-            ->Identifier("price")
-            ->InList("lines")
-            ->Name("Unit Price")
-            ->Group("Items")
-            ->MicroData("http://schema.org/PriceSpecification", "price")
-            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->identifier("price")
+            ->inList("lines")
+            ->name("Unit Price")
+            ->group("Items")
+            ->microData("http://schema.org/PriceSpecification", "price")
+            ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
-
         //====================================================================//
         // Order Line Tax Name
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->Identifier("tax_name")
-            ->InList("lines")
-            ->Name("VAT Tax Code")
-            ->Group("Items")
-            ->MicroData("http://schema.org/PriceSpecification", "valueAddedTaxName")
-            ->Association("title@lines", "quantity@lines", "price@lines")
+            ->identifier("tax_name")
+            ->inList("lines")
+            ->name("VAT Tax Code")
+            ->group("Items")
+            ->microData("http://schema.org/PriceSpecification", "valueAddedTaxName")
+            ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
     }
@@ -110,15 +135,14 @@ trait ItemsTrait
      *
      * @return void
      */
-    protected function getItemsFields($key, $fieldName): void
+    protected function getItemsFields(string $key, string $fieldName): void
     {
         //====================================================================//
         // Check if List field & Init List Array
-        $fieldId = self::lists()->InitOutput($this->out, "lines", $fieldName);
+        $fieldId = self::lists()->initOutput($this->out, "lines", $fieldName);
         if (!$fieldId) {
             return;
         }
-
         //====================================================================//
         // Parse Order Items
         //====================================================================//
@@ -131,10 +155,9 @@ trait ItemsTrait
                 $value = $this->getItemField($orderLine, $fieldName);
                 //====================================================================//
                 // Insert Data in List
-                self::lists()->Insert($this->out, "lines", $fieldName, $index, $value);
+                self::lists()->insert($this->out, "lines", $fieldName, $index, $value);
             }
         }
-
         //====================================================================//
         // Parse Order Shipping
         //====================================================================//
@@ -166,9 +189,11 @@ trait ItemsTrait
      * @param array  $line      Line Data Object
      * @param string $fieldName Field Identifier / Name
      *
-     * @return null|array|bool|float|int|string
+     * @return null|array|float|int|string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    private function getItemField($line, $fieldName)
+    private function getItemField(array $line, string $fieldName)
     {
         //====================================================================//
         // READ Fields
@@ -177,6 +202,8 @@ trait ItemsTrait
             // Order Line Description
             case 'title@lines':
                 return  $line['title']." - ".$line['variant_title'];
+            case 'sku@lines':
+                return  $line['sku'];
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
@@ -192,6 +219,8 @@ trait ItemsTrait
             // Order Line Quantity
             case 'quantity@lines':
                 return (int) $line['quantity'];
+            case 'quantity_with_refunds@lines':
+                return (int) ($line['quantity'] - $this->getItemRefundedQty($line));
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -215,9 +244,9 @@ trait ItemsTrait
      * @param array  $line      Line Data Object
      * @param string $fieldName Field Identifier / Name
      *
-     * @return null|array|float|float|int|string
+     * @return null|array|float|int|string
      */
-    private function getShippingField($line, $fieldName)
+    private function getShippingField(array $line, string $fieldName)
     {
         //====================================================================//
         // READ Fields
@@ -229,10 +258,12 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
+            case 'sku@lines':
                 return null;
             //====================================================================//
             // Order Line Quantity
             case 'quantity@lines':
+            case 'quantity_with_refunds@lines':
                 return 1;
             //====================================================================//
             // Order Line Price
@@ -258,7 +289,7 @@ trait ItemsTrait
      *
      * @return float|int
      */
-    private function getItemVatRate($line)
+    private function getItemVatRate(array $line)
     {
         //====================================================================//
         // Line not Taxable
@@ -314,7 +345,7 @@ trait ItemsTrait
      *
      * @return null|string
      */
-    private function getItemVatName($line)
+    private function getItemVatName(array $line): ?string
     {
         //====================================================================//
         // Line not Taxable
@@ -336,7 +367,7 @@ trait ItemsTrait
     }
 
     /**
-     * Get Discount Percetile Applied
+     * Get Discount Percentile Applied
      *
      * @param array $line
      *
@@ -356,11 +387,35 @@ trait ItemsTrait
             $amount += $discount['amount'];
         }
         //====================================================================//
-        // If Quantity is defined => Devide
+        // If Quantity is defined => Divide
         if (isset($line['quantity'])) {
             $amount = $amount / $line['quantity'];
         }
 
         return 100 * ($amount / $line['price']);
+    }
+
+    /**
+     * Get Item Refunded Quantity
+     *
+     * @param array $line
+     *
+     * @return int
+     */
+    private function getItemRefundedQty(array $line): int
+    {
+        //====================================================================//
+        // Walk on Refunds
+        foreach ($this->object->refunds ?? array() as $refund) {
+            //====================================================================//
+            // Walk on Refunds Items
+            foreach ($refund["refund_line_items"] ?? array() as $refundLine) {
+                if ($refundLine['line_item_id'] == $line['id']) {
+                    return (int) $refundLine['quantity'];
+                }
+            }
+        }
+
+        return 0;
     }
 }
