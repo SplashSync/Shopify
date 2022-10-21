@@ -58,6 +58,11 @@ trait CRUDTrait
         if ($this->connector->hasMondialRelayPlugin()) {
             MondialRelayHelper::apply($object);
         }
+        //====================================================================//
+        // Clear List of Loaded Transactions
+        if (method_exists($this, "clearLoadedTransactions")) {
+            $this->clearLoadedTransactions();
+        }
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
     }
