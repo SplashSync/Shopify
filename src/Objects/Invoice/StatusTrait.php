@@ -35,11 +35,11 @@ trait StatusTrait
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->identifier("status")
             ->name("Order Status")
-            ->MicroData("http://schema.org/Invoice", "paymentStatus")
-            ->AddChoice(Status::DRAFT, "Draft")
-            ->AddChoice(Status::PAYMENT_DUE, "Payment Due")
-            ->AddChoice(Status::COMPLETE, "Payment Completed")
-            ->AddChoice(Status::CANCELED, "Canceled")
+            ->microData("http://schema.org/Invoice", "paymentStatus")
+            ->addChoice(Status::DRAFT, "Draft")
+            ->addChoice(Status::PAYMENT_DUE, "Payment Due")
+            ->addChoice(Status::COMPLETE, "Payment Completed")
+            ->addChoice(Status::CANCELED, "Canceled")
             ->isListed()
         ;
     }
