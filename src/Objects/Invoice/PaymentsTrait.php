@@ -187,7 +187,7 @@ trait PaymentsTrait
             //====================================================================//
             // Payment Line - Payment Identification Number
             case 'number':
-                return implode(", ", $transaction["receipt"] ?? array());
+                return self::toPaymentReceipt($transaction["receipt"] ?? array());
             //====================================================================//
             // Payment Line - Payment Amount
             case 'amount':
@@ -236,5 +236,32 @@ trait PaymentsTrait
         }
 
         return "CreditCard";
+    }
+
+    /**
+     * Try To Detect Payment Receipt Reference
+     *
+     * @param array $receipt
+     *
+     * @return string
+     */
+    private static function toPaymentReceipt(array $receipt): string
+    {
+        //====================================================================//
+        // Known Receipt Array keys
+        static $knownKeys = array(
+            "systempay" => "x_reference",
+            "PayPlug" => "refund_id",
+        );
+        //====================================================================//
+        // Walk on Allowed Receipt Number Keys
+        foreach ($knownKeys as $key) {
+            if (isset($receipt[$key]) && is_string($receipt[$key])) {
+                return $receipt[$key];
+            }
+        }
+        //====================================================================//
+        // Default method
+        return implode(", ", $receipt);
     }
 }
