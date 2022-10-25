@@ -199,6 +199,9 @@ trait StatusTrait
             case 'failure':
                 return Status::PROBLEM;
         }
+        if (("fulfilled" == $fulfillmentStatus) && (null == $shipmentStatus)) {
+            return Status::DELIVERED;
+        }
 
         return Status::UNKNOWN;
     }

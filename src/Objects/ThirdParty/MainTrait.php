@@ -97,7 +97,8 @@ trait MainTrait
 
                 break;
             case 'state':
-                $this->out[$fieldName] = ("enabled" == $this->object->{$fieldName});
+                // $this->out[$fieldName] = ("enabled" == $this->object->{$fieldName});
+                $this->out[$fieldName] = true;
 
                 break;
             default:
