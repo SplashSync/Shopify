@@ -26,6 +26,8 @@ trait ItemsTrait
      * Build Address Fields using FieldFactory
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function buildItemsFields(): void
     {
@@ -63,6 +65,50 @@ trait ItemsTrait
             ->isReadOnly()
         ;
         //====================================================================//
+        // Order Line Discount
+        $this->fieldsFactory()->create(SPL_T_DOUBLE)
+            ->identifier("discount")
+            ->inList("lines")
+            ->name("[L] Discount %")
+            ->group("Items")
+            ->microData("http://schema.org/Order", "discount")
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
+        //====================================================================//
+        // Order Line Unit Price
+        $this->fieldsFactory()->create(SPL_T_PRICE)
+            ->identifier("price")
+            ->inList("lines")
+            ->name("[L] Unit Price")
+            ->group("Items")
+            ->microData("http://schema.org/PriceSpecification", "price")
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
+        //====================================================================//
+        // Order Line Tax Name
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("tax_name")
+            ->inList("lines")
+            ->name("[L] VAT Tax Code")
+            ->group("Items")
+            ->microData("http://schema.org/PriceSpecification", "valueAddedTaxName")
+            ->association("title@lines", "quantity@lines", "price@lines")
+            ->isReadOnly()
+        ;
+    }
+
+    /**
+     * Build Address Fields using FieldFactory
+     *
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    protected function buildQtyItemsFields(): void
+    {
+        //====================================================================//
         // Order Line Quantity
         $this->fieldsFactory()->create(SPL_T_INT)
             ->identifier("quantity")
@@ -78,7 +124,7 @@ trait ItemsTrait
             ->isReadOnly()
         ;
         //====================================================================//
-        // Order Line Quantity
+        // Order Line Quantity with Refunds
         $this->fieldsFactory()->create(SPL_T_INT)
             ->identifier("quantity_with_refunds")
             ->inList("lines")
@@ -93,35 +139,14 @@ trait ItemsTrait
             ->isReadOnly()
         ;
         //====================================================================//
-        // Order Line Discount
-        $this->fieldsFactory()->create(SPL_T_DOUBLE)
-            ->identifier("discount")
+        // Order Line Refunded Quantity
+        $this->fieldsFactory()->create(SPL_T_INT)
+            ->identifier("quantity_refunded")
             ->inList("lines")
-            ->name("Discount %")
+            ->name("[L] Refunded Qty")
+            ->description("[L] Refunded/Returned Quantities")
             ->group("Items")
-            ->microData("http://schema.org/Order", "discount")
-            ->association("title@lines", "quantity@lines", "price@lines")
-            ->isReadOnly()
-        ;
-        //====================================================================//
-        // Order Line Unit Price
-        $this->fieldsFactory()->create(SPL_T_PRICE)
-            ->identifier("price")
-            ->inList("lines")
-            ->name("Unit Price")
-            ->group("Items")
-            ->microData("http://schema.org/PriceSpecification", "price")
-            ->association("title@lines", "quantity@lines", "price@lines")
-            ->isReadOnly()
-        ;
-        //====================================================================//
-        // Order Line Tax Name
-        $this->fieldsFactory()->create(SPL_T_VARCHAR)
-            ->identifier("tax_name")
-            ->inList("lines")
-            ->name("VAT Tax Code")
-            ->group("Items")
-            ->microData("http://schema.org/PriceSpecification", "valueAddedTaxName")
+            ->microData("http://schema.org/QuantitativeValue", "refunded")
             ->association("title@lines", "quantity@lines", "price@lines")
             ->isReadOnly()
         ;
@@ -221,6 +246,8 @@ trait ItemsTrait
                 return (int) $line['quantity'];
             case 'quantity_with_refunds@lines':
                 return (int) ($line['quantity'] - $this->getItemRefundedQty($line));
+            case 'quantity_refunded@lines':
+                return $this->getItemRefundedQty($line);
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -245,6 +272,8 @@ trait ItemsTrait
      * @param string $fieldName Field Identifier / Name
      *
      * @return null|array|float|int|string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function getShippingField(array $line, string $fieldName)
     {
@@ -265,6 +294,8 @@ trait ItemsTrait
             case 'quantity@lines':
             case 'quantity_with_refunds@lines':
                 return 1;
+            case 'quantity_refunded@lines':
+                return $this->getShippingRefundedQty();
             //====================================================================//
             // Order Line Price
             case 'price@lines':
@@ -412,6 +443,28 @@ trait ItemsTrait
             foreach ($refund["refund_line_items"] ?? array() as $refundLine) {
                 if ($refundLine['line_item_id'] == $line['id']) {
                     return (int) $refundLine['quantity'];
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Get Shipping Refunded Quantity
+     *
+     * @return int
+     */
+    private function getShippingRefundedQty(): int
+    {
+        //====================================================================//
+        // Walk on Refunds
+        foreach ($this->object->refunds ?? array() as $refund) {
+            //====================================================================//
+            // Walk on Refunds Order Adjustments
+            foreach ($refund["order_adjustments"] ?? array() as $adjustmentLine) {
+                if ("shipping_refund" == $adjustmentLine['kind']) {
+                    return 1;
                 }
             }
         }
