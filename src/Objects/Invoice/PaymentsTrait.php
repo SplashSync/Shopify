@@ -36,7 +36,10 @@ trait PaymentsTrait
     private static $knownPaymentMethods = array(
         "manual" => "ByBankTransferInAdvance",
         "Bank Deposit" => "ByBankTransferInAdvance",
+        "Virement" => "ByBankTransferInAdvance",
 
+        "Cheque" => "CheckInAdvance",
+        "Chèque" => "CheckInAdvance",
         "Money Order" => "CheckInAdvance",
 
         "PayPal Express Checkout" => "PayPal",
@@ -49,6 +52,9 @@ trait PaymentsTrait
         "Stripe" => "CreditCard",
         "PayPlug" => "CreditCard",
         "Shopify Payments" => "CreditCard",
+
+        // Specific for Constant & Zoé
+        "3X par Chèque" => "COD",
     );
 
     /**
