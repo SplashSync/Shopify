@@ -70,6 +70,7 @@ trait MainTrait
             ->name("Accepts Marketing")
             ->group("Meta")
             ->microData("http://schema.org/Organization", "newsletter")
+            ->isReadOnly()
         ;
     }
 
@@ -90,7 +91,7 @@ trait MainTrait
 
                 break;
             case 'email_marketing_consent':
-                $this->getSimpleBool($fieldName);
+                $this->out[$fieldName] = ("subscribed" == $this->object->email_marketing_consent['state']);
 
                 break;
             case 'tax_exempt':
@@ -121,7 +122,6 @@ trait MainTrait
     {
         switch ($fieldName) {
             case 'phone':
-            case 'email_marketing_consent':
             case 'note':
                 $this->setSimple($fieldName, $fieldData);
 
