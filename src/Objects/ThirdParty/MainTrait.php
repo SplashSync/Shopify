@@ -66,7 +66,7 @@ trait MainTrait
         //====================================================================//
         // Is Opt In
         $this->fieldsFactory()->create(SPL_T_BOOL)
-            ->identifier("accepts_marketing")
+            ->identifier("email_marketing_consent")
             ->name("Accepts Marketing")
             ->group("Meta")
             ->microData("http://schema.org/Organization", "newsletter")
@@ -89,7 +89,7 @@ trait MainTrait
                 $this->getSimple($fieldName);
 
                 break;
-            case 'accepts_marketing':
+            case 'email_marketing_consent':
                 $this->getSimpleBool($fieldName);
 
                 break;
@@ -121,7 +121,7 @@ trait MainTrait
     {
         switch ($fieldName) {
             case 'phone':
-            case 'accepts_marketing':
+            case 'email_marketing_consent':
             case 'note':
                 $this->setSimple($fieldName, $fieldData);
 
