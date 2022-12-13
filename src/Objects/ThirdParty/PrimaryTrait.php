@@ -19,6 +19,9 @@ use Slince\Shopify\Model\Customers\Customer;
 use Splash\Client\Splash;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
+/**
+ * Shopify Search Customer by Primary Keys
+ */
 trait PrimaryTrait
 {
     /**
@@ -28,7 +31,7 @@ trait PrimaryTrait
     {
         //====================================================================//
         // Add a Min Test delay in Phpunit Tests
-        if (Splash::isDebugMode()) {
+        if (Splash::isTravisMode()) {
             sleep(5);
         }
         //====================================================================//

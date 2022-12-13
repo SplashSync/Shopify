@@ -18,6 +18,9 @@ namespace Splash\Connectors\Shopify\Objects\Order;
 use Slince\Shopify\Model\Customers\Customer;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 
+/**
+ * Shopify Search Orders & Invoices by Primary Keys
+ */
 trait PrimaryTrait
 {
     /**

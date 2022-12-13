@@ -94,6 +94,7 @@ trait MainTrait
             ->identifier("barcode")
             ->name("UPC | ISBN BarCode")
             ->microData("http://schema.org/Product", "gtin12")
+            ->isIndexed()
         ;
     }
 

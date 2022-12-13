@@ -53,7 +53,7 @@ trait CoreTrait
      *
      * @var array
      */
-    protected static $gpdrTopics = array(
+    protected static array $gpdrTopics = array(
         // GPDR Events
         "customers/data_request" => "GPDR - Customers request their data from a store owner",
         "customers/redact" => "GPDR - Request that data is deleted on behalf of a customer",
@@ -61,11 +61,11 @@ trait CoreTrait
     );
 
     /**
-     * WebHook Requets Dat Format
+     * WebHook Request Data Format
      *
      * @var array
      */
-    protected static $format = array(
+    protected static array $format = array(
         "json" => "Json Data Format",
         "xml" => "Xml Data Format",
     );

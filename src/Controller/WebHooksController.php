@@ -153,11 +153,11 @@ class WebHooksController extends AbstractController
             case 'orders/delete':
                 $this->executeOrderCommit($this->data, SPL_A_DELETE, "Deleted");
 
-            //====================================================================//
-            // RGPD WebHooks
-            //====================================================================//
                 return;
             default:
+                //====================================================================//
+                // RGPD WebHooks
+                //====================================================================//
                 return;
         }
     }
