@@ -90,13 +90,11 @@ class ActionsController extends AbstractController
         // Get Connector WebService Id from Session
         /** @var null|string $webserviceId */
         $webserviceId = $session->get("shopify_oauth2_wsid");
-
         //====================================================================//
         // NO WebserviceId => Install from Shopify Listing
-        if (!$webserviceId) {
+        if (!$webserviceId || ("new" == $webserviceId)) {
             return $this->forwardToConnector("ShopifyBundle:Install:init", $connector);
         }
-
         //====================================================================//
         // Perform Identify Pointed Server
         if (false === $connector->identify($webserviceId)) {
