@@ -96,12 +96,12 @@ class OAuth2Client extends AbstractProvider
      *
      * @return $this
      */
-    public function configure(AbstractConnector $connector): self
+    public function configure(AbstractConnector $connector, string $shop = null): self
     {
         //==============================================================================
         // Configure Shopify Shop Url
         /** @var string $shop */
-        $shop = $connector->getParameter("WsHost");
+        $shop = $shop ?? $connector->getParameter("WsHost");
         $this->shop = $shop;
 
         return $this;

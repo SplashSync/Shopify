@@ -41,7 +41,7 @@ class ActionsController extends AbstractController
     //==============================================================================
 
     /**
-     * Update User Connector WebHooks List
+     * Perform Oauth for this Server from Splash Account Page
      *
      * @param Session           $session
      * @param ClientRegistry    $registry
@@ -88,8 +88,15 @@ class ActionsController extends AbstractController
     ) {
         //==============================================================================
         // Get Connector WebService Id from Session
-        /** @var string $webserviceId */
+        /** @var null|string $webserviceId */
         $webserviceId = $session->get("shopify_oauth2_wsid");
+
+        //====================================================================//
+        // NO WebserviceId => Install from Shopify Listing
+        if (!$webserviceId) {
+            return $this->forwardToConnector("ShopifyBundle:Install:init", $connector);
+        }
+
         //====================================================================//
         // Perform Identify Pointed Server
         if (false === $connector->identify($webserviceId)) {
