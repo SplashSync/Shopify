@@ -18,4 +18,5 @@ services:
     Splash\Connectors\Shopify\Controller\:
         resource: '../../Controller'
         public: true
+        autowire: true
         tags: ['controller.service_arguments']

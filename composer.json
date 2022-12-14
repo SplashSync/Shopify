@@ -52,8 +52,9 @@
         "symfony/symfony":                              "^3.4|^4.4",
         "symfony/monolog-bundle":                       "*",
         "symfony/phpunit-bridge":                       "*",
+        "symfony/swiftmailer-bundle":                   "*",
         "monolog/monolog":                              "^1.0",
-        
+
         "doctrine/doctrine-bundle":                     "^2.6",
         "doctrine/orm":                                 "^2.5"
     },

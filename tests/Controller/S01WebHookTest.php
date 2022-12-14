@@ -56,35 +56,6 @@ class S01WebHookTest extends TestCase
         $this->assertPublicActionFail($connector, null, array(), "DELETE");
     }
 
-//    /**
-//     * Test WebHook with Errors
-//     */
-//    public function testWebhookErrors()
-//    {
-//        //====================================================================//
-//        // Load Connector
-//        $connector = $this->getConnector("Shopify");
-//        $this->assertInstanceOf(ShopifyConnector::class, $connector);
-//
-//        //====================================================================//
-//        // Empty Contents
-//        //====================================================================//
-//
-//        $this->assertPublicActionFail($connector, null, array(), "POST");
-//
-//        //====================================================================//
-//        // EVENT BUT NO EMAIL
-//        //====================================================================//
-//
-//        $this->assertPublicActionFail($connector, null, array("event" => "unsubscribed"), "POST");
-//
-//        //====================================================================//
-//        // EMAIOL BUT NO EVENT
-//        //====================================================================//
-//
-//        $this->assertPublicActionFail($connector, null, array("email" => self::FAKE_EMAIL), "POST");
-//    }
-//
     /**
      * Test WebHook Member Updates
      *
@@ -127,6 +98,57 @@ class S01WebHookTest extends TestCase
     }
 
     /**
+     * Test Mandatory WebHooks Updates
+     *
+     * @dataProvider webHooksMandatoryInputsProvider
+     *
+     * @param string $topic
+     * @param array  $data
+     *
+     * @return void
+     */
+    public function testMandatoryWebhookRequest(
+        string $topic,
+        array $data
+    ): void {
+        //====================================================================//
+        // Load Connector
+        $connector = $this->getConnector("shopify");
+        $this->assertInstanceOf(ShopifyConnector::class, $connector);
+        //====================================================================//
+        // Setup Client
+        $this->configure($connector, $topic);
+
+        //====================================================================//
+        // POST MODE
+        $this->assertRouteWorks(
+            "splash_connector_shopify_mandatory_webhooks",
+            array(),
+            $data,
+            "POST"
+        );
+        $this->assertNotEmpty($this->getResponseContents());
+        //====================================================================//
+        // JSON POST MODE
+        $this->assertRouteWorks(
+            "splash_connector_shopify_mandatory_webhooks",
+            array(),
+            $data,
+            "JSON"
+        );
+        $this->assertNotEmpty($this->getResponseContents());
+
+        //====================================================================//
+        // EMPTY DATA => ERROR
+        $this->assertRouteFail(
+            "splash_connector_shopify_mandatory_webhooks",
+            array(),
+            array(),
+            "POST"
+        );
+    }
+
+    /**
      * Generate Fake Inputs for WebHook Requests
      *
      * @return array
@@ -166,6 +188,54 @@ class S01WebHookTest extends TestCase
             $hooks[] = self::getInvoiceWebHook(SPL_A_UPDATE, "orders/updated", uniqid());
             $hooks[] = self::getInvoiceWebHook(SPL_A_DELETE, "orders/delete", uniqid());
         }
+
+        return $hooks;
+    }
+
+    /**
+     * Generate Fake Inputs for Mandatory WebHook Requests
+     *
+     * @return array
+     */
+    public function webHooksMandatoryInputsProvider(): array
+    {
+        $hooks = array();
+
+        //====================================================================//
+        // GPDR Customer Data Request
+        $hooks[] = array(
+            "customers/data_request",
+            array(
+                "shop_id" => 954889,
+                "shop_domain" => "{shop}.myshopify.com",
+                "orders_requested" => array(299938, 280263, 220458),
+                "customer" => array("id" => 191167, "email" => "john@example.com", "phone" => "555-625-1199"),
+                "data_request" => array("id" => 9999)
+            )
+        );
+
+        //====================================================================//
+        // GPDR Customer Redact
+        $hooks[] = array(
+            "customers/redact",
+            array(
+                "shop_id" => 954889,
+                "shop_domain" => "{shop}.myshopify.com",
+                "orders_requested" => array(299938, 280263, 220458),
+                "customer" => array("id" => 191167, "email" => "john@example.com", "phone" => "555-625-1199"),
+                "data_request" => array("id" => 9999)
+            )
+        );
+
+        //====================================================================//
+        // GPDR Shop Redact
+        $hooks[] = array(
+            "shop/redact",
+            array(
+                "shop_id" => 954889,
+                "shop_domain" => "{shop}.myshopify.com"
+            )
+        );
 
         return $hooks;
     }

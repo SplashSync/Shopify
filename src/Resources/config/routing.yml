@@ -1,0 +1,4 @@
+
+splash_connector_shopify_mandatory_webhooks:
+    path:     /shopify/webhooks/mandatory/gpdr
+    controller: Splash\Connectors\Shopify\Controller\GpdrController::indexAction
