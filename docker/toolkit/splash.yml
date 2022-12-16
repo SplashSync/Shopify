@@ -27,7 +27,7 @@ splash:
             name:               Shopify Server
             host:               false
             connector:          shopify
-            config:  
+            config:
                 WsHost:         '%env(resolve:SHOPIFY_URL)%'
                 LocationId:     '%env(resolve:SHOPIFY_LOCATION)%'
                 LogisticMode:   false

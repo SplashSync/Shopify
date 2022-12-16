@@ -121,6 +121,13 @@ trait CoreTrait
             ->name("Data Format")
             ->addChoices(static::$format)
         ;
+        //====================================================================//
+        // WebHook Format
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("api_version")
+            ->name("Api Version")
+            ->isReadOnly()
+        ;
     }
 
     /**
@@ -137,6 +144,7 @@ trait CoreTrait
             case 'address':
             case 'topic':
             case 'format':
+            case 'api_version':
                 $this->getSimple($fieldName);
 
                 break;
