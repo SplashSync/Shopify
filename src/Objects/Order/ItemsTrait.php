@@ -226,7 +226,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Description
             case 'title@lines':
-                return  $line['title']." - ".$line['variant_title'];
+                return  $line['title'].(!empty($line['variant_title']) ? " - ".$line['variant_title'] : "");
             case 'sku@lines':
                 return  $line['sku'];
             //====================================================================//
