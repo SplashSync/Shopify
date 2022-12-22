@@ -622,7 +622,12 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
             //====================================================================//
             // This is a Splash WebHooks
             if (false !== strpos(trim($webHook['address']), $serverUrl)) {
-                $manager->delete($webHook['id']);
+                //====================================================================//
+                // Same Topic but Wrong Address
+                // Unexpected Topic
+                if (($webHook['topic'] == $topic) || !in_array($topic, WebHook::getTopics(), true)) {
+                    $manager->delete($webHook['id']);
+                }
             }
         }
         //====================================================================//
@@ -636,7 +641,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     }
 
     /**
-     * Get Shopify Shop Countries Informations
+     * Get Shopify Shop Countries Information
      *
      * @return bool
      */
@@ -656,7 +661,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     }
 
     /**
-     * Get Shopify Shop Countries Informations
+     * Get Shopify Shop Countries Information
      *
      * @return bool
      */
@@ -676,7 +681,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     }
 
     /**
-     * Get Shopify Shop Locations Informations
+     * Get Shopify Shop Locations Information
      *
      * @return bool
      */

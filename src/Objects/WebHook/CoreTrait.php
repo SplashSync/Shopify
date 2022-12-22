@@ -77,7 +77,7 @@ trait CoreTrait
      */
     public static function getTopics() : array
     {
-        return array_keys(array_merge(static::$topics, static::$gpdrTopics));
+        return array_keys(static::$topics);
     }
 
     /**
