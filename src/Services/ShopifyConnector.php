@@ -57,7 +57,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         "Product" => Objects\Product::class,
         "Order" => Objects\Order::class,
         "Invoice" => Objects\Invoice::class,
-        //        "WebHooks" => Objects\WebHook::class,
+        "WebHooks" => Objects\WebHook::class,
     );
 
     /**
