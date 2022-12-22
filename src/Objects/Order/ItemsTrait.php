@@ -245,6 +245,10 @@ trait ItemsTrait
             case 'quantity@lines':
                 return (int) $line['quantity'];
             case 'quantity_with_refunds@lines':
+                if ($this->connector->hasLogisticMode() && empty($line['requires_shipping'] ?? true)) {
+                    return 0;
+                }
+
                 return (int) ($line['quantity'] - $this->getItemRefundedQty($line));
             case 'quantity_refunded@lines':
                 return $this->getItemRefundedQty($line);
@@ -361,7 +365,7 @@ trait ItemsTrait
         $tax = (float) $this->getItemVatRate($line);
         //====================================================================//
         // Build Price Array
-        return self::prices()->Encode(
+        return self::prices()->encode(
             $priceHT,
             $tax,
             $priceTTC,
