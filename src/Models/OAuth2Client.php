@@ -227,9 +227,9 @@ class OAuth2Client extends AbstractProvider
         }
         //==============================================================================
         // Extract Request RAW Data
-        $rawContents = !empty($request->getContent())
-            ? $request->getContent()
-            : json_encode($request->request->all())
+        $rawContents = file_get_contents('php://input')
+            ?: $request->getContent()
+            ?: json_encode($request->request->all())
         ;
         //==============================================================================
         // Compute Request HMAC
