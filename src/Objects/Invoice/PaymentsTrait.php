@@ -268,6 +268,6 @@ trait PaymentsTrait
         }
         //====================================================================//
         // Default method
-        return implode(", ", $receipt);
+        return "";
     }
 }

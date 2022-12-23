@@ -87,7 +87,7 @@ trait VariantsTrait
     }
 
     /**
-     * Encode Splash Address Id from Shopify Customer && Address Id
+     * Encode Splash Address ID from Shopify Customer && Address Id
      *
      * @param string $productId
      * @param string $variantId

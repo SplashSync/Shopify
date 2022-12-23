@@ -101,6 +101,7 @@ class Product extends AbstractStandaloneObject
         $this->connector = $connector;
         //====================================================================//
         //  Load Translation File
+        Splash::translator()->load('local');
         Splash::translator()->load('objects');
     }
 }

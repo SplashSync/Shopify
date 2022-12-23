@@ -90,6 +90,7 @@ trait MainTrait
                 $this->getSimple($fieldName);
 
                 break;
+            case 'accepts_marketing':
             case 'email_marketing_consent':
                 $this->out[$fieldName] = ("subscribed" == $this->object->email_marketing_consent['state']);
 
