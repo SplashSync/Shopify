@@ -21,6 +21,7 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Splash\Bundle\Models\AbstractConnector;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth2 Shopify Client Provider
@@ -202,6 +203,66 @@ class OAuth2Client extends AbstractProvider
             ? array('X-Shopify-Access-Token' => $token->getToken())
             : array()
         ;
+    }
+
+    /**
+     * Returns the authorization headers used by this provider.
+     *
+     * Each webhook request includes a base64-encoded X-Shopify-Hmac-SHA256 header,
+     * which is generated using the app's client secret along with the data sent in the request.
+     * If you're using PHP, or a Rack-based framework such as Ruby on Rails or Sinatra,
+     * then the header is HTTP_X_SHOPIFY_HMAC_SHA256.
+     *
+     * @param Request $request Received Webhook Request
+     *
+     * @return bool
+     */
+    public static function validateWebhookHmac(Request $request): bool
+    {
+        //==============================================================================
+        // Extract Request HMAC
+        $headerHmac = $request->headers->get("X_SHOPIFY_HMAC_SHA256");
+        if (empty($headerHmac) || !is_string($headerHmac)) {
+            return false;
+        }
+        //==============================================================================
+        // Extract Request RAW Data
+        $rawContents = !empty($request->getContent())
+            ? $request->getContent()
+            : json_encode($request->request->all())
+        ;
+        //==============================================================================
+        // Compute Request HMAC
+        $requestHmac = self::getRequestHmac((string) $rawContents);
+        if (empty($requestHmac)) {
+            return false;
+        }
+
+        return hash_equals($requestHmac, $headerHmac);
+    }
+
+    /**
+     * Generate request Security HMAC.
+     *
+     * @param string $contents Request Contents
+     *
+     * @return null|string
+     */
+    public static function getRequestHmac(string $contents): ?string
+    {
+        //==============================================================================
+        // Safety Check
+        if (empty(self::$config['client_secret'])) {
+            return null;
+        }
+        //==============================================================================
+        // Compute Request HMAC
+        return base64_encode(hash_hmac(
+            'sha256',
+            $contents,
+            self::$config['client_secret'],
+            true
+        )) ?: null;
     }
 
     /**

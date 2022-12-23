@@ -17,12 +17,14 @@ namespace Splash\Connectors\Shopify\Controller;
 
 use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
+use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
  * Splash Shopify Connector WebHooks Controller
@@ -72,7 +74,7 @@ class WebHooksController extends AbstractController
         //==============================================================================
         // Safety Check
         if (!$this->verify($request, $connector)) {
-            throw new BadRequestHttpException('Malformed or missing data');
+            throw new UnauthorizedHttpException('Malformed or missing data');
         }
 
         //====================================================================//
@@ -265,7 +267,6 @@ class WebHooksController extends AbstractController
         if (!$request->isMethod('POST')) {
             return false;
         }
-
         //====================================================================//
         // Verify User Node Domain is Ok with Identifier
         $headerHost = $request->headers->get("X-Shopify-Shop-Domain");
@@ -273,7 +274,11 @@ class WebHooksController extends AbstractController
         if (empty($headerHost) || ($connector->getShopifyDomain() != $headerHost)) {
             return false;
         }
-
+        //====================================================================//
+        // Verify Request HMAC
+        if (!OAuth2Client::validateWebhookHmac($request)) {
+            return false;
+        }
         //====================================================================//
         // Verify WebHook Type is Provided & is Valid
         $topic = $request->headers->get("X-Shopify-Topic");

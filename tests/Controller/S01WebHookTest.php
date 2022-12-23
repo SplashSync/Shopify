@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Test\Controller;
 
+use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Tests\Tools\TestCase;
@@ -82,7 +83,7 @@ class S01WebHookTest extends TestCase
         $this->assertInstanceOf(ShopifyConnector::class, $connector);
         //====================================================================//
         // Setup Client
-        $this->configure($connector, $topic);
+        $this->configure($connector, $topic, $data);
 
         //====================================================================//
         // POST MODE
@@ -115,10 +116,22 @@ class S01WebHookTest extends TestCase
         // Load Connector
         $connector = $this->getConnector("shopify");
         $this->assertInstanceOf(ShopifyConnector::class, $connector);
-        //====================================================================//
-        // Setup Client
-        $this->configure($connector, $topic);
 
+        //====================================================================//
+        // Setup Client (Without Security HMAC)
+        $this->configure($connector, $topic, null);
+        //====================================================================//
+        // POST MODE => 401 ERROR
+        $this->assertRouteFail(
+            "splash_connector_shopify_mandatory_webhooks",
+            array(),
+            $data,
+            "POST"
+        );
+        $this->assertNotEmpty($this->getResponseContents());
+        //====================================================================//
+        // Setup Client (With Security HMAC)
+        $this->configure($connector, $topic, $data);
         //====================================================================//
         // POST MODE
         $this->assertRouteWorks(
@@ -137,14 +150,16 @@ class S01WebHookTest extends TestCase
             "JSON"
         );
         $this->assertNotEmpty($this->getResponseContents());
-
+        //====================================================================//
+        // Setup Client (With Security HMAC)
+        $this->configure($connector, $topic, array());
         //====================================================================//
         // EMPTY DATA => ERROR
         $this->assertRouteFail(
             "splash_connector_shopify_mandatory_webhooks",
             array(),
             array(),
-            "POST"
+            "JSON"
         );
     }
 
@@ -248,12 +263,18 @@ class S01WebHookTest extends TestCase
      *
      * @return void
      */
-    private function configure(ShopifyConnector $connector, string $topic): void
+    private function configure(ShopifyConnector $connector, string $topic, ?array $data = null): void
     {
         $wsHost = $connector->getParameter("WsHost");
         $this->assertIsString($wsHost);
         $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Shop-Domain", $wsHost);
         $this->getTestClient()->setServerParameter("HTTP_X-Shopify-Topic", $topic);
+        if (is_array($data)) {
+            $this->getTestClient()->setServerParameter(
+                "HTTP_X_SHOPIFY_HMAC_SHA256",
+                (string) OAuth2Client::getRequestHmac((string) json_encode($data))
+            );
+        }
     }
 
     /**
