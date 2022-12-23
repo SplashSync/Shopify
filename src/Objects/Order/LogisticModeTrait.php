@@ -108,7 +108,7 @@ trait LogisticModeTrait
     /**
      * Write Given Fields
      *
-     * @param string $fieldName Field Identifier / Name
+     * @param string      $fieldName Field Identifier / Name
      * @param null|string $fieldData Field Data
      *
      * @return void
@@ -120,7 +120,7 @@ trait LogisticModeTrait
         switch ($fieldName) {
             case 'tracking_number':
             case 'tracking_url':
-                $this->setMainFulfillmentField($fieldName, $fieldData);
+                $this->setMainFulfillmentField($fieldName, (string) $fieldData);
 
                 break;
             default:
