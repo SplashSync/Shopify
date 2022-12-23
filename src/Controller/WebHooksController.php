@@ -268,6 +268,13 @@ class WebHooksController extends AbstractController
             return false;
         }
         //====================================================================//
+        // Private Connexion => Override Client Configuration
+        /** @var null|string $apiSecret */
+        $apiSecret = $connector->getConfiguration()["apiSecret"] ?? null;
+        if ($apiSecret) {
+            OAuth2Client::init($apiSecret);
+        }
+        //====================================================================//
         // Verify User Node Domain is Ok with Identifier
         $headerHost = $request->headers->get("X-Shopify-Shop-Domain");
         /** @var ShopifyConnector $connector */
