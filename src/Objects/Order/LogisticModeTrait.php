@@ -109,11 +109,11 @@ trait LogisticModeTrait
      * Write Given Fields
      *
      * @param string $fieldName Field Identifier / Name
-     * @param string $fieldData Field Data
+     * @param null|string $fieldData Field Data
      *
      * @return void
      */
-    protected function setFulfillmentFields(string $fieldName, string $fieldData): void
+    protected function setFulfillmentFields(string $fieldName, ?string $fieldData): void
     {
         //====================================================================//
         // WRITE Field
