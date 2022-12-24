@@ -232,7 +232,7 @@ trait ItemsTrait
             //====================================================================//
             // Order Line Product Id
             case 'product_id@lines':
-                if (empty($line['product_id'])||empty($line['variant_id'])) {
+                if (empty($line['product_id']) || empty($line['variant_id'])) {
                     return null;
                 }
 
