@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Controller;
 
+use Exception;
 use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Models\OAuth2Client;
@@ -74,7 +75,7 @@ class WebHooksController extends AbstractController
         //==============================================================================
         // Safety Check
         if (!$this->verify($request, $connector)) {
-            throw new UnauthorizedHttpException('Malformed or missing data');
+            throw new BadRequestHttpException('Malformed or missing data');
         }
 
         //====================================================================//
@@ -258,6 +259,8 @@ class WebHooksController extends AbstractController
      * @param Request           $request
      * @param AbstractConnector $connector
      *
+     * @throws Exception
+     *
      * @return bool
      */
     private function verify(Request $request, AbstractConnector $connector) : bool
@@ -284,7 +287,7 @@ class WebHooksController extends AbstractController
         //====================================================================//
         // Verify Request HMAC
         if (!OAuth2Client::validateWebhookHmac($request)) {
-            return false;
+            throw new UnauthorizedHttpException('Malformed or missing data');
         }
         //====================================================================//
         // Verify WebHook Type is Provided & is Valid
