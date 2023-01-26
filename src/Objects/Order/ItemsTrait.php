@@ -351,9 +351,9 @@ trait ItemsTrait
      *
      * @param array $line
      *
-     * @return array|string
+     * @return null|array
      */
-    private function getItemPrice($line)
+    private function getItemPrice(array $line): ?array
     {
         //====================================================================//
         // Read Price Tax Mode
