@@ -27,8 +27,9 @@ variables:
 ################################################################
 # Defined Pipeline Stages
 stages:
-  - tests
   - deploy
+  - tests
+#   - deploy
 
 ################################################################
 # Functional Tests
@@ -72,36 +73,45 @@ stages:
 
 ################################################################################
 # PHP 8.1
-#tests:php-8.1:
-#    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-#    needs: ["tests:php-8.0"]
-#    <<: *core_tests
+tests:php-8.1:
+   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+   <<: *core_tests
 
-################################################################################
-# PHP 8.0
-tests:php-8.0:
-    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.0
-    <<: *core_tests
 
 ################################################################
 # Build Documentation
 ################################################################
+# pages:
+#     image:    registry.gitlab.com/badpixxel-projects/php-sdk:jekyll
+#     stage:    deploy
+#     tags:
+#       - Dedicated
+#     services:
+#       - docker:dind
+#     ################################################################################
+#     # Run Test Script
+#     script:
+#       # Deploy Symfony Files
+#       - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/deploy.sh | sh
+#       # Run Composer to Build deps
+#       - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/composer.sh  | bash
+#       # Build Documentation
+#       - php vendor/bin/grumphp run --tasks=build-docs
+#     artifacts:
+#         paths:
+#             - public
+
+#################################################################
+## Build Documentation
+#################################################################
 pages:
-    image:    registry.gitlab.com/badpixxel-projects/php-sdk:jekyll
-    stage:    deploy
-    tags:
-      - Dedicated
-    services:
-      - docker:dind
+    image:      jekyll/minimal:latest
+    stage:      deploy
+    tags:       [ Dedicated-Docker ]
     ################################################################################
     # Run Test Script
     script:
-      # Deploy Symfony Files
-      - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/deploy.sh | sh
-      # Run Composer to Build deps
-      - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/composer.sh  | bash
-      # Build Documentation
-      - php vendor/bin/grumphp run --tasks=build-docs
+        - wget -qO - https://gitlab.com/badpixxel-robo/jekyll/-/raw/main/scripts/gitlab-pages.sh | sh
     artifacts:
         paths:
             - public
