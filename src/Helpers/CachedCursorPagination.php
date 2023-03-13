@@ -244,7 +244,7 @@ class CachedCursorPagination extends CursorBasedPagination
         }
         //====================================================================//
         // Load Empty Value
-        if (!isset($this->cache) || !is_array($this->cache)) {
+        if (!isset($this->cache)) {
             $this->cache = array();
         }
     }
