@@ -18,6 +18,7 @@ namespace Splash\Connectors\Shopify\Objects;
 use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
+use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects\IntelParserTrait;
 use Splash\Models\Objects\ListsTrait;
 use Splash\Models\Objects\ObjectsTrait;
@@ -133,6 +134,10 @@ class Order extends AbstractStandaloneObject implements PrimaryKeysAwareInterfac
     public function __construct(ShopifyConnector $connector)
     {
         $this->connector = $connector;
+        //====================================================================//
+        //  Load Translation File
+        Splash::translator()->load('local');
+        Splash::translator()->load('objects');
     }
 
     /**
