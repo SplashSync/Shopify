@@ -143,19 +143,31 @@ trait LogisticModeTrait
             return false;
         }
         //====================================================================//
-        // Extract Fulfillment for Update
-        $data = array(
-            "fulfillment" => array_intersect_key(
-                $this->object->fulfillments[$index],
-                array_flip(self::$fulfillmentFields)
-            )
-        );
-        //====================================================================//
         // Create/Update Fulfillment
-        $result = isset($this->object->fulfillments[$index]["id"])
-            ? API::put($this->getMainFulfillmentUri(), $data)
-            : API::post($this->getMainFulfillmentUri(), $data)
-        ;
+        $fulfillmentId = $this->object->fulfillments[$index]["id"] ?? null;
+        if (!$fulfillmentId) {
+            //====================================================================//
+            // Get First Fulfillment Order ID
+            $fulfillmentOrderId = $this->getFirstFulfillmentOrderId();
+            if (!$fulfillmentOrderId) {
+                return false;
+            }
+            //====================================================================//
+            // Create New Fulfillment for Order
+            $result = API::post(
+                'fulfillments',
+                $this->getFirstFulfillmentData($index, $fulfillmentOrderId)
+            );
+        } else {
+            //====================================================================//
+            // Update Fulfillment Tracking Infos
+            $result = API::post(
+                sprintf("fulfillments/%s/update_tracking", $fulfillmentId),
+                $this->getFirstFulfillmentData($index)
+            );
+        }
+        //====================================================================//
+        // Detect Errors
         if (null === $result) {
             return Splash::log()->errTrace("Unable to create/update Order Fulfillment.");
         }
@@ -232,21 +244,66 @@ trait LogisticModeTrait
     }
 
     /**
-     * Get Main Fulfillment CRUD Base Uri
+     * Get First Fulfillment Order ID
      *
-     * @return string
+     * @return null|int
      */
-    private function getMainFulfillmentUri() : string
+    private function getFirstFulfillmentOrderId() : ?int
     {
-        $uri = 'orders/'.$this->getObjectIdentifier()."/fulfillments";
+        $uri = sprintf("orders/%s/fulfillment_orders", $this->object->id);
         //====================================================================//
-        // Search for first Active Item
-        $index = $this->getFirstFulfillmentIndex();
-        if (isset($this->object->fulfillments[$index]["id"])) {
-            $uri .= "/".$this->object->fulfillments[$index]["id"];
+        // Get List of Fulfillment Orders
+        $fulfillmentOrders = API::get($uri);
+        if (!$fulfillmentOrders || empty($fulfillmentOrders["fulfillment_orders"])) {
+            return Splash::log()->errNull("Unable to Load Fulfillment Order.");
         }
+        //====================================================================//
+        // Extract First Fulfillment Order
+        /** @var null|array $fulfillmentOrder */
+        $fulfillmentOrder = array_shift($fulfillmentOrders["fulfillment_orders"]);
+        if (!$fulfillmentOrder || empty($fulfillmentOrder["id"])) {
+            return Splash::log()->errNull("Unable to Load Fulfillment Order.");
+        }
+        //====================================================================//
+        // Return Fulfillment Order ID
+        return $fulfillmentOrder["id"];
+    }
 
-        return $uri;
+    /**
+     * Get Fulfillment API Data
+     *
+     * @param int      $index
+     * @param null|int $fulfillmentOrderId
+     *
+     * @return array
+     */
+    private function getFirstFulfillmentData(int $index, ?int $fulfillmentOrderId = null) : array
+    {
+        //====================================================================//
+        // Extract Fulfillment for Update
+        $fulfillment = array_intersect_key(
+            $this->object->fulfillments[$index],
+            array_flip(self::$fulfillmentFields)
+        );
+        //====================================================================//
+        // Reformat Fulfillment Infos
+        $fulfillment['tracking_info'] = array(
+            "company" => $fulfillment['tracking_company'] ?? null,
+            "number" => $fulfillment['tracking_number'] ?? null,
+            "url" => $fulfillment['tracking_url'] ?? null,
+        );
+        //====================================================================//
+        // Add Fulfillment Order ID
+        if ($fulfillmentOrderId) {
+            $fulfillment['line_items_by_fulfillment_order'] = array(array(
+                "fulfillment_order_id" => $fulfillmentOrderId
+            ));
+        }
+        //====================================================================//
+        // Return Fulfillment API Data
+        return array(
+            "fulfillment" => $fulfillment
+        );
     }
 
     /**

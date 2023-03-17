@@ -96,9 +96,9 @@ trait CRUDTrait
 
         //====================================================================//
         // Order Information Update is Forbidden
-        if ($this->isToUpdate('fulfillments')) {
-            if (method_exists($this, 'updateFulfillment')) {
-                $this->updateFulfillment();
+        if ($this->isToUpdate('fulfillments') && method_exists($this, 'updateFulfillment')) {
+            if (!$this->updateFulfillment()) {
+                return Splash::log()->errNull("An error occurred while updating Orders Shipment Status.");
             }
         }
 
