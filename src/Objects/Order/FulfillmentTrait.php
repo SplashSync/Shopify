@@ -126,7 +126,7 @@ trait FulfillmentTrait
                         self::$fulfillmentListName,
                         $fieldName,
                         $index,
-                        isset($fulfillment[$fieldId]) ? $fulfillment[$fieldId] : null
+                        $fulfillment[$fieldId] ?? null
                     );
 
                     break;
