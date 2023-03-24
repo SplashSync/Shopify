@@ -106,7 +106,10 @@ class WebhooksManager
         }
         //====================================================================//
         // Setup Hostname for WebHooks
-        $this->router->getContext()->setHost($this->getHostname());
+        $this->router->getContext()
+            ->setHost($this->getHostname())
+            ->setScheme("https")
+        ;
         //====================================================================//
         // Generate WebHook Url
         $webHookUrl = $this->router->generate(
