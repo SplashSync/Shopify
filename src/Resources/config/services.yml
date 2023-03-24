@@ -14,6 +14,11 @@ services:
             - { name: "splash.connector"}
 
     ################################################################################
+    # SPLASH Shopify WebHooks Manager
+    Splash\Connectors\Shopify\Services\WebhooksManager:
+        autowire: true
+
+    ################################################################################
     # Enables Dependency Injection in Controller Actions
     Splash\Connectors\Shopify\Controller\:
         resource: '../../Controller'

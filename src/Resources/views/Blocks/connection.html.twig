@@ -56,13 +56,13 @@
 
         <li>
             {% if connector.verifyWebHooks %}
-            <h4 class="font-md text-success">
-                <i class="fa fa-check"></i>&nbsp;{{ 'admin.webhooks.msg'| trans }}
-            </h4>
+                <h4 class="font-md text-success">
+                    <i class="fa fa-check"></i>&nbsp;{{ 'admin.webhooks.msg'| trans }}
+                </h4>
             {% else %}
-            <h4 class="font-md text-danger">
-                <i class="fa fa-times"></i>&nbsp;{{ 'admin.webhooks.err'| trans }}
-            </h4>
+                <h4 class="font-md text-danger">
+                    <i class="fa fa-times"></i>&nbsp;{{ 'admin.webhooks.err'| trans }}
+                </h4>
             {% endif %}
         </li>
 

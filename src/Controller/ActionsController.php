@@ -21,13 +21,14 @@ use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Local\ActionsTrait;
 use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
+use Splash\Connectors\Shopify\Services\WebhooksManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Splash Shopify Connector Actions Controller
@@ -145,27 +146,29 @@ class ActionsController extends AbstractController
     /**
      * Update User Connector WebHooks List
      *
-     * @param Request           $request
-     * @param AbstractConnector $connector
+     * @param Request             $request
+     * @param TranslatorInterface $translator
+     * @param WebhooksManager     $whManager
+     * @param AbstractConnector   $connector
      *
      * @return Response
      */
-    public function webhooksAction(Request $request, AbstractConnector $connector)
-    {
+    public function webhooksAction(
+        Request $request,
+        TranslatorInterface $translator,
+        WebhooksManager $whManager,
+        AbstractConnector $connector
+    ): Response {
         $result = false;
         //====================================================================//
         // Connector SelfTest
         if (($connector instanceof ShopifyConnector) && $connector->selfTest()) {
-            /** @var RouterInterface $router */
-            $router = $this->get('router');
             //====================================================================//
             // Update WebHooks Config
-            $result = $connector->updateWebHooks($router);
+            $result = $whManager->updateWebHooks($connector);
         }
         //====================================================================//
         // Inform User
-        /** @var Translator $translator */
-        $translator = $this->get('translator');
         $this->addFlash(
             $result ? "success" : "danger",
             $translator->trans(
@@ -197,7 +200,7 @@ class ActionsController extends AbstractController
      *
      * @return Response
      */
-    public function refreshAction(Request $request, AbstractConnector $connector)
+    public function refreshAction(Request $request, AbstractConnector $connector): Response
     {
         $result = false;
         //====================================================================//

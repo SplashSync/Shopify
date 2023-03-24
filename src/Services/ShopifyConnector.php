@@ -28,11 +28,9 @@ use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
 use Splash\Connectors\Shopify\Models\OAuth2Client;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\Objects;
-use Splash\Connectors\Shopify\Objects\WebHook;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Helpers\ImagesHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Shopify REST API Connector for Splash
@@ -75,6 +73,11 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     private string $cacheDir;
 
     /**
+     * @var WebhooksManager
+     */
+    private WebhooksManager $webhooksManager;
+
+    /**
      * Class Constructor
      *
      * @param string                   $cacheDir
@@ -87,11 +90,13 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     public function __construct(
         string $cacheDir,
         string $apiSecret,
+        WebhooksManager $webhooksManager,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
         parent::__construct($eventDispatcher, $logger);
         OAuth2Client::init($apiSecret);
+        $this->webhooksManager = $webhooksManager;
         $this->cacheDir = $cacheDir;
     }
 
@@ -433,117 +438,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
      */
     public function verifyWebHooks() : bool
     {
-        //====================================================================//
-        // Connector SelfTest
-        if (!$this->selfTest()) {
-            return false;
-        }
-        //====================================================================//
-        // Generate WebHook Url
-        /** @var string $webHookServer */
-        $webHookServer = filter_input(INPUT_SERVER, 'SERVER_NAME');
-        //====================================================================//
-        // When Running on a Local Server
-        if (false !== strpos("localhost", $webHookServer)) {
-            $webHookServer = "www.splashsync.com";
-        }
-        //====================================================================//
-        // When Running on a Splash Cloud
-        if (false !== strpos("admin.splashsync.com", $webHookServer)) {
-            $webHookServer = "www.splashsync.com";
-        }
-        //====================================================================//
-        // Create Object Class
-        $webHookManager = new WebHook($this);
-        $webHookManager->configure("webhook", $this->getWebserviceId(), $this->getConfiguration());
-        //====================================================================//
-        // Get List Of WebHooks for this List
-        $webHooks = $webHookManager->objectsList();
-        if (isset($webHooks["meta"])) {
-            unset($webHooks["meta"]);
-        }
-        //====================================================================//
-        // Walk on WebHooks Topics
-        foreach (WebHook::getTopics() as $topic) {
-            $found = false;
-
-            //====================================================================//
-            // Search in WebHooks List
-            foreach ($webHooks as $webHook) {
-                //====================================================================//
-                // Check WebHook is Valid
-                if (WebHook::isValid($webHook, $webHookServer, $topic)) {
-                    $found = true;
-                }
-            }
-
-            //====================================================================//
-            // WebHooks is Ok
-            if ($found) {
-                continue;
-            }
-
-            return false;
-        }
-
-        //====================================================================//
-        // All Splash WebHooks were Found
-        return true;
-    }
-
-    /**
-     * Check & Update Shopify Api Account WebHooks.
-     *
-     * @param RouterInterface $router
-     *
-     * @return bool
-     */
-    public function updateWebHooks(RouterInterface $router) : bool
-    {
-        //====================================================================//
-        // Connector SelfTest
-        if (!$this->selfTest()) {
-            return false;
-        }
-        //====================================================================//
-        // Generate WebHook Url
-        /** @var string $webHookServer */
-        $webHookServer = filter_input(INPUT_SERVER, 'SERVER_NAME');
-        $webHookUrl = (string) $router->generate(
-            'splash_connector_action',
-            array(
-                'connectorName' => $this->getProfile()["name"],
-                'webserviceId' => $this->getWebserviceId(),
-            ),
-            RouterInterface::ABSOLUTE_URL
-        );
-        //====================================================================//
-        // When Running on a Local Server
-        if (false !== strpos("localhost", $webHookServer)) {
-            $webHookServer = "www.splashsync.com";
-            $webHookUrl = "https://www.splashsync.com/en/ws/Shopify/123456";
-        }
-        //====================================================================//
-        // Create Object Class
-        $webHookManager = new WebHook($this);
-        $webHookManager->configure("webhook", $this->getWebserviceId(), $this->getConfiguration());
-        //====================================================================//
-        // Get List Of WebHooks for this List
-        $webHooks = $webHookManager->objectsList();
-        if (isset($webHooks["meta"])) {
-            unset($webHooks["meta"]);
-        }
-        //====================================================================//
-        // Walk on WebHooks Topics
-        foreach (WebHook::getTopics() as $topic) {
-            //====================================================================//
-            // Update Splash WebHook Configuration
-            if (false === $this->updateWebHookConfig($webHookManager, $webHooks, $webHookServer, $webHookUrl, $topic)) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->webhooksManager->verifyWebHooks($this);
     }
 
     //====================================================================//
@@ -588,56 +483,6 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         }
 
         return true;
-    }
-
-    /**
-     * Check & Update Shopify Api Account WebHook Configuration.
-     *
-     * @param WebHook $manager    Shopify WebHook Splash Manager
-     * @param array   $webHooks   Shopify WebHooks List
-     * @param string  $serverUrl  Splash Server Url
-     * @param string  $webhookUrl Splash WebHook Url
-     * @param string  $topic      WebHook Shopify Topic
-     *
-     * @return bool
-     */
-    private function updateWebHookConfig(
-        WebHook $manager,
-        array $webHooks,
-        string $serverUrl,
-        string $webhookUrl,
-        string $topic
-    ) : bool {
-        //====================================================================//
-        // Filter & Clean List Of WebHooks
-        $foundWebHook = false;
-        foreach ($webHooks as $webHook) {
-            //====================================================================//
-            // Check WebHook is Valid
-            if (WebHook::isValid($webHook, $webhookUrl, $topic)) {
-                $foundWebHook = true;
-
-                continue;
-            }
-            //====================================================================//
-            // This is a Splash WebHooks
-            if (false !== strpos(trim($webHook['address']), $serverUrl)) {
-                //====================================================================//
-                // Same Topic but Wrong Address
-                // Unexpected Topic
-                if (($webHook['topic'] == $topic) || !in_array($topic, WebHook::getTopics(), true)) {
-                    $manager->delete($webHook['id']);
-                }
-            }
-        }
-        //====================================================================//
-        // Splash WebHooks was Found
-        if ($foundWebHook) {
-            return true;
-        }
-        //====================================================================//
-        // Add Splash WebHooks
-        return (false !== $manager->create($webhookUrl, $topic));
     }
 
     /**
