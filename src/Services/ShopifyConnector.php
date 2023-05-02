@@ -37,6 +37,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Shopify REST API Connector for Splash
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
 {

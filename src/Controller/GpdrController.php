@@ -15,6 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Controller;
 
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Splash\Bundle\Models\Local\ActionsTrait;
 use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
@@ -38,10 +39,24 @@ class GpdrController extends AbstractController
      */
     private string $topic;
 
+    /**
+     * OAuth2 Clients Registry
+     *
+     * @var ClientRegistry
+     */
+    private ClientRegistry $clientRegistry;
+
+    /**
+     * @var Swift_Mailer
+     */
     private Swift_Mailer $mailer;
 
-    public function __construct(Swift_Mailer $mailer)
+    /**
+     * @param Swift_Mailer $mailer
+     */
+    public function __construct(ClientRegistry $clientRegistry, Swift_Mailer $mailer)
     {
+        $this->clientRegistry = $clientRegistry;
         $this->mailer = $mailer;
     }
 
@@ -105,7 +120,10 @@ class GpdrController extends AbstractController
         }
         //====================================================================//
         // Verify Request HMAC
-        if (!ShopifyAdapter::validateWebhookHmac($request)) {
+        $adapter = $this->clientRegistry->getClient('shopify')->getOAuth2Provider();
+        //==============================================================================
+        // Safety Check
+        if (!($adapter instanceof ShopifyAdapter) || !$adapter->validateWebhookHmac($request)) {
             return false;
         }
         //====================================================================//

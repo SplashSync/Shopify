@@ -38,10 +38,10 @@ class OAuth2Master extends AbstractController
     /**
      * Register Connector App Token
      *
-     * @param Request           $request
-     * @param Session           $session
-     * @param ClientRegistry    $registry
-     * @param AbstractConnector $connector
+     * @param Request          $request
+     * @param Session          $session
+     * @param ClientRegistry   $registry
+     * @param ShopifyConnector $connector
      *
      * @return Response
      */
@@ -68,9 +68,11 @@ class OAuth2Master extends AbstractController
         //==============================================================================
         // CODE Defined => Request Access Token
         if ($request->query->has("code")) {
+            /** @var string $shop */
+            $shop = $request->get('shop');
             //====================================================================//
             // Perform Identify Server by Host
-            if (false === $connector->identifyByHost($request->get('shop'))) {
+            if (false === $connector->identifyByHost($shop)) {
                 //==============================================================================
                 // NOTHING Defined => Request Install
                 return $this->getRegisterToProfile($connector, $client, $session, $request);
@@ -132,8 +134,7 @@ class OAuth2Master extends AbstractController
     /**
      * Request & Save Connector Access Token
      *
-     * @param AbstractConnector     $connector
-     * @param OAuth2ClientInterface $client
+     * @param Request $request
      *
      * @return Response
      */
@@ -156,20 +157,24 @@ class OAuth2Master extends AbstractController
         Session $session,
         Request $request
     ): Response {
+        /** @var null|string $shop */
+        $shop = $request->get('shop');
         //====================================================================//
         // Perform Identify Server by Host
-        if (false !== $connector->identifyByHost($request->get('shop'))) {
+        if (!$shop || (false !== $connector->identifyByHost($shop))) {
             return new Response('This Application is Already Connected.');
         }
         $adapter = $client->getOAuth2Provider();
+        /** @var null|string $shop */
+        $shop = $request->get('shop');
         //==============================================================================
         // Safety Check
-        if (!($adapter instanceof ShopifyAdapter)) {
+        if (!$shop || !($adapter instanceof ShopifyAdapter)) {
             return self::getDefaultResponse();
         }
         //==============================================================================
         // Configure Shopify OAuth2 Client
-        $adapter->configure($connector, $request->get('shop'));
+        $adapter->configure($connector, $shop);
         //==============================================================================
         // Set Client as StateLess
         $client->setAsStateless();
@@ -192,6 +197,7 @@ class OAuth2Master extends AbstractController
         if (!$connector->selfTest() || !$connector->fetchShopInformations()) {
             return new Response("Too few informations to collect Shop Informations", 400);
         }
+        /** @var array $shop */
         $shop = $connector->getParameter("ShopInformations") ?? array();
         //====================================================================//
         // Setup Session for User Register
@@ -201,7 +207,7 @@ class OAuth2Master extends AbstractController
             "phone" => $shop['phone'] ?? null,
             "connector" => $connector->getSplashType(),
             "configuration" => array(
-                "WsHost" => $request->get('shop'),
+                "WsHost" => $shop,
                 "Token" => $accessToken->getToken(),
             ),
             "extras" => array(

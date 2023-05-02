@@ -258,15 +258,28 @@ trait LogisticModeTrait
             return Splash::log()->errNull("Unable to Load Fulfillment Order.");
         }
         //====================================================================//
-        // Extract First Fulfillment Order
-        /** @var null|array $fulfillmentOrder */
-        $fulfillmentOrder = array_shift($fulfillmentOrders["fulfillment_orders"]);
-        if (!$fulfillmentOrder || empty($fulfillmentOrder["id"])) {
+        // Extract First Pending Fulfillment Order
+        /** @var null|int $fulfillmentOrderId */
+        $fulfillmentOrderId = null;
+        /** @var array{ "status": string, "id": int } $fulfillmentOrder */
+        foreach ($fulfillmentOrders["fulfillment_orders"] as $fulfillmentOrder) {
+            //====================================================================//
+            // Filter Closed Orders
+            if (in_array($fulfillmentOrder["status"], array("closed"), true)) {
+                continue;
+            }
+            if (!empty($fulfillmentOrder["id"])) {
+                $fulfillmentOrderId = $fulfillmentOrder["id"];
+
+                break;
+            }
+        }
+        if (empty($fulfillmentOrderId)) {
             return Splash::log()->errNull("Unable to Load Fulfillment Order.");
         }
         //====================================================================//
         // Return Fulfillment Order ID
-        return $fulfillmentOrder["id"];
+        return $fulfillmentOrderId;
     }
 
     /**
