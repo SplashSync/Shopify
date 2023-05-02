@@ -13,20 +13,20 @@
  *  file that was distributed with this source code.
  */
 
-namespace Splash\Connectors\Shopify\Models;
+namespace Splash\Connectors\Shopify\OAuth2;
 
-use Exception;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Splash\Bundle\Models\AbstractConnector;
+use Splash\Connectors\Shopify\Models\ShopifyStore;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth2 Shopify Client Provider
  */
-class OAuth2Client extends AbstractProvider
+class ShopifyAdapter extends AbstractProvider
 {
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
@@ -50,10 +50,10 @@ class OAuth2Client extends AbstractProvider
     private static array $config = array(
         // Shopify OAuth2 Provider
         "type" => "generic",
-        "provider_class" => OAuth2Client::class,
+        "provider_class" => ShopifyAdapter::class,
         // Shopify Public App Options!
-        "client_id" => "32324733c73b1ea6e98bd2266c1ec089",
-        "client_secret" => "",
+        "client_id" => "%env(resolve:SHOPIFY_API_KEY)%",
+        "client_secret" => "%env(resolve:SHOPIFY_API_SECRET)%",
         // Shopify Redirect Route Definition
         "redirect_route" => "splash_connector_action_master",
         "redirect_params" => array(
@@ -72,28 +72,10 @@ class OAuth2Client extends AbstractProvider
     }
 
     /**
-     * Init OAuth2 Client for All Connectors
-     *
-     * @param string $apiSecret
-     *
-     * @throws Exception
-     *
-     * @return void
-     */
-    public static function init(string $apiSecret): void
-    {
-        //==============================================================================
-        // Safety Check
-        if (empty($apiSecret)) {
-            throw new Exception("SHOPIFY: No Api Secret Provided");
-        }
-        self::$config['client_secret'] = $apiSecret;
-    }
-
-    /**
      * Configure OAuth2 Client for User Connector
      *
-     * @param AbstractConnector $connector
+     * @param AbstractConnector $connector Shopify Connector
+     * @param null|string       $shop      Force Shop Url
      *
      * @return $this
      */
@@ -160,7 +142,8 @@ class OAuth2Client extends AbstractProvider
             // Access to Product Stocks Levels
             'read_inventory', 'write_inventory',
             // Access to Order, Transaction and Fulfillment.
-            'read_orders', 'write_orders', 'read_all_orders',
+            'read_orders', 'write_orders',
+            //            'read_orders', 'write_orders', 'read_all_orders',
             // Access to Fulfillment
             'read_fulfillments', 'write_fulfillments',
         );
@@ -217,52 +200,26 @@ class OAuth2Client extends AbstractProvider
      *
      * @return bool
      */
-    public static function validateWebhookHmac(Request $request): bool
+    public function validateWebhookHmac(Request $request): bool
     {
-        //==============================================================================
-        // Extract Request HMAC
-        $headerHmac = $request->headers->get("X_SHOPIFY_HMAC_SHA256");
-        if (empty($headerHmac) || !is_string($headerHmac)) {
-            return false;
-        }
-        //==============================================================================
-        // Extract Request RAW Data
-        $rawContents = file_get_contents('php://input')
-            ?: $request->getContent()
-            ?: json_encode($request->request->all())
-        ;
-        //==============================================================================
-        // Compute Request HMAC
-        $requestHmac = self::getRequestHmac((string) $rawContents);
-        if (empty($requestHmac)) {
-            return false;
-        }
-
-        return hash_equals($requestHmac, $headerHmac);
+        return RequestVerifier::validateWebhookHmac($this->clientSecret, $request);
     }
 
     /**
-     * Generate request Security HMAC.
+     * Returns the authorization headers used by this provider.
      *
-     * @param string $contents Request Contents
+     * Each webhook request includes a base64-encoded X-Shopify-Hmac-SHA256 header,
+     * which is generated using the app's client secret along with the data sent in the request.
+     * If you're using PHP, or a Rack-based framework such as Ruby on Rails or Sinatra,
+     * then the header is HTTP_X_SHOPIFY_HMAC_SHA256.
      *
-     * @return null|string
+     * @param Request $request Received Webhook Request
+     *
+     * @return bool
      */
-    public static function getRequestHmac(string $contents): ?string
+    public function validateQueryHmac(Request $request): bool
     {
-        //==============================================================================
-        // Safety Check
-        if (empty(self::$config['client_secret'])) {
-            return null;
-        }
-        //==============================================================================
-        // Compute Request HMAC
-        return base64_encode(hash_hmac(
-            'sha256',
-            $contents,
-            self::$config['client_secret'],
-            true
-        )) ?: null;
+        return RequestVerifier::validateQueryHmac($this->clientSecret, $request);
     }
 
     /**
