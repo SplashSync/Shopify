@@ -18,7 +18,7 @@ namespace Splash\Connectors\Shopify\Controller;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -275,7 +275,7 @@ class WebHooksController extends AbstractController
         /** @var null|string $apiSecret */
         $apiSecret = $connector->getConfiguration()["apiSecret"] ?? null;
         if ($apiSecret) {
-            OAuth2Client::init($apiSecret);
+            ShopifyAdapter::init($apiSecret);
         }
         //====================================================================//
         // Verify User Node Domain is Ok with Identifier
@@ -286,7 +286,7 @@ class WebHooksController extends AbstractController
         }
         //====================================================================//
         // Verify Request HMAC
-        if (!OAuth2Client::validateWebhookHmac($request)) {
+        if (!ShopifyAdapter::validateWebhookHmac($request)) {
             throw new UnauthorizedHttpException('Malformed or missing data');
         }
         //====================================================================//
