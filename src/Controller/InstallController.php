@@ -18,7 +18,7 @@ namespace Splash\Connectors\Shopify\Controller;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Local\ActionsTrait;
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,7 +58,7 @@ class InstallController extends AbstractController
         $client = $registry->getClient("shopify");
         //==============================================================================
         // Safety Check
-        if (!($client->getOAuth2Provider() instanceof OAuth2Client)) {
+        if (!($client->getOAuth2Provider() instanceof ShopifyAdapter)) {
             return self::getDefaultResponse();
         }
         //==============================================================================
