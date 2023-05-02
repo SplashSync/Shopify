@@ -197,22 +197,22 @@ class OAuth2Master extends AbstractController
         if (!$connector->selfTest() || !$connector->fetchShopInformations()) {
             return new Response("Too few informations to collect Shop Informations", 400);
         }
-        /** @var array $shop */
-        $shop = $connector->getParameter("ShopInformations") ?? array();
+        /** @var array $shopInfo */
+        $shopInfo = $connector->getParameter("ShopInformations") ?? array();
         //====================================================================//
         // Setup Session for User Register
         $registerData = array(
-            "username" => $shop['shop_owner'] ?? null,
-            "email" => $shop['email'] ?? null,
-            "phone" => $shop['phone'] ?? null,
+            "username" => $shopInfo['shop_owner'] ?? null,
+            "email" => $shopInfo['email'] ?? null,
+            "phone" => $shopInfo['phone'] ?? null,
             "connector" => $connector->getSplashType(),
             "configuration" => array(
                 "WsHost" => $shop,
                 "Token" => $accessToken->getToken(),
             ),
             "extras" => array(
-                "Shop" => $shop['name'] ?? null,
-                "Domain" => $shop['domain'] ?? null,
+                "Shop" => $shopInfo['name'] ?? null,
+                "Domain" => $shopInfo['domain'] ?? null,
             )
         );
         $session->set(md5(Install::class), $registerData);
