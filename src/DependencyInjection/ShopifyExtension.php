@@ -15,7 +15,7 @@
 
 namespace Splash\Connectors\Shopify\DependencyInjection;
 
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -48,7 +48,7 @@ class ShopifyExtension extends Extension implements PrependExtensionInterface
         $container->prependExtensionConfig(
             "knpu_oauth2_client",
             array(
-                "clients" => array("shopify" => OAuth2Client::getConfig()),
+                "clients" => array("shopify" => ShopifyAdapter::getConfig()),
             )
         );
     }
