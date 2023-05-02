@@ -62,7 +62,7 @@ class WebHooksController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function indexAction(LoggerInterface $logger, Request $request, AbstractConnector $connector): JsonResponse
+    public function __invoke(LoggerInterface $logger, Request $request, AbstractConnector $connector): JsonResponse
     {
         //====================================================================//
         // For Shopify ping GET
