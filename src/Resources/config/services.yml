@@ -1,17 +1,20 @@
-parameters:
-    splash.connectors.shopify.api-secret: '%env(resolve:SHOPIFY_API_SECRET)%'
-
 services:
+
+    _defaults:
+        autowire: true
+
     ################################################################################
     # SPLASH Shopify Connector Service
     splash.connectors.shopify:
         class: Splash\Connectors\Shopify\Services\ShopifyConnector
         autowire: true
         arguments:
-            - "%kernel.cache_dir%"
-            - "%splash.connectors.shopify.api-secret%"
+            $cacheDir:  "%kernel.cache_dir%"
         tags:
             - { name: "splash.connector"}
+
+    Splash\Connectors\Shopify\Services\ShopifyConnector:
+        alias: splash.connectors.shopify
 
     ################################################################################
     # SPLASH Shopify WebHooks Manager
@@ -25,3 +28,8 @@ services:
         public: true
         autowire: true
         tags: ['controller.service_arguments']
+
+    ################################################################################
+    # Register Connector Authenticator to Connect from Shopify Admin
+    Splash\Connectors\Shopify\OAuth2\ShopifyAuthenticator:
+        tags: ['splash.connectors.authenticator']
