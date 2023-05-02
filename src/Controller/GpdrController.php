@@ -16,7 +16,7 @@
 namespace Splash\Connectors\Shopify\Controller;
 
 use Splash\Bundle\Models\Local\ActionsTrait;
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
 use Swift_Mailer;
 use Swift_Message;
@@ -26,6 +26,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
+/**
+ * Manage GPDR Actions for Shopify Connector
+ */
 class GpdrController extends AbstractController
 {
     use ActionsTrait;
@@ -102,7 +105,7 @@ class GpdrController extends AbstractController
         }
         //====================================================================//
         // Verify Request HMAC
-        if (!OAuth2Client::validateWebhookHmac($request)) {
+        if (!ShopifyAdapter::validateWebhookHmac($request)) {
             return false;
         }
         //====================================================================//

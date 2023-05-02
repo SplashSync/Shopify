@@ -15,7 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Test\Controller;
 
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Tests\Tools\TestCase;
@@ -272,7 +272,7 @@ class S01WebHookTest extends TestCase
         if (is_array($data)) {
             $this->getTestClient()->setServerParameter(
                 "HTTP_X_SHOPIFY_HMAC_SHA256",
-                (string) OAuth2Client::getRequestHmac((string) json_encode($data))
+                (string) ShopifyAdapter::getRequestHmac((string) json_encode($data))
             );
         }
     }
