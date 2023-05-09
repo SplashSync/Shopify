@@ -39,6 +39,14 @@ profile:
 
 ## Node Api Actions
 admin:
+    scopes:
+        title:      Accès à Application
+        active:     Accès Disponibles
+        missing:    Accès Manquants
+        alert:      You are missing required API access scope(s) for using Splash Connector
+        action:     Mettre à jour les accès
+    description:
+        title:  Informations Connecteur
     selftest:   Configuration du Connecteur Shopify
     connect:    Connexion a l'API Shopify V3  
     webhooks:
