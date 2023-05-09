@@ -99,6 +99,8 @@ functional:customers:
 # PHP 8.1 - Products
 functional:products:
    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+   needs:
+     - functional:customers
    variables:
       SPLASH_TYPES:   "Product"
    <<: *functional_tests
@@ -107,6 +109,9 @@ functional:products:
 # PHP 8.1 - Orders & Invoices
 functional:orders:
    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+   needs:
+     - functional:customers
+     - functional:products
    variables:
       SPLASH_TYPES:   "Order,Invoices"
    <<: *functional_tests
