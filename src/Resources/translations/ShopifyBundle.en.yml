@@ -39,6 +39,14 @@ profile:
 
 ## Node Api Actions
 admin:
+    scopes:
+        title:      Available Scopes
+        active:     Active Scopes
+        missing:    Missing Scopes
+        alert:      You are missing required API access scope(s) for using Splash Connector
+        action:     Update access scopes
+    description:
+        title:  Connector Infos
     selftest:   Shopify Connector Configuration
     connect:    Connect to Shopify API    
     webhooks:

@@ -220,6 +220,41 @@ class ShopifyHelper
     }
 
     /**
+     * Shopify API GET Request
+     *
+     * @param string      $path     API REST Path
+     * @param null|string $objectId Shopify Object Id
+     * @param array       $query    Request Query
+     * @param null|string $resource Response Resource
+     *
+     * @return null|array
+     */
+    public static function getRaw(
+        string $path,
+        array $query = array(),
+        string $resource = null
+    ): ?array {
+        //====================================================================//
+        // Perform Request
+        try {
+            $response = self::$client->createRequest('GET', self::$client->buildUrl($path, false), array(
+                'query' => $query,
+            ));
+        } catch (ClientException $ex) {
+            Splash::log()->err($ex->getMessage());
+
+            return null;
+        }
+        //====================================================================//
+        // Return Response
+        if (!is_null($resource) && isset($response[$resource])) {
+            return $response[$resource];
+        }
+
+        return  $response;
+    }
+
+    /**
      * Shopify API PUT Request
      *
      * @param string $resource API REST Path

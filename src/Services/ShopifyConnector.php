@@ -26,6 +26,7 @@ use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
 use Splash\Connectors\Shopify\Controller as Actions;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
+use Splash\Connectors\Shopify\Models\ConnectorScopesTrait;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
@@ -45,6 +46,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     use GenericObjectPrimaryMapperTrait;
     use GenericWidgetMapperTrait;
     use ConnectorConfigurationsTrait;
+    use ConnectorScopesTrait;
 
     /**
      * Objects Type Class Map
@@ -75,11 +77,6 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     private string $cacheDir;
 
     /**
-     * @var WebhooksManager
-     */
-    private WebhooksManager $webhooksManager;
-
-    /**
      * Class Constructor
      *
      * @param string                   $cacheDir
@@ -90,13 +87,13 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
      */
     public function __construct(
         string $cacheDir,
-        WebhooksManager $webhooksManager,
+        protected WebhooksManager $webhooksManager,
+        protected ScopesManagers $scopesManagers,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
         parent::__construct($eventDispatcher, $logger);
         $this->setSplashType("shopify");
-        $this->webhooksManager = $webhooksManager;
         $this->cacheDir = $cacheDir;
     }
 
@@ -133,6 +130,11 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         //====================================================================//
         // Get Shop Informations
         if (!$this->fetchShopInformations()) {
+            return false;
+        }
+        //====================================================================//
+        // Get Scopes Informations
+        if (!$this->fetchAccessScopes()) {
             return false;
         }
         //====================================================================//

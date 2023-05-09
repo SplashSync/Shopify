@@ -1,3 +1,44 @@
-<div class="well well-sm">
-    {% include 'ShopifyBundle:Blocks:connection.html.twig'  %}
+{% trans_default_domain "ShopifyBundle" %}
+
+{% set selfTest = connector.selfTest %}
+{% set connect = connector.connect %}
+
+<div class="panel-group" id="accordion">
+
+    <!-- Available OAuth2 Scopes Block -->
+    <div class="panel panel-default card">
+        <div class="panel-heading card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false">
+            <h3 class="panel-title card-title text-primary">
+                <i class="fa fa-fw fa-key"></i>
+                {{ 'admin.scopes.title'|trans }}
+            </h3>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false">
+            <div class="panel-body card-body">
+                {% include '@Shopify/Blocks/scopes.html.twig'  %}
+            </div>
+        </div>
+    </div>
+    <!-- End Available OAuth2 Scopes Block -->
+
+
+    <!-- Server Description Block -->
+    <div class="panel panel-default card">
+        <div class="panel-heading card-header" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true">
+            <h3 class="panel-title card-title text-primary">
+                <i class="fa fa-fw fa-info-circle"></i>
+                {{ 'admin.description.title'|trans }}
+            </h3>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse show" aria-expanded="true">
+            <div class="panel-body card-body">
+                {% include '@Shopify/Blocks/features.html.twig'  %}
+            </div>
+        </div>
+    </div>
+    <!-- End Server Description Block -->
+
+
 </div>
+
+{% include '@Shopify/Blocks/actions.html.twig'  %}

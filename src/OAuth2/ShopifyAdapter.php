@@ -21,6 +21,8 @@ use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Models\ShopifyStore;
+use Splash\Connectors\Shopify\Services\ScopesManagers;
+use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -62,6 +64,11 @@ class ShopifyAdapter extends AbstractProvider
     );
 
     /**
+     * @var string[]
+     */
+    private array $accessScopes = ScopesManagers::DEFAULT_SCOPES;
+
+    /**
      * Get Shopify OAuth2 Client Configuration
      *
      * @return array
@@ -86,6 +93,17 @@ class ShopifyAdapter extends AbstractProvider
         /** @var string $shop */
         $shop = $shop ?? $connector->getParameter("WsHost");
         $this->shop = $shop;
+        //==============================================================================
+        // Safety Check
+        if (!$connector instanceof ShopifyConnector) {
+            return $this;
+        }
+        //==============================================================================
+        // Configure Access Scopes
+        $this->accessScopes = ScopesManagers::DEFAULT_SCOPES;
+        if ($connector->hasLogisticMode()) {
+            $this->accessScopes = array_merge( $this->accessScopes, ScopesManagers::LOGISTIC_SCOPES);
+        }
 
         return $this;
     }
@@ -134,19 +152,7 @@ class ShopifyAdapter extends AbstractProvider
      */
     public function getDefaultScopes(): array
     {
-        return array(
-            // Access to Customer and Saved Search.
-            'read_customers', 'write_customers',
-            // Access to Product, product variant, Product Image, Collect, Custom Collection, and Smart Collection.
-            'read_products', 'write_products',
-            // Access to Product Stocks Levels
-            'read_inventory', 'write_inventory',
-            // Access to Order, Transaction and Fulfillment.
-            'read_orders', 'write_orders',
-            //            'read_orders', 'write_orders', 'read_all_orders',
-            // Access to Fulfillment
-            'read_fulfillments', 'write_fulfillments',
-        );
+        return $this->accessScopes;
     }
 
     /**

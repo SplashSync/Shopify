@@ -17,9 +17,12 @@ services:
         alias: splash.connectors.shopify
 
     ################################################################################
+    # SPLASH Shopify Scopes Manager
+    Splash\Connectors\Shopify\Services\ScopesManagers: ~
+
+    ################################################################################
     # SPLASH Shopify WebHooks Manager
-    Splash\Connectors\Shopify\Services\WebhooksManager:
-        autowire: true
+    Splash\Connectors\Shopify\Services\WebhooksManager: ~
 
     ################################################################################
     # Enables Dependency Injection in Controller Actions
