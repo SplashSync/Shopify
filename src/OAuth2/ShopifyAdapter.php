@@ -102,7 +102,7 @@ class ShopifyAdapter extends AbstractProvider
         // Configure Access Scopes
         $this->accessScopes = ScopesManagers::DEFAULT_SCOPES;
         if ($connector->hasLogisticMode()) {
-            $this->accessScopes = array_merge( $this->accessScopes, ScopesManagers::LOGISTIC_SCOPES);
+            $this->accessScopes = array_merge($this->accessScopes, ScopesManagers::LOGISTIC_SCOPES);
         }
 
         return $this;

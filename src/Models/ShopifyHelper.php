@@ -220,10 +220,9 @@ class ShopifyHelper
     }
 
     /**
-     * Shopify API GET Request
+     * Shopify API RAW GET Request
      *
      * @param string      $path     API REST Path
-     * @param null|string $objectId Shopify Object Id
      * @param array       $query    Request Query
      * @param null|string $resource Response Resource
      *
@@ -237,7 +236,7 @@ class ShopifyHelper
         //====================================================================//
         // Perform Request
         try {
-            $response = self::$client->createRequest('GET', self::$client->buildUrl($path, false), array(
+            $response = self::$client->createRequest('GET', self::$client->buildUrl($path, ""), array(
                 'query' => $query,
             ));
         } catch (ClientException $ex) {
