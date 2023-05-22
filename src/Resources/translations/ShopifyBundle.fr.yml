@@ -56,9 +56,10 @@ admin:
         err:    La Configuration des WebHooks a échouée
     privateApp:
         enabled: Ce serveur utilise des clefs d'application privée.
-        migrate: "Nous vous recommandons maintenant fortement d'utiliser les applications privées pour vous connecter Shopify, veuillez vous référer à
+        migrate: "A partir du 15 Juin 2023, l'utilisation d'une applications privées pour se connecter à Shopify deviendra obligatoire. 
+                    Veuillez suivre 
                     <a href=\"https://splashsync.gitlab.io/Shopify/fr/start.html#advanced-setup\" target=\"_blank\">notre documentation</a>
-                    pour mettre en place cette connexion."
+                    pour migrer votre connexion vers ce mode de connexion."
     logistic:
         enabled:    Le mode Logisticien est activé
     happy-colissimo:

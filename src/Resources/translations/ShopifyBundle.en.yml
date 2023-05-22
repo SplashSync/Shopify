@@ -56,9 +56,10 @@ admin:
         err:    Update of WebHooks Configuration Failed
     privateApp:
         enabled:    This Server uses Private App Credentials
-        migrate:    "We now highly recommend using Private App for connecting Shopify, please refer to 
+        migrate:    "From June 15, 2023, the use of a private application to connect to Shopify will become mandatory.
+                    Please follow
                     <a href=\"https://splashsync.gitlab.io/Shopify/start.html#advanced-setup\" target=\"_blank\">our documentation</a>
-                    to implement this connection."
+                    to migrate your connection to this connection mode."
     logistic:
         enabled:    Logistic Mode is Enabled
     happy-colissimo:
