@@ -27,78 +27,94 @@ variables:
 ################################################################
 # Defined Pipeline Stages
 stages:
-  - tests
+  - quality
+  - functional
   - deploy
 
 ################################################################
-# Functional Tests
+# Quality Checks
 ################################################################
 
-.core_tests:    &core_tests
-    stage:      tests
+.quality_tests:    &quality_tests
+    stage:      quality
     tags:
         - Dedicated
     services:
         - mysql:5.7
-    artifacts:
-            when: always
-            reports:
-                junit: "$CI_PROJECT_DIR/*-report.xml"
     ################################################################################
     # Install & Configure Environment
     before_script:
-        # Setup Travis
-        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/configure.sh  | sh
-        # Deploy Symfony Files
-        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/deploy.sh | sh
-        # Setup Symfony Version & Create Database
-        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/configure.sh | sh
-        # Install Symfony
-        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/install.sh | sh
-
+        - bash ci/install.sh
     ################################################################################
     # Run Test Script
     script:
         - php bin/console debug:container --env-vars
         # Execute Grumphp Testsuite
         - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/grumphp.sh  | sh
-        # Execute PhpUnit Tests
-        - vendor/bin/phpunit --log-junit $CI_PROJECT_DIR/full-report.xml
-
     ################################################################################
     # Run After Script
     after_script:
-      - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
+        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
 
 ################################################################################
 # PHP 8.1
-tests:php-8.1:
+quality:php-8.1:
+  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+  <<: *quality_tests
+
+
+################################################################
+# Functional Tests
+################################################################
+
+.functional_tests:    &functional_tests
+      stage:      functional
+      tags:
+          - Dedicated
+      services:
+          - mysql:5.7
+      artifacts:
+              when: always
+              reports:
+                  junit: "$CI_PROJECT_DIR/*-report.xml"
+      ################################################################################
+      # Install & Configure Environment
+      before_script:
+        - bash ci/install.sh
+      ################################################################################
+      # Run Test Script
+      script:
+          # Execute PhpUnit Tests
+          - vendor/bin/phpunit --log-junit $CI_PROJECT_DIR/full-report.xml
+
+################################################################################
+# PHP 8.1 - ThirdParty & Address
+functional:customers:
    image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-   <<: *core_tests
+   variables:
+      SPLASH_TYPES:   "ThirdParty,Address"
+   <<: *functional_tests
 
+################################################################################
+# PHP 8.1 - Products
+functional:products:
+   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+   needs:
+     - functional:customers
+   variables:
+      SPLASH_TYPES:   "Product"
+   <<: *functional_tests
 
-################################################################
-# Build Documentation
-################################################################
-# pages:
-#     image:    registry.gitlab.com/badpixxel-projects/php-sdk:jekyll
-#     stage:    deploy
-#     tags:
-#       - Dedicated
-#     services:
-#       - docker:dind
-#     ################################################################################
-#     # Run Test Script
-#     script:
-#       # Deploy Symfony Files
-#       - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/symfony/deploy.sh | sh
-#       # Run Composer to Build deps
-#       - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/composer.sh  | bash
-#       # Build Documentation
-#       - php vendor/bin/grumphp run --tasks=build-docs
-#     artifacts:
-#         paths:
-#             - public
+################################################################################
+# PHP 8.1 - Orders & Invoices
+functional:orders:
+   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+   needs:
+     - functional:customers
+     - functional:products
+   variables:
+      SPLASH_TYPES:   "Order,Invoices"
+   <<: *functional_tests
 
 #################################################################
 ## Build Documentation
@@ -107,7 +123,9 @@ pages:
     image:      jekyll/minimal:latest
     stage:      deploy
     tags:       [ Dedicated-Docker ]
-    ################################################################################
+    only:
+        - master
+  ################################################################################
     # Run Test Script
     script:
         - wget -qO - https://gitlab.com/badpixxel-robo/jekyll/-/raw/main/scripts/gitlab-pages.sh | sh

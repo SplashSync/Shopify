@@ -1,11 +1,6 @@
 {% trans_default_domain "ShopifyBundle" %}
 
-{% set selfTest = connector.selfTest %}
-{% set ping = connector.ping %}
-{% set connect = connector.connect %}
-
-        
-<!-- Connection Block -->
+<!-- Features Block -->
 <ul class="list-unstyled">
    
     <li>
@@ -30,8 +25,8 @@
             </li>
         {% else %}
             <li>
-                <h4 class="font-md text-warning">
-                    <i class="fa fa-user-secret"></i>&nbsp;{{ 'admin.privateApp.migrate'|trans|raw }}
+                <h4 class="font-md text-danger">
+                    <i class="fa fa-times"></i>&nbsp;{{ 'admin.privateApp.migrate'|trans|raw }}
                 </h4>
             </li>
         {% endif %}
@@ -76,35 +71,5 @@
     
 </ul>
     
-{% if connect %}
-    
-<a 
-    id="node-webhooks-btn" class="btn-lg btn-block btn-warning text-center" 
-    href="{{ path('splash_connector_secured_action', { 
-            "connectorName" :   connector.profile.name, 
-            "webserviceId" :    connector.WebserviceId, 
-            "action" :          "webhooks"
-        }) }}"
-    > 
-    <i class="fa fa-refresh"></i> 
-    {{ 'admin.webhooks.label' | trans }}
-</a>
-    
-{% elseif connector.hasValidShopifyHost %}
-    
-<a 
-    id="node-webhooks-btn" class="btn-lg btn-block btn-primary text-center" 
-    href="{{ path('splash_connector_secured_action', { 
-            "connectorName" :   connector.profile.name, 
-            "webserviceId" :    connector.WebserviceId, 
-            "action" :          "oauth"
-        }) }}"
-    > 
-    <i class="fa fa-user-secret"></i> 
-    {{ 'admin.connect' | trans }}
-</a>
-    
-{% endif %}    
-    
-<!-- End Connection Block -->
+<!-- End Features Block -->
 

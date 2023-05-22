@@ -261,7 +261,7 @@ trait LogisticModeTrait
         // Extract First Pending Fulfillment Order
         /** @var null|int $fulfillmentOrderId */
         $fulfillmentOrderId = null;
-        /** @var array[] $fulfillmentOrder */
+        /** @var array{ "status": string, "id": int } $fulfillmentOrder */
         foreach ($fulfillmentOrders["fulfillment_orders"] as $fulfillmentOrder) {
             //====================================================================//
             // Filter Closed Orders

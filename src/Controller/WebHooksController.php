@@ -16,9 +16,11 @@
 namespace Splash\Connectors\Shopify\Controller;
 
 use Exception;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Psr\Log\LoggerInterface;
 use Splash\Bundle\Models\AbstractConnector;
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\OAuth2\RequestVerifier;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,9 +31,18 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
  * Splash Shopify Connector WebHooks Controller
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class WebHooksController extends AbstractController
 {
+    /**
+     * OAuth2 Clients Registry
+     *
+     * @var ClientRegistry
+     */
+    private ClientRegistry $clientRegistry;
+
     /**
      * @var AbstractConnector
      */
@@ -62,8 +73,13 @@ class WebHooksController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function indexAction(LoggerInterface $logger, Request $request, AbstractConnector $connector): JsonResponse
-    {
+    public function __invoke(
+        LoggerInterface $logger,
+        Request $request,
+        ClientRegistry $clientRegistry,
+        AbstractConnector $connector
+    ): JsonResponse {
+        $this->clientRegistry = $clientRegistry;
         //====================================================================//
         // For Shopify ping GET
         if ($request->isMethod('GET')) {
@@ -271,13 +287,6 @@ class WebHooksController extends AbstractController
             return false;
         }
         //====================================================================//
-        // Private Connexion => Override Client Configuration
-        /** @var null|string $apiSecret */
-        $apiSecret = $connector->getConfiguration()["apiSecret"] ?? null;
-        if ($apiSecret) {
-            OAuth2Client::init($apiSecret);
-        }
-        //====================================================================//
         // Verify User Node Domain is Ok with Identifier
         $headerHost = $request->headers->get("X-Shopify-Shop-Domain");
         /** @var ShopifyConnector $connector */
@@ -286,7 +295,7 @@ class WebHooksController extends AbstractController
         }
         //====================================================================//
         // Verify Request HMAC
-        if (!OAuth2Client::validateWebhookHmac($request)) {
+        if (!$this->verifyHmac($request, $connector)) {
             throw new UnauthorizedHttpException('Malformed or missing data');
         }
         //====================================================================//
@@ -302,6 +311,43 @@ class WebHooksController extends AbstractController
         $this->connector = $connector;
 
         return true;
+    }
+
+    /**
+     * Verify Request HMAC Key
+     *
+     * @param Request          $request
+     * @param ShopifyConnector $connector
+     *
+     * @throws Exception
+     *
+     * @return bool
+     */
+    private function verifyHmac(Request $request, ShopifyConnector $connector) : bool
+    {
+        //====================================================================//
+        // Private Connexion => Use Helper
+        if ($connector->hasPrivateAppCredentials()) {
+            /** @var null|string $apiSecret */
+            $apiSecret = $connector->getConfiguration()["apiSecret"] ?? null;
+            //====================================================================//
+            // Verify Request HMAC
+            if (!$apiSecret || !RequestVerifier::validateWebhookHmac($apiSecret, $request)) {
+                return false;
+            }
+
+            return true;
+        }
+        //====================================================================//
+        // Public Connexion => Use Client Registry
+        $adapter = $this->clientRegistry->getClient('shopify')->getOAuth2Provider();
+        //==============================================================================
+        // Safety Check
+        if (!($adapter instanceof ShopifyAdapter)) {
+            return false;
+        }
+
+        return $adapter->validateWebhookHmac($request);
     }
 
     /**

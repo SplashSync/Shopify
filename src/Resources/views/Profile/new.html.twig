@@ -1,4 +1,8 @@
 
+{% set selfTest = connector.selfTest %}
+{% set connect = connector.connect %}
+
 <div class="well well-sm">
-    {% include 'ShopifyBundle:Blocks:connection.html.twig'  %}
+    {% include '@Shopify/Blocks/features.html.twig'  %}
+    {% include '@Shopify/Blocks/actions.html.twig'  %}
 </div>            

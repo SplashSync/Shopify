@@ -73,6 +73,18 @@ class WebHook extends AbstractStandaloneObject
     }
 
     /**
+     * Override Default Mode
+     *
+     * @param bool $disabled
+     *
+     * @return void
+     */
+    public static function setDisabled(bool $disabled = true): void
+    {
+        static::$disabled = $disabled;
+    }
+
+    /**
      * Check if WebHook Has Requested Parameters.
      *
      * @param array       $webHook Shopify WebHook Object

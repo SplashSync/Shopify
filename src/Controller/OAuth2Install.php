@@ -20,39 +20,33 @@ use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Local\ActionsTrait;
 use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
-class InstallController extends AbstractController
+/**
+ * Shopify OAUth2 - Install Connector from Shopify App Store
+ */
+class OAuth2Install extends AbstractController
 {
     use ActionsTrait;
 
+    //==============================================================================
+    // OAUTH2 INSTALL
+    //==============================================================================
+
     /**
-     * Initiate Oauth when Installed from Shop
+     * Initiate Oauth2 Connection Process
      *
-     * @param Request           $request
-     * @param Session           $session
+     * @param string            $shop
      * @param AbstractConnector $connector
      * @param ClientRegistry    $registry
      *
      * @return Response
      */
-    public function initAction(
-        Request $request,
-        Session $session,
+    public function __invoke(
+        string $shop,
         AbstractConnector $connector,
         ClientRegistry $registry
     ): Response {
-        //==============================================================================
-        // Get Shop Url from Request
-        /** @var null|string $shopUrl */
-        $shopUrl = $request->get("shop");
-        //==============================================================================
-        // Safety Check
-        if (!$shopUrl) {
-            return self::getDefaultResponse();
-        }
         //==============================================================================
         // Load Shopify OAuth2 Client
         $client = $registry->getClient("shopify");
@@ -62,13 +56,15 @@ class InstallController extends AbstractController
             return self::getDefaultResponse();
         }
         //==============================================================================
-        // Store Empty WebService Id in Session
-        $session->set("shopify_oauth2_wsid", "new");
-        //==============================================================================
         // Configure Shopify OAuth2 Client
-        $client->getOAuth2Provider()->configure($connector, $shopUrl);
+        $client->getOAuth2Provider()->configure($connector, $shop);
         //==============================================================================
         // Do Shopify OAuth2 Authentification
         return $client->redirect(array(), array());
+        //==============================================================================
+        // Override Redirect url
+//        return $client->redirect(array(), array(
+//            'redirect_uri' => "https://3c7b-2a01-e0a-b04-be90-f29c-d9fe-d4b7-7d66.ngrok-free.app/en/ws/shopify"
+//        ));
     }
 }

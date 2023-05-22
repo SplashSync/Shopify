@@ -410,9 +410,10 @@ trait ItemsTrait
      */
     private function getItemDiscount(array $line)
     {
+        $price = (int) ($line['price'] ?? null);
         //====================================================================//
         // Line has no Discounts
-        if (empty($line['discount_allocations'])) {
+        if (empty($line['discount_allocations']) || empty($price)) {
             return 0;
         }
         //====================================================================//
@@ -427,7 +428,7 @@ trait ItemsTrait
             $amount = $amount / $line['quantity'];
         }
 
-        return 100 * ($amount / $line['price']);
+        return 100 * ($amount / $price);
     }
 
     /**
