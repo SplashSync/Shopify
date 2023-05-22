@@ -72,7 +72,6 @@ class WebHook extends AbstractStandaloneObject
         $this->connector = $parentConnector;
     }
 
-
     /**
      * Override Default Mode
      *
