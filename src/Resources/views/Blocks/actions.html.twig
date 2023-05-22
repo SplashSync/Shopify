@@ -21,7 +21,7 @@
 {#
     CONNECTED BUT MISSING SCOPES
 #}
-{% elseif connector.missingScopes is not empty %}
+{% elseif selfTest and connector.missingScopes is not empty %}
 
     <h4 class="font-md text-warning">
         <i class="fa fa-key"></i>&nbsp;{{ 'admin.scopes.alert'| trans }}
