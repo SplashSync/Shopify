@@ -123,7 +123,9 @@ pages:
     image:      jekyll/minimal:latest
     stage:      deploy
     tags:       [ Dedicated-Docker ]
-    ################################################################################
+    only:
+        - master
+  ################################################################################
     # Run Test Script
     script:
         - wget -qO - https://gitlab.com/badpixxel-robo/jekyll/-/raw/main/scripts/gitlab-pages.sh | sh
