@@ -1,0 +1,61 @@
+{% trans_default_domain "ShopifyBundle" %}
+
+<!-- Actions Block -->
+
+{#
+    DISCONNECTED BUT VALID HOST NAME
+#}
+{% if not connect and connector.hasValidShopifyHost%}
+    <a
+            id="node-webhooks-btn" class="btn-lg btn-block btn-primary text-center"
+            href="{{ path('splash_connector_secured_action', {
+                "connectorName" :   connector.profile.name,
+                "webserviceId" :    connector.WebserviceId,
+                "action" :          "connect"
+            }) }}"
+    >
+        <i class="fa fa-user-secret"></i>
+        {{ 'admin.connect' | trans }}
+    </a>
+
+{#
+    CONNECTED BUT MISSING SCOPES
+#}
+{% elseif connector.missingScopes is not empty %}
+
+    <h4 class="font-md text-warning">
+        <i class="fa fa-key"></i>&nbsp;{{ 'admin.scopes.alert'| trans }}
+    </h4>
+
+    <a
+            id="node-webhooks-btn" class="btn-lg btn-block btn-warning text-center"
+            href="{{ path('splash_connector_secured_action', {
+                "connectorName" :   connector.profile.name,
+                "webserviceId" :    connector.WebserviceId,
+                "action" :          "connect"
+            }) }}"
+    >
+        <i class="fa fa-refresh"></i>
+        {{ 'admin.scopes.action' | trans }}
+    </a>
+
+{#
+    CONNECTED => SETUP WEBHOOKS
+#}
+{% elseif connect %}
+    <a
+        id="node-webhooks-btn" class="btn-lg btn-block btn-warning text-center"
+        href="{{ path('splash_connector_secured_action', {
+                "connectorName" :   connector.profile.name,
+                "webserviceId" :    connector.WebserviceId,
+                "action" :          "webhooks"
+            }) }}"
+        >
+        <i class="fa fa-refresh"></i>
+        {{ 'admin.webhooks.label' | trans }}
+    </a>
+
+{% endif %}    
+    
+<!-- End Connection Block -->
+

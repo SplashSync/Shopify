@@ -30,5 +30,6 @@ splash:
             config:
                 WsHost:         '%env(resolve:SHOPIFY_URL)%'
                 LocationId:     '%env(resolve:SHOPIFY_LOCATION)%'
-                LogisticMode:   false
                 Token:          '%env(resolve:SHOPIFY_PRIVATE_TOKEN)%'
+                Extended:       true
+                LogisticMode:   true

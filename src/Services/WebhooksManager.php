@@ -201,8 +201,9 @@ class WebhooksManager
             "localhost" => "eu-99.splashsync.com",
             "toolkit.shopify.local" => "eu-99.splashsync.com",
             "eu-99.splashsync.com" => "app-99.splashsync.com",
-            "www.splashsync.com" => "app.splashsync.com",
-            "admin.splashsync.com" => "app.splashsync.com"
+            "www.splashsync.com" => "proxy.splashsync.com",
+            "app.splashsync.com" => "proxy.splashsync.com",
+            "admin.splashsync.com" => "proxy.splashsync.com"
         );
         //====================================================================//
         // Get Current Server Name

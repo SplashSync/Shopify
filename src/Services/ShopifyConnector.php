@@ -23,10 +23,12 @@ use Splash\Bundle\Models\AbstractConnector;
 use Splash\Bundle\Models\Connectors\GenericObjectMapperTrait;
 use Splash\Bundle\Models\Connectors\GenericObjectPrimaryMapperTrait;
 use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
+use Splash\Connectors\Shopify\Controller as Actions;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
-use Splash\Connectors\Shopify\Models\OAuth2Client;
+use Splash\Connectors\Shopify\Models\ConnectorScopesTrait;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
+use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Helpers\ImagesHelper;
@@ -36,6 +38,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Shopify REST API Connector for Splash
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
 {
@@ -43,6 +46,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     use GenericObjectPrimaryMapperTrait;
     use GenericWidgetMapperTrait;
     use ConnectorConfigurationsTrait;
+    use ConnectorScopesTrait;
 
     /**
      * Objects Type Class Map
@@ -73,15 +77,9 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     private string $cacheDir;
 
     /**
-     * @var WebhooksManager
-     */
-    private WebhooksManager $webhooksManager;
-
-    /**
      * Class Constructor
      *
      * @param string                   $cacheDir
-     * @param string                   $apiSecret
      * @param EventDispatcherInterface $eventDispatcher
      * @param LoggerInterface          $logger
      *
@@ -89,14 +87,13 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
      */
     public function __construct(
         string $cacheDir,
-        string $apiSecret,
-        WebhooksManager $webhooksManager,
+        protected WebhooksManager $webhooksManager,
+        protected ScopesManagers $scopesManagers,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
         parent::__construct($eventDispatcher, $logger);
-        OAuth2Client::init($apiSecret);
-        $this->webhooksManager = $webhooksManager;
+        $this->setSplashType("shopify");
         $this->cacheDir = $cacheDir;
     }
 
@@ -133,6 +130,11 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         //====================================================================//
         // Get Shop Informations
         if (!$this->fetchShopInformations()) {
+            return false;
+        }
+        //====================================================================//
+        // Get Scopes Informations
+        if (!$this->fetchAccessScopes()) {
             return false;
         }
         //====================================================================//
@@ -225,6 +227,12 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         //====================================================================//
         if (empty($config["Token"]) || !is_string($config["Token"])) {
             return Splash::log()->err("Shop Credential (App Token) is Invalid");
+        }
+        //====================================================================//
+        // Extended Mode
+        //====================================================================//
+        if ($this->getParameter("Extended", false)) {
+            Objects\WebHook::setDisabled(false);
         }
         //====================================================================//
         // Verify Private API Key is Set
@@ -322,6 +330,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
             'domain' => 'ShopifyBundle',                        // Translation domain for names
             'ico' => '/bundles/shopify/img/Shopify-Icon.png',   // Public Icon path
             'www' => 'www.Shopify.com',                         // Website Url
+            'uniqueHost' => true                                // Require Unique Host Constraint
         );
     }
 
@@ -355,7 +364,6 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     public function getFormBuilderName() : string
     {
         return ExtendedEditFormType::class;
-//        return $this->getParameter("Extended", false) ? ExtendedEditFormType::class : EditFormType::class;
     }
 
     /**
@@ -363,7 +371,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
      */
     public function getMasterAction(): ?string
     {
-        return "ShopifyBundle:Actions:register";
+        return Actions\OAuth2Master::class;
     }
 
     /**
@@ -372,7 +380,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     public function getPublicActions() : array
     {
         return array(
-            "index" => "ShopifyBundle:WebHooks:index",
+            "index" => Actions\WebHooksController::class,
         );
     }
 
@@ -382,9 +390,9 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     public function getSecuredActions() : array
     {
         return array(
-            "oauth" => "ShopifyBundle:Actions:oauth",
-            "webhooks" => "ShopifyBundle:Actions:webhooks",
-            "refresh" => "ShopifyBundle:Actions:refresh",
+            "connect" => Actions\OAuth2Connect::class,
+            "webhooks" => Actions\SetupWebhooks::class,
+            "refresh" => Actions\OAuth2Refresh::class,
         );
     }
 
@@ -408,7 +416,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         }
         //====================================================================//
         // Request a New Access Token
-        $authConfig = OAuth2Client::getConfig();
+        $authConfig = ShopifyAdapter::getConfig();
         $clientConfig = $this->getConfiguration();
         $query = array(
             "client_id" => $authConfig["client_id"],
@@ -490,7 +498,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
      *
      * @return bool
      */
-    private function fetchShopInformations(): bool
+    public function fetchShopInformations(): bool
     {
         //====================================================================//
         // Get User Lists from Api

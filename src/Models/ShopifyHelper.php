@@ -36,7 +36,7 @@ class ShopifyHelper
     /**
      * API Version to Use
      */
-    const API_VERSION = "2022-07";
+    const API_VERSION = "2023-04";
 
     /**
      * @var string
@@ -205,6 +205,40 @@ class ShopifyHelper
         // Perform Request
         try {
             $response = self::$client->get($path, $query);
+        } catch (ClientException $ex) {
+            Splash::log()->err($ex->getMessage());
+
+            return null;
+        }
+        //====================================================================//
+        // Return Response
+        if (!is_null($resource) && isset($response[$resource])) {
+            return $response[$resource];
+        }
+
+        return  $response;
+    }
+
+    /**
+     * Shopify API RAW GET Request
+     *
+     * @param string      $path     API REST Path
+     * @param array       $query    Request Query
+     * @param null|string $resource Response Resource
+     *
+     * @return null|array
+     */
+    public static function getRaw(
+        string $path,
+        array $query = array(),
+        string $resource = null
+    ): ?array {
+        //====================================================================//
+        // Perform Request
+        try {
+            $response = self::$client->createRequest('GET', self::$client->buildUrl($path, ""), array(
+                'query' => $query,
+            ));
         } catch (ClientException $ex) {
             Splash::log()->err($ex->getMessage());
 
