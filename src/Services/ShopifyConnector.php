@@ -229,6 +229,12 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
             return Splash::log()->err("Shop Credential (App Token) is Invalid");
         }
         //====================================================================//
+        // Extended Mode
+        //====================================================================//
+        if ($this->getParameter("Extended", false)) {
+            Objects\WebHook::setDisabled(false);
+        }
+        //====================================================================//
         // Verify Private API Key is Set
         //====================================================================//
         if ($this->hasPrivateAppCredentials()) {

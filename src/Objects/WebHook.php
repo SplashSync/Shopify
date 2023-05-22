@@ -72,6 +72,19 @@ class WebHook extends AbstractStandaloneObject
         $this->connector = $parentConnector;
     }
 
+
+    /**
+     * Override Default Mode
+     *
+     * @param bool $disabled
+     *
+     * @return void
+     */
+    public static function setDisabled(bool $disabled = true): void
+    {
+        static::$disabled = $disabled;
+    }
+
     /**
      * Check if WebHook Has Requested Parameters.
      *
