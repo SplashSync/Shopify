@@ -148,7 +148,7 @@ abstract class AbstractShopifyType extends AbstractType
                 'label' => 'var.api-private.label',
                 'help' => 'var.api-private.desc',
                 'translation_domain' => 'ShopifyBundle',
-                'required' => false,
+                'required' => true,
             ))
         ;
 
@@ -176,7 +176,7 @@ abstract class AbstractShopifyType extends AbstractType
                 'label' => 'var.api-key.label',
                 'help' => 'var.api-key.desc',
                 'translation_domain' => 'ShopifyBundle',
-                'required' => false,
+                'required' => true,
             ))
         ;
 
@@ -204,7 +204,7 @@ abstract class AbstractShopifyType extends AbstractType
                 'label' => 'var.api-secret.label',
                 'help' => 'var.api-secret.desc',
                 'translation_domain' => 'ShopifyBundle',
-                'required' => false,
+                'required' => true,
             ))
         ;
 
