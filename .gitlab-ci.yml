@@ -27,9 +27,9 @@ variables:
 ################################################################
 # Defined Pipeline Stages
 stages:
-  - deploy
   - quality
   - functional
+  - deploy
 
 ################################################################
 # Quality Checks
