@@ -1,16 +1,32 @@
 ---
 lang: en
-permalink: start/setup
-title: Splash Account Setup
+permalink: docs/migrate-to-private-app
+title: Private App Migration
 ---
 
-### Account vs Server ? 
+### Why using a Private Application? 
 
-Accounts servers are different from standard servers because connection to your shop is managed by Splash.
+Since June 15, 2023, using Shopify private app with Splash Sync become mandatory.
 
-To do so, we implemented communication with Shopify API, you don't have any specific plugin to install on Shopify.
+This change will improve reliability and efficiency of our interfaces with Shopify, also increase security.   
 
-### Step 1 - Create a Shopify Private App
+If you still have issues with Shopify Private Apps, please contact our support team.
+
+### What will we do in this tutorial?
+
+We will guide you for migration from Splash <> Shopify Public App connexion to Splash <> Shopify Private App.
+
+This process is similar to our new installation process, but first, we will ask you to uninstall any existing public app.
+
+### Step 1 - Remove Public App
+
+To connect your Shopify store, then go to **Setting >> Apps and sales channels**.
+
+Now uninstall our Public Application:
+
+![Add Shopify Private App]({{ "/assets/img/uninstall-public-app.png" | relative_url }})
+
+### Step 2 - Create a Shopify Private App
 
 First step of installation process is creation of a dedicated Shopify Application Splash Sync will use to communication with your store.
 
@@ -20,7 +36,7 @@ Now create a new private application:
 
 ![Add Shopify Private App]({{ "/assets/img/private-app-create.png" | relative_url }})
 
-### Step 2 - Admin API Integration
+### Step 3 - Admin API Integration
 
 Now you have created an App, you have to configure application rights so that Splash could access required information.
 
@@ -47,15 +63,13 @@ Your configuration should look like this.
     </div>
 </div>
 
-### Step 3 - Create a new Account Server Profile
+### Step 4 - Update your Server Configuration
 
 Now go back to your Splash Sync account.
 
-Go to **My Accounts >> Shopify API** and click on "Connect" button.
+Go to **My Accounts >> My Shopify Store** and click on "Edit" button.
 
-![Add Shopify Account]({{ "/assets/img/add-account.png" | relative_url }})
-
-### Step 4 - Setup API credentials
+### Step 5 - Setup API credentials
 
 This is the most critical step! You now have to cut and paste all your API credentials to your Splash Sync Server configuration.
 
@@ -72,7 +86,7 @@ Go to **API Credentials**  Tab and copy all credentials from Shopify to Splash.
     </div>
 </div>
 
-On Splash side, click on server <i class="far fa-edit"></i> Edit button and fill the form.
+On Splash side, click on server <i class="far fa-edit"></i> Edit button and fill the form with the admin url of you shop.
 
 First, enter your shop admin url, this url looks like: myawesomeshop.myshopify.com.
 **Do not use your public domain here, this is only for admin access to your Shopify Account.**
@@ -81,7 +95,7 @@ Then, cut and paste all credentials. Your configuration look like this:
 
 ![API credentials]({{ "/assets/img/private-app-splash-setup.png" | relative_url }})
 
-### Step 5 - Refresh your server
+### Step 6 - Refresh your server
 
 Now Splash should have a valid configuration to access your Shopify Shop API.
 
@@ -89,19 +103,19 @@ You can Refresh your connection so that Splash collect all information about you
 
 ![Server Refresh]({{ "/assets/img/refresh.png" | relative_url }})
 
-### Step 6 - Setup of Webhooks
+### Step 7 - Setup of Webhooks
 
 Shopify Webhooks are used to inform Splash of any changes you does on your Shopify Account.
 
 This could be an update of a Product description or stock, but also a new Order received on your Shop.
-  
+
 To ensure Splash receive all those notifications, you need to trigger the webhook setup.
 
 Once done, your server profile should only show green flags!
 
 ![API credentials]({{ "/assets/img/configuration-ok.png" | relative_url }})
 
-### Step 7 - Select default Warehouse
+### Step 8 - Select default Warehouse
 
 Shopify now uses multi-location warehouses, so you have to select which warehouse Splash should use for stocks synchronization.
 
