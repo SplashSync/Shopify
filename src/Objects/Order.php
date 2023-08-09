@@ -47,6 +47,7 @@ class Order extends AbstractStandaloneObject implements PrimaryKeysAwareInterfac
     use Order\ObjectsListTrait;
     use Order\PrimaryTrait;
     use Order\CoreTrait;
+    use Order\AddressesTrait;
     use Order\MainTrait;
     use Order\StatusTrait;
     use Order\StatusFlagsTrait;

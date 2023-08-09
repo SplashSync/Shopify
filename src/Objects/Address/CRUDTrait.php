@@ -16,6 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Address;
 
 use ArrayObject;
+use Splash\Connectors\Shopify\Helpers\OrderAddressHelper;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Core\SplashCore      as Splash;
 
@@ -37,8 +38,11 @@ trait CRUDTrait
         // Stack Trace
         Splash::log()->trace();
         //====================================================================//
+        // Get Address from Order Api
+        $object = $this->loadFromOrder($objectId);
+        //====================================================================//
         // Get Customer Address from Api
-        $object = API::get(self::getUri($objectId), null, array(), "customer_address");
+        $object = $object ?? API::get(self::getUri($objectId), null, array(), "customer_address");
         //====================================================================//
         // Fetch Object
         if (null === $object) {
@@ -49,6 +53,40 @@ trait CRUDTrait
         unset($object['name']);
 
         return new ArrayObject($object, ArrayObject::ARRAY_AS_PROPS);
+    }
+
+    /**
+     * Load Request Object from Order Object
+     *
+     * @param string $objectId Object ID
+     *
+     * @return null|array
+     */
+    public function loadFromOrder(string $objectId): ?array
+    {
+        $address = $order = null;
+        //====================================================================//
+        // Get Shipping Address from Order Api
+        if ($shippingId = OrderAddressHelper::toOrderShippingId($objectId)) {
+            $order = API::get("orders", $shippingId, array(), "order");
+
+            $address = $order['shipping_address'] ?? null;
+        }
+        //====================================================================//
+        // Get Billing Address from Order Api
+        if ($billingId = OrderAddressHelper::toOrderBillingId($objectId)) {
+            $order = API::get("orders", $billingId, array(), "order");
+
+            $address = $order['billing_address'] ?? null;
+        }
+        //====================================================================//
+        // Complete Address from Order Api
+        if ($address && $order) {
+            $address["id"] = $objectId;
+            $address["customer_id"] = $order['customer']['id'] ?? null;
+        }
+
+        return $address;
     }
 
     /**
@@ -104,6 +142,13 @@ trait CRUDTrait
         // Stack Trace
         Splash::log()->trace();
         //====================================================================//
+        // Safety Check
+        if (OrderAddressHelper::isOrderAddress($this->object->id)) {
+            Splash::log()->err("This is an Order Address, thus you cannot update it!");
+
+            return $this->object->id;
+        }
+        //====================================================================//
         // Encode Object Id
         $objectId = $this->getObjectId($this->object->customer_id, $this->object->id);
         //====================================================================//
@@ -128,6 +173,11 @@ trait CRUDTrait
         //====================================================================//
         // Stack Trace
         Splash::log()->trace();
+        //====================================================================//
+        // Safety Check
+        if (OrderAddressHelper::isOrderAddress($this->object->id)) {
+            return Splash::log()->err("This is an Order Address, thus you cannot delete it!");
+        }
         //====================================================================//
         // Delete Customer from Api
         if (null === API::delete(self::getUri($objectId))) {
