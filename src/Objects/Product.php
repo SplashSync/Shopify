@@ -43,6 +43,7 @@ class Product extends AbstractStandaloneObject
     use Product\ObjectsListTrait;
     use Product\CoreTrait;
     use Product\ImagesTrait;
+    use Product\TagsTrait;
     use Product\VariantsTrait;
     use Product\Variants\MainTrait;
     use Product\Variants\StockTrait;

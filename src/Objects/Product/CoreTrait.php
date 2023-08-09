@@ -54,6 +54,14 @@ trait CoreTrait
             ->microData("http://schema.org/Product", "description")
         ;
         //====================================================================//
+        // Product Type
+        $this->fieldsFactory()->create(SPL_T_VARCHAR)
+            ->identifier("product_type")
+            ->name("Product Type")
+            ->description("A categorization for the product used for filtering and searching products.")
+            ->microData("http://schema.org/Product", "additionalType")
+        ;
+        //====================================================================//
         // Meta Url
         $this->fieldsFactory()->create(SPL_T_VARCHAR)
             ->identifier("handle")
@@ -82,6 +90,7 @@ trait CoreTrait
             case 'title':
             case 'body_html':
             case 'handle':
+            case 'product_type':
                 $this->getSimple($fieldName);
 
                 break;
@@ -112,6 +121,7 @@ trait CoreTrait
             case 'title':
             case 'body_html':
             case 'handle':
+            case 'product_type':
                 $this->setSimple($fieldName, $fieldData);
 
                 break;
