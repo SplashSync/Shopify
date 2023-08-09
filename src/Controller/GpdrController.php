@@ -148,6 +148,11 @@ class GpdrController extends AbstractController
     private function sendEmail(string $reason, array $data): void
     {
         //==============================================================================
+        // Filter Tests GPDR Request
+        if (str_contains($data["shop_domain"] ?? "", "api-connector.myshopify.com")) {
+            return;
+        }
+        //==============================================================================
         // Push an email to site Admins
         $message = (new Swift_Message('Hello Email'))
             ->setFrom('shopify@splashsync.com')
