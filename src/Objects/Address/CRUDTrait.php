@@ -175,7 +175,7 @@ trait CRUDTrait
         Splash::log()->trace();
         //====================================================================//
         // Safety Check
-        if (OrderAddressHelper::isOrderAddress($this->object->id)) {
+        if (OrderAddressHelper::isOrderAddress($objectId)) {
             return Splash::log()->err("This is an Order Address, thus you cannot delete it!");
         }
         //====================================================================//
