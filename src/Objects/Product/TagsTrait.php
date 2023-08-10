@@ -29,6 +29,8 @@ trait TagsTrait
             ->name("Tags")
             ->description("Used for filtering and search. A product can have up to 250 tags.")
             ->microData("http://schema.org/Product", "tags")
+            ->addOption("isOrdered")
+            ->addOption("isLowerCase")
             ->setPreferNone()
         ;
     }
