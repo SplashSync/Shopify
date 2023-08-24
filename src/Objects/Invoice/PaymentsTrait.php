@@ -258,6 +258,7 @@ trait PaymentsTrait
         static $knownKeys = array(
             "systempay" => "x_reference",
             "PayPlug" => "refund_id",
+            "Shopify Payments" => "charge_id",
         );
         //====================================================================//
         // Walk on Allowed Receipt Number Keys

@@ -34,6 +34,7 @@ trait AddressesTrait
         $this->fieldsFactory()->create((string) self::objects()->encode("Address", SPL_T_ID))
             ->identifier("shipping_address")
             ->name("Shipping Address")
+            ->microData("http://schema.org/Order", "orderDelivery")
             ->isReadOnly()
         ;
         //====================================================================//
@@ -41,6 +42,7 @@ trait AddressesTrait
         $this->fieldsFactory()->create((string) self::objects()->encode("Address", SPL_T_ID))
             ->identifier("billing_address")
             ->name("Billing Address")
+            ->microData("http://schema.org/Order", "billingAddress")
             ->isReadOnly()
         ;
     }
