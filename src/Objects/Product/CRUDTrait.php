@@ -160,13 +160,18 @@ trait CRUDTrait
             //====================================================================//
             // Update Inventory Level
             if ($this->isToUpdate("inventory")) {
-                $newInventorylevel = $this->getNewInventorylevel();
-                if (is_null($newInventorylevel) || (null === API::post('inventory_levels/set', $newInventorylevel))) {
+                $newInventoryLevel = $this->getNewInventorylevel();
+                if (is_null($newInventoryLevel) || (null === API::post('inventory_levels/set', $newInventoryLevel))) {
                     return Splash::log()->errNull(" Unable to Update Product Variant Stock (".$objectId.").");
                 }
             }
         } catch (Exception $exception) {
             return Splash::log()->errNull($exception->getMessage());
+        }
+        //====================================================================//
+        // Take Time in Tests Phases
+        if (Splash::isTravisMode()) {
+            usleep(250000);
         }
 
         return $objectId;

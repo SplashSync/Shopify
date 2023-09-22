@@ -129,4 +129,4 @@ functional:orders:
         - functional:customers
         - functional:products
     variables:
-        SPLASH_TYPES:   "Order,Invoices"
+        SPLASH_TYPES:   "Order,Invoice"

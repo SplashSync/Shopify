@@ -1949,16 +1949,16 @@
         },
         {
             "name": "splash/phpcore",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SplashSync/Php-Core.git",
-                "reference": "898156d1c3ac287b2a76a8e89f66df68a379c31b"
+                "reference": "5cb5b7e8b148edddb527e675136f90dce37a5f51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SplashSync/Php-Core/zipball/898156d1c3ac287b2a76a8e89f66df68a379c31b",
-                "reference": "898156d1c3ac287b2a76a8e89f66df68a379c31b",
+                "url": "https://api.github.com/repos/SplashSync/Php-Core/zipball/5cb5b7e8b148edddb527e675136f90dce37a5f51",
+                "reference": "5cb5b7e8b148edddb527e675136f90dce37a5f51",
                 "shasum": ""
             },
             "require": {
@@ -2005,9 +2005,9 @@
             "description": "Splash Foundation Module for All Php Applications",
             "support": {
                 "issues": "https://github.com/SplashSync/Php-Core/issues",
-                "source": "https://github.com/SplashSync/Php-Core/tree/2.1.1"
+                "source": "https://github.com/SplashSync/Php-Core/tree/2.1.2"
             },
-            "time": "2023-09-20T22:04:30+00:00"
+            "time": "2023-09-22T22:03:22+00:00"
         },
         {
             "name": "symfony/cache",
@@ -11194,12 +11194,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SplashSync/Toolkit.git",
-                "reference": "bee9b3fe6a48701bcec92873a5cd23ad4d31525e"
+                "reference": "2245565a819db600b1d861a27dd238d9fb918cad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SplashSync/Toolkit/zipball/bee9b3fe6a48701bcec92873a5cd23ad4d31525e",
-                "reference": "bee9b3fe6a48701bcec92873a5cd23ad4d31525e",
+                "url": "https://api.github.com/repos/SplashSync/Toolkit/zipball/2245565a819db600b1d861a27dd238d9fb918cad",
+                "reference": "2245565a819db600b1d861a27dd238d9fb918cad",
                 "shasum": ""
             },
             "require": {
@@ -11251,7 +11251,7 @@
                 "issues": "https://github.com/SplashSync/Toolkit/issues",
                 "source": "https://github.com/SplashSync/Toolkit/tree/master"
             },
-            "time": "2023-09-22T20:50:21+00:00"
+            "time": "2023-09-22T21:11:15+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
