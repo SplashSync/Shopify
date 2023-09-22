@@ -102,14 +102,13 @@ functional:php-8.2:
 #          # Execute PhpUnit Tests
 #          - vendor/bin/phpunit --log-junit $CI_PROJECT_DIR/full-report.xml
 #
-#################################################################################
-## PHP 8.1 - ThirdParty & Address
-#functional:customers:
-#   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-#   variables:
-#      SPLASH_TYPES:   "ThirdParty,Address"
-#   <<: *functional_tests
-#
+################################################################################
+# Functional Tests - ThirdParty & Address
+functional:customers:
+  extends:            functional:php-8.1
+  variables:
+      SPLASH_TYPES:   "ThirdParty,Address"
+
 #################################################################################
 ## PHP 8.1 - Products
 #functional:products:
