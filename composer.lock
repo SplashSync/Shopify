@@ -6108,16 +6108,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.27.0",
+            "version": "v3.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "e73ccaae1208f017bb7860986eebb3da48bd25d6"
+                "reference": "113e09fea3d2306319ffaa2423fe3de768b28cff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/e73ccaae1208f017bb7860986eebb3da48bd25d6",
-                "reference": "e73ccaae1208f017bb7860986eebb3da48bd25d6",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/113e09fea3d2306319ffaa2423fe3de768b28cff",
+                "reference": "113e09fea3d2306319ffaa2423fe3de768b28cff",
                 "shasum": ""
             },
             "require": {
@@ -6191,7 +6191,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.27.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.28.0"
             },
             "funding": [
                 {
@@ -6199,7 +6199,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-17T14:37:54+00:00"
+            "time": "2023-09-22T20:43:40+00:00"
         },
         {
             "name": "friendsoftwig/twigcs",
@@ -11194,12 +11194,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SplashSync/Toolkit.git",
-                "reference": "6fef1c2d35ce8e02a9589702bdea34d82e95eacb"
+                "reference": "bee9b3fe6a48701bcec92873a5cd23ad4d31525e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SplashSync/Toolkit/zipball/6fef1c2d35ce8e02a9589702bdea34d82e95eacb",
-                "reference": "6fef1c2d35ce8e02a9589702bdea34d82e95eacb",
+                "url": "https://api.github.com/repos/SplashSync/Toolkit/zipball/bee9b3fe6a48701bcec92873a5cd23ad4d31525e",
+                "reference": "bee9b3fe6a48701bcec92873a5cd23ad4d31525e",
                 "shasum": ""
             },
             "require": {
@@ -11251,7 +11251,7 @@
                 "issues": "https://github.com/SplashSync/Toolkit/issues",
                 "source": "https://github.com/SplashSync/Toolkit/tree/master"
             },
-            "time": "2023-09-22T13:24:59+00:00"
+            "time": "2023-09-22T20:50:21+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -15191,5 +15191,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
