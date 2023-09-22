@@ -112,6 +112,7 @@ class ShopifyImages
         if (is_array($fromCache)) {
             return $fromCache;
         }
+
         //====================================================================//
         // Loading Splash Image Fail
         try {

@@ -277,6 +277,7 @@ trait LogisticModeTrait
         if (empty($fulfillmentOrderId)) {
             return Splash::log()->errNull("Unable to Load Fulfillment Order.");
         }
+
         //====================================================================//
         // Return Fulfillment Order ID
         return $fulfillmentOrderId;
@@ -312,6 +313,7 @@ trait LogisticModeTrait
                 "fulfillment_order_id" => $fulfillmentOrderId
             ));
         }
+
         //====================================================================//
         // Return Fulfillment API Data
         return array(

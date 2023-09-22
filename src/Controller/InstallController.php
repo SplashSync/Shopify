@@ -67,6 +67,7 @@ class InstallController extends AbstractController
         //==============================================================================
         // Configure Shopify OAuth2 Client
         $client->getOAuth2Provider()->configure($connector, $shopUrl);
+
         //==============================================================================
         // Do Shopify OAuth2 Authentification
         return $client->redirect(array(), array());

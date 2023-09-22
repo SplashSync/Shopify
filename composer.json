@@ -20,22 +20,16 @@
 
     "autoload": {
         "psr-4": { 
-            "Splash\\Connectors\\Shopify\\":     "src/"
+            "Splash\\Connectors\\Shopify\\":            "src/"
         }
     },
     
     "autoload-dev": {
-        "classmap": [ "tests/Kernel.php" ],
-        "files":    [ 
-            "vendor/splash/phpcore/inc/Splash.Inc.php",
-            "vendor/splash/php-bundle/src/Tests/KernelTestCase.php"
-        ],
-        "psr-4": { 
+        "psr-4": {
             "Splash\\Connectors\\Shopify\\Test\\":     "tests/"
         }        
     },
-    
-    
+
     "require": {
         "php":                                          "^8.0",
         "ext-json":                                     "*",
@@ -47,34 +41,37 @@
     
     "require-dev": {
         "badpixxel/php-sdk":                            "~2.0",
-        "splash/console":                               "dev-master",
-
-        "symfony/symfony":                              "^3.4|^4.4",
-        "symfony/monolog-bundle":                       "*",
-        "symfony/phpunit-bridge":                       "*",
-        "symfony/swiftmailer-bundle":                   "*",
-        "monolog/monolog":                              "^1.0",
-
-        "doctrine/doctrine-bundle":                     "^2.6",
-        "doctrine/orm":                                 "^2.5"
+        "splash/toolkit":                               "dev-master"
     },
 
     "scripts": {
         "auto-scripts": [
-            "rm vendor/splash/phpcore/Tests/Tools/TestCase.php",
-            "php tests/console cache:clear",
-            "cd var/cache/dev && ln -sf testsKernelDevDebugContainer.xml testContainer.xml"
+            "php bin/console cache:clear --no-debug",
+            "php bin/console assets:install --relative",
+            "php bin/console doctrine:schema:update --force --complete --no-interaction --no-debug",
+            "find var/cache/dev/*.xml | while read -r i; do cp \"$i\" var/cache/dev/testContainer.xml; done"
         ],
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "php bin/console sonata:user:create Toolkit toolkit@splashsync.com toolkit --super-admin || exit 0"
         ],
         "post-update-cmd": [
             "@auto-scripts"
         ]
     },
+
+    "archive": {
+        "exclude": ["/config", "/bin", "/ci", "/docs", "/tests"]
+    },
+
     "config": {
         "allow-plugins": {
-            "phpro/grumphp": true
+            "phpro/grumphp":    true,
+            "symfony/runtime":  true
         }
+    },
+
+    "extra": {
+        "public-dir": "tests/public"
     }
 }

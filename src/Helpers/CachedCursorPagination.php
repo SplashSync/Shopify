@@ -228,6 +228,7 @@ class CachedCursorPagination extends CursorBasedPagination
         //====================================================================//
         // Connect to Apcu Cache
         $this->cacheAdapter = new ApcuAdapter();
+
         //====================================================================//
         // Load Links from Cache
         try {
@@ -285,6 +286,7 @@ class CachedCursorPagination extends CursorBasedPagination
             ),
             $query
         );
+
         //====================================================================//
         // Build Image Cache Key
         return implode(

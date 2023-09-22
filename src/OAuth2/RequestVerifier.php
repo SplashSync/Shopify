@@ -114,6 +114,7 @@ class RequestVerifier
         if (empty($clientSecret)) {
             return null;
         }
+
         //==============================================================================
         // Compute Request HMAC
         return base64_encode(hash_hmac(

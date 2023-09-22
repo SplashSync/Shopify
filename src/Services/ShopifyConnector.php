@@ -107,6 +107,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         if (!$this->selfTest()) {
             return false;
         }
+
         //====================================================================//
         // Perform Ping Test
         return API::ping();
@@ -248,6 +249,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
                 $this->cacheDir
             );
         }
+
         //====================================================================//
         // Configure Rest API
         return API::configure($config["WsHost"], $config["Token"], $this->cacheDir);

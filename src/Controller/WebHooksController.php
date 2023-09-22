@@ -139,9 +139,9 @@ class WebHooksController extends AbstractController
                 $this->executeCustomerCommit($this->data, SPL_A_DELETE, "Deleted");
 
                 return;
-            //====================================================================//
-            // Products WebHooks
-            //====================================================================//
+                //====================================================================//
+                // Products WebHooks
+                //====================================================================//
             case 'products/create':
                 $this->executeProductCommit($this->data, SPL_A_CREATE, "Created");
 
@@ -154,9 +154,9 @@ class WebHooksController extends AbstractController
                 $this->executeProductCommit($this->data, SPL_A_DELETE, "Deleted");
 
                 return;
-            //====================================================================//
-            // Order & Invoices WebHooks
-            //====================================================================//
+                //====================================================================//
+                // Order & Invoices WebHooks
+                //====================================================================//
             case 'orders/create':
                 $this->executeOrderCommit($this->data, SPL_A_CREATE, "Created");
 

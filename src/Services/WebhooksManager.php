@@ -185,6 +185,7 @@ class WebhooksManager
         if ($foundWebHook) {
             return true;
         }
+
         //====================================================================//
         // Add Splash WebHooks
         return (false !== $manager->create($webhookUrl, $topic));

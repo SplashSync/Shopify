@@ -1,7 +1,8 @@
 services:
 
     _defaults:
-        autowire: true
+        autowire:       true
+        autoconfigure:  true
 
     ################################################################################
     # SPLASH Shopify Connector Service

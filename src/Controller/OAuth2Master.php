@@ -85,6 +85,7 @@ class OAuth2Master extends AbstractController
         if ($request->query->has("session")) {
             return $this->getConnectToProfile($request);
         }
+
         //==============================================================================
         // NOTHING Defined => Request Install
         return $this->forward(OAuth2Install::class, array(

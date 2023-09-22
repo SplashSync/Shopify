@@ -58,13 +58,14 @@ class OAuth2Install extends AbstractController
         //==============================================================================
         // Configure Shopify OAuth2 Client
         $client->getOAuth2Provider()->configure($connector, $shop);
+
         //==============================================================================
         // Do Shopify OAuth2 Authentification
         return $client->redirect(array(), array());
         //==============================================================================
         // Override Redirect url
 //        return $client->redirect(array(), array(
-//            'redirect_uri' => "https://3c7b-2a01-e0a-b04-be90-f29c-d9fe-d4b7-7d66.ngrok-free.app/en/ws/shopify"
+//            'redirect_uri' => "https://xxx.ngrok-free.app/en/ws/shopify"
 //        ));
     }
 }

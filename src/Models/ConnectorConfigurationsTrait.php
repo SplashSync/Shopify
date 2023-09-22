@@ -40,6 +40,7 @@ trait ConnectorConfigurationsTrait
                 return 100 * $country['tax'];
             }
         }
+
         //====================================================================//
         // Tax was not Found
         return 0;
@@ -74,6 +75,7 @@ trait ConnectorConfigurationsTrait
         if (parse_url((string) $wsHost, PHP_URL_HOST)) {
             return (string) parse_url((string) $wsHost, PHP_URL_HOST);
         }
+
         //====================================================================//
         // Raw Domain was found
         return (string) $wsHost;

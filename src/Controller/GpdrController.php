@@ -19,13 +19,14 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Splash\Bundle\Models\Local\ActionsTrait;
 use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 /**
  * Manage GPDR Actions for Shopify Connector
@@ -39,25 +40,10 @@ class GpdrController extends AbstractController
      */
     private string $topic;
 
-    /**
-     * OAuth2 Clients Registry
-     *
-     * @var ClientRegistry
-     */
-    private ClientRegistry $clientRegistry;
-
-    /**
-     * @var Swift_Mailer
-     */
-    private Swift_Mailer $mailer;
-
-    /**
-     * @param Swift_Mailer $mailer
-     */
-    public function __construct(ClientRegistry $clientRegistry, Swift_Mailer $mailer)
-    {
-        $this->clientRegistry = $clientRegistry;
-        $this->mailer = $mailer;
+    public function __construct(
+        private ClientRegistry $clientRegistry,
+        private MailerInterface $mailer
+    ) {
     }
 
     /**
@@ -83,6 +69,7 @@ class GpdrController extends AbstractController
         if (empty($data) || !is_array($data)) {
             throw new BadRequestHttpException('Malformed or missing data');
         }
+
         //==============================================================================
         // Push an email to site Admins
         try {
@@ -90,6 +77,7 @@ class GpdrController extends AbstractController
         } catch (\Throwable $ex) {
             $this->topic = $ex->getMessage();
         }
+
         //==============================================================================
         // Return OK Response
         return new JsonResponse(array(
@@ -138,7 +126,7 @@ class GpdrController extends AbstractController
     }
 
     /**
-     * Send GPDR User Requests by Email
+     * Send GDPR User Requests by Email
      *
      * @param string $reason
      * @param array  $data
@@ -148,19 +136,23 @@ class GpdrController extends AbstractController
     private function sendEmail(string $reason, array $data): void
     {
         //==============================================================================
-        // Filter Tests GPDR Request
+        // Filter Tests GDPR Request
         if (str_contains($data["shop_domain"] ?? "", "api-connector.myshopify.com")) {
             return;
         }
         //==============================================================================
         // Push an email to site Admins
-        $message = (new Swift_Message('Hello Email'))
-            ->setFrom('shopify@splashsync.com')
-            ->setTo('contact@splashsync.com')
-            ->setSubject("[SHOPIFY] GPDR Request - ".$reason)
-            ->setBody(json_encode($data), 'text/plain')
+        $message = (new Email())
+            ->from('shopify@splashsync.com')
+            ->to('contact@splashsync.com')
+            ->subject("[SHOPIFY] GDPR Request - ".$reason)
+            ->text((string) json_encode($data))
         ;
 
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+        } catch (TransportExceptionInterface $e) {
+            return;
+        }
     }
 }

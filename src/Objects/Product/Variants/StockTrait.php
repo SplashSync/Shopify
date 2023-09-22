@@ -90,8 +90,8 @@ trait StockTrait
                 $this->getSimple($fieldName, "variant");
 
                 break;
-            //====================================================================//
-            // Out Of Stock
+                //====================================================================//
+                // Out Of Stock
             case 'outofstock':
                 $this->out[$fieldName] = !($this->variant->inventory_quantity > 0);
 

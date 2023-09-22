@@ -1,0 +1,27 @@
+parameters:
+    # Adds a fallback configuration if the env var is not set.
+    env(SHOPIFY_URL):               'ThisIsShopUrl'
+    env(SHOPIFY_LOCATION):          'ThisIsStockLocation'
+    env(SHOPIFY_PRIVATE_TOKEN):     'ThisIsSecretApiList'
+
+
+splash:
+    ################################################################################
+    # List of Available Connector Connections
+    ################################################################################
+    connections:
+        
+        ########################################################################
+        # Shopify Connection
+        shopify:
+            id:                 ThisIsShopifyWsId
+            key:                ThisIsNotASecretKeyForShopify
+            name:               Shopify Server
+            host:               false
+            connector:          shopify
+            config:
+                WsHost:         '%env(resolve:SHOPIFY_URL)%'
+                LocationId:     '%env(resolve:SHOPIFY_LOCATION)%'
+                Token:          '%env(resolve:SHOPIFY_PRIVATE_TOKEN)%'
+                Extended:       true
+                LogisticMode:   true

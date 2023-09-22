@@ -109,14 +109,14 @@ trait CoreTrait
                 $this->getSimple($fieldName);
 
                 break;
-            //====================================================================//
-            // Order UUID
+                //====================================================================//
+                // Order UUID
             case 'uuid':
                 $this->out[$fieldName] = $this->object->id.$this->object->name;
 
                 break;
-            //====================================================================//
-            // Customer Object Id Readings
+                //====================================================================//
+                // Customer Object Id Readings
             case 'customer':
                 if (isset($this->object->customer)) {
                     $this->out[$fieldName] = self::objects()->Encode("ThirdParty", $this->object->customer['id']);
@@ -126,8 +126,8 @@ trait CoreTrait
                 $this->out[$fieldName] = null;
 
                 break;
-            //====================================================================//
-            // Order Official Date
+                //====================================================================//
+                // Order Official Date
             case 'processed_at':
                 $date = new DateTime($this->object->{$fieldName});
                 $this->out[$fieldName] = $date->format(SPL_T_DATECAST);

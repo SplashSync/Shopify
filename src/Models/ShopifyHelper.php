@@ -201,6 +201,7 @@ class ShopifyHelper
         if (!is_null($objectId)) {
             $path .= "/".$objectId;
         }
+
         //====================================================================//
         // Perform Request
         try {
@@ -272,6 +273,7 @@ class ShopifyHelper
 
             return null;
         }
+
         //====================================================================//
         // Return Response
         return isset($response[$resource]) ? $response[$resource] : $response;
@@ -384,6 +386,7 @@ class ShopifyHelper
         if (!is_null($limit) && ($limit > 0) && !is_null($offset) && ($offset >= 0)) {
             $page = (1 + (int) ($offset / $limit));
         }
+
         //====================================================================//
         // Perform Request
         try {
@@ -398,6 +401,7 @@ class ShopifyHelper
 
             return null;
         }
+
         //====================================================================//
         // Return Response
         return isset($response[$resource]) ? $response[$resource] : $response;
@@ -421,6 +425,7 @@ class ShopifyHelper
 
             return null;
         }
+
         //====================================================================//
         // Return Response
         return isset($response["count"]) ? $response["count"] : null;

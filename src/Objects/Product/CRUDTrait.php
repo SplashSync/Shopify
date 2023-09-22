@@ -88,6 +88,7 @@ trait CRUDTrait
 
             return null;
         }
+
         //====================================================================//
         // Create New Product from Api
         try {

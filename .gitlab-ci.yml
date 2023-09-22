@@ -16,119 +16,134 @@
 ################################################################################
 
 ################################################################
+# Include Pipeline Templates
+include:
+  - remote: 'https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/gitlab/php/connectors.yaml'
+
+#################################################################
+## Functional Tests
+#################################################################
+
+functional:php-8.1:
+  when: manual
+
+functional:php-8.2:
+  when: manual
+
+################################################################
 # Set any variables we need
-variables:
-  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
-  MYSQL_DATABASE:         symfony
-  MYSQL_ROOT_PASSWORD:    Shopify-Bundle
-  COMPOSER_MEMORY_LIMIT:  -1
-  SYMFONY_DEPRECATIONS_HELPER:  disabled
+#variables:
+#  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
+#  MYSQL_DATABASE:         symfony
+#  MYSQL_ROOT_PASSWORD:    Shopify-Bundle
+#  COMPOSER_MEMORY_LIMIT:  -1
+#  SYMFONY_DEPRECATIONS_HELPER:  disabled
 
 ################################################################
 # Defined Pipeline Stages
-stages:
-  - quality
-  - functional
-  - deploy
+#stages:
+#  - quality
+#  - functional
+#  - deploy
 
 ################################################################
 # Quality Checks
 ################################################################
 
-.quality_tests:    &quality_tests
-    stage:      quality
-    tags:
-        - Dedicated
-    services:
-        - mysql:5.7
-    ################################################################################
-    # Install & Configure Environment
-    before_script:
-        - bash ci/install.sh
-    ################################################################################
-    # Run Test Script
-    script:
-        - php bin/console debug:container --env-vars
-        # Execute Grumphp Testsuite
-        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/grumphp.sh  | sh
-    ################################################################################
-    # Run After Script
-    after_script:
-        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
-
-################################################################################
-# PHP 8.1
-quality:php-8.1:
-  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-  <<: *quality_tests
+#.quality_tests:    &quality_tests
+#    stage:      quality
+#    tags:
+#        - Dedicated
+#    services:
+#        - mysql:5.7
+#    ################################################################################
+#    # Install & Configure Environment
+#    before_script:
+#        - bash ci/install.sh
+#    ################################################################################
+#    # Run Test Script
+#    script:
+#        - php bin/console debug:container --env-vars
+#        # Execute Grumphp Testsuite
+#        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/grumphp.sh  | sh
+#    ################################################################################
+#    # Run After Script
+#    after_script:
+#        - curl -s https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/ci/after.sh | sh
+#
+#################################################################################
+## PHP 8.1
+#quality:php-8.1:
+#  image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+#  <<: *quality_tests
 
 
 ################################################################
 # Functional Tests
 ################################################################
 
-.functional_tests:    &functional_tests
-      stage:      functional
-      tags:
-          - Dedicated
-      services:
-          - mysql:5.7
-      artifacts:
-              when: always
-              reports:
-                  junit: "$CI_PROJECT_DIR/*-report.xml"
-      ################################################################################
-      # Install & Configure Environment
-      before_script:
-        - bash ci/install.sh
-      ################################################################################
-      # Run Test Script
-      script:
-          # Execute PhpUnit Tests
-          - vendor/bin/phpunit --log-junit $CI_PROJECT_DIR/full-report.xml
+#.functional_tests:    &functional_tests
+#      stage:      functional
+#      tags:
+#          - Dedicated
+#      services:
+#          - mysql:5.7
+#      artifacts:
+#              when: always
+#              reports:
+#                  junit: "$CI_PROJECT_DIR/*-report.xml"
+#      ################################################################################
+#      # Install & Configure Environment
+#      before_script:
+#        - bash ci/install.sh
+#      ################################################################################
+#      # Run Test Script
+#      script:
+#          # Execute PhpUnit Tests
+#          - vendor/bin/phpunit --log-junit $CI_PROJECT_DIR/full-report.xml
+#
+#################################################################################
+## PHP 8.1 - ThirdParty & Address
+#functional:customers:
+#   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+#   variables:
+#      SPLASH_TYPES:   "ThirdParty,Address"
+#   <<: *functional_tests
+#
+#################################################################################
+## PHP 8.1 - Products
+#functional:products:
+#   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+#   needs:
+#     - functional:customers
+#   variables:
+#      SPLASH_TYPES:   "Product"
+#   <<: *functional_tests
+#
+#################################################################################
+## PHP 8.1 - Orders & Invoices
+#functional:orders:
+#   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
+#   needs:
+#     - functional:customers
+#     - functional:products
+#   variables:
+#      SPLASH_TYPES:   "Order,Invoices"
+#   <<: *functional_tests
 
-################################################################################
-# PHP 8.1 - ThirdParty & Address
-functional:customers:
-   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-   variables:
-      SPLASH_TYPES:   "ThirdParty,Address"
-   <<: *functional_tests
-
-################################################################################
-# PHP 8.1 - Products
-functional:products:
-   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-   needs:
-     - functional:customers
-   variables:
-      SPLASH_TYPES:   "Product"
-   <<: *functional_tests
-
-################################################################################
-# PHP 8.1 - Orders & Invoices
-functional:orders:
-   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-   needs:
-     - functional:customers
-     - functional:products
-   variables:
-      SPLASH_TYPES:   "Order,Invoices"
-   <<: *functional_tests
-
-#################################################################
-## Build Documentation
-#################################################################
-pages:
-    image:      jekyll/minimal:latest
-    stage:      deploy
-    tags:       [ Dedicated-Docker ]
-    only:
-        - master
-  ################################################################################
-    # Run Test Script
-    script:
-        - wget -qO - https://gitlab.com/badpixxel-robo/jekyll/-/raw/main/scripts/gitlab-pages.sh | sh
-    artifacts:
-        paths:
-            - public
+##################################################################
+### Build Documentation
+##################################################################
+#pages:
+#    image:      jekyll/minimal:latest
+#    stage:      deploy
+#    tags:       [ Dedicated-Docker ]
+#    only:
+#        - master
+#  ################################################################################
+#    # Run Test Script
+#    script:
+#        - wget -qO - https://gitlab.com/badpixxel-robo/jekyll/-/raw/main/scripts/gitlab-pages.sh | sh
+#    artifacts:
+#        paths:
+#            - public

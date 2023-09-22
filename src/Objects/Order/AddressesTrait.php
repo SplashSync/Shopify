@@ -67,8 +67,8 @@ trait AddressesTrait
                 $this->out[$fieldName] = $orderId ? OrderAddressHelper::toShippingId($orderId) : null;
 
                 break;
-            //====================================================================//
-            // Billing Address
+                //====================================================================//
+                // Billing Address
             case 'billing_address':
                 $orderId = $this->getObjectIdentifier();
                 $this->out[$fieldName] = $orderId ? OrderAddressHelper::toBillingId($orderId) : null;

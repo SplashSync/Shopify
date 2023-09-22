@@ -84,6 +84,7 @@ class ShopifyAuthenticator implements AuthenticatorInterface
         //==============================================================================
         // Configure Shopify OAuth2 Client
         $adapter->configure($this->connector);
+
         //==============================================================================
         // Allow Connection only if Server Already Connected
         return $this->connector->connect();

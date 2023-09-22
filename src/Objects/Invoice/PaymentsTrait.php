@@ -180,8 +180,8 @@ trait PaymentsTrait
             // Payment Line - Payment Mode
             case 'mode':
                 return self::toPaymentMethod($transaction["gateway"] ?? "Stripe");
-            //====================================================================//
-            // Payment Line - Payment Date
+                //====================================================================//
+                // Payment Line - Payment Date
             case 'date':
                 try {
                     $date = new DateTime($transaction["created_at"] ?? $this->object->created_at);
@@ -190,12 +190,12 @@ trait PaymentsTrait
                 }
 
                 return $date->format(SPL_T_DATECAST);
-            //====================================================================//
-            // Payment Line - Payment Identification Number
+                //====================================================================//
+                // Payment Line - Payment Identification Number
             case 'number':
                 return self::toPaymentReceipt($transaction["receipt"] ?? array());
-            //====================================================================//
-            // Payment Line - Payment Amount
+                //====================================================================//
+                // Payment Line - Payment Amount
             case 'amount':
                 return $transaction["amount"] ?? 0.0;
             default:
@@ -267,6 +267,7 @@ trait PaymentsTrait
                 return $receipt[$key];
             }
         }
+
         //====================================================================//
         // Default method
         return "";

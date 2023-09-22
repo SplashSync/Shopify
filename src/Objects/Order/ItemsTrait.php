@@ -229,8 +229,8 @@ trait ItemsTrait
                 return  $line['title'].(!empty($line['variant_title']) ? " - ".$line['variant_title'] : "");
             case 'sku@lines':
                 return  $line['sku'];
-            //====================================================================//
-            // Order Line Product Id
+                //====================================================================//
+                // Order Line Product Id
             case 'product_id@lines':
                 if (empty($line['product_id']) || empty($line['variant_id'])) {
                     return null;
@@ -240,8 +240,8 @@ trait ItemsTrait
                     "Product",
                     Product::getObjectId($line['product_id'], $line['variant_id'])
                 );
-            //====================================================================//
-            // Order Line Quantity
+                //====================================================================//
+                // Order Line Quantity
             case 'quantity@lines':
                 return (int) $line['quantity'];
             case 'quantity_with_refunds@lines':
@@ -252,16 +252,16 @@ trait ItemsTrait
                 return (int) ($line['quantity'] - $this->getItemRefundedQty($line));
             case 'quantity_refunded@lines':
                 return $this->getItemRefundedQty($line);
-            //====================================================================//
-            // Order Line Price
+                //====================================================================//
+                // Order Line Price
             case 'price@lines':
                 return $this->getItemPrice($line);
-            //====================================================================//
-            // Order Line Discount Percentile
+                //====================================================================//
+                // Order Line Discount Percentile
             case "discount@lines":
                 return  (float) $this->getItemDiscount($line);
-            //====================================================================//
-            // Order Line Tax Name
+                //====================================================================//
+                // Order Line Tax Name
             case 'tax_name@lines':
                 return  $this->getItemVatName($line);
             default:
@@ -288,28 +288,28 @@ trait ItemsTrait
             // Order Line Description
             case 'title@lines':
                 return  $line['title'];
-            //====================================================================//
-            // Order Line Product Id
+                //====================================================================//
+                // Order Line Product Id
             case 'product_id@lines':
             case 'sku@lines':
                 return null;
-            //====================================================================//
-            // Order Line Quantity
+                //====================================================================//
+                // Order Line Quantity
             case 'quantity@lines':
             case 'quantity_with_refunds@lines':
                 return 1;
             case 'quantity_refunded@lines':
                 return $this->getShippingRefundedQty();
-            //====================================================================//
-            // Order Line Price
+                //====================================================================//
+                // Order Line Price
             case 'price@lines':
                 return $this->getItemPrice($line);
-            //====================================================================//
-            // Order Line Discount Percentile
+                //====================================================================//
+                // Order Line Discount Percentile
             case "discount@lines":
                 return  (float) $this->getItemDiscount($line);
-            //====================================================================//
-            // Order Line Tax Name
+                //====================================================================//
+                // Order Line Tax Name
             case 'tax_name@lines':
                 return  $this->getItemVatName($line);
             default:
@@ -363,6 +363,7 @@ trait ItemsTrait
         $priceHT = $taxIncluded ? null : (float) $line['price'];
         $priceTTC = $taxIncluded ? (float) $line['price'] : null;
         $tax = (float) $this->getItemVatRate($line);
+
         //====================================================================//
         // Build Price Array
         return self::prices()->encode(
