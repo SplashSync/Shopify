@@ -105,44 +105,28 @@ functional:php-8.2:
 ################################################################################
 # Functional Tests - ThirdParty & Address
 functional:customers:
-  extends:            functional:php-8.1
-  variables:
-      SPLASH_TYPES:   "ThirdParty,Address"
+    extends:            functional:php-8.1
+    when:               always
+    variables:
+        SPLASH_TYPES:   "ThirdParty,Address"
 
-#################################################################################
-## PHP 8.1 - Products
-#functional:products:
-#   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-#   needs:
-#     - functional:customers
-#   variables:
-#      SPLASH_TYPES:   "Product"
-#   <<: *functional_tests
-#
-#################################################################################
-## PHP 8.1 - Orders & Invoices
-#functional:orders:
-#   image: registry.gitlab.com/badpixxel-projects/php-sdk:php-8.1
-#   needs:
-#     - functional:customers
-#     - functional:products
-#   variables:
-#      SPLASH_TYPES:   "Order,Invoices"
-#   <<: *functional_tests
+################################################################################
+# Functional Tests - Products
+functional:products:
+    extends:            functional:php-8.1
+    when:               always
+    needs:
+        - functional:customers
+    variables:
+        SPLASH_TYPES:   "Product"
 
-##################################################################
-### Build Documentation
-##################################################################
-#pages:
-#    image:      jekyll/minimal:latest
-#    stage:      deploy
-#    tags:       [ Dedicated-Docker ]
-#    only:
-#        - master
-#  ################################################################################
-#    # Run Test Script
-#    script:
-#        - wget -qO - https://gitlab.com/badpixxel-robo/jekyll/-/raw/main/scripts/gitlab-pages.sh | sh
-#    artifacts:
-#        paths:
-#            - public
+################################################################################
+# Functional Tests - Orders & Invoices
+functional:orders:
+    extends:            functional:php-8.1
+    when:               always
+    needs:
+        - functional:customers
+        - functional:products
+    variables:
+        SPLASH_TYPES:   "Order,Invoices"
