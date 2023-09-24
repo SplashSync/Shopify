@@ -124,6 +124,12 @@ trait CRUDTrait
         // Default Setup for New Product Variant
         $this->setSimple("inventory_management", "shopify", "variant");
 
+        //====================================================================//
+        // Take Time in Tests Phases
+        if (Splash::isTravisMode()) {
+            sleep(1);
+        }
+
         return $this->object;
     }
 
@@ -171,7 +177,7 @@ trait CRUDTrait
         //====================================================================//
         // Take Time in Tests Phases
         if (Splash::isTravisMode()) {
-            usleep(250000);
+            sleep(1);
         }
 
         return $objectId;
