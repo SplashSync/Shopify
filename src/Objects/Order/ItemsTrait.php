@@ -411,7 +411,7 @@ trait ItemsTrait
      */
     private function getItemDiscount(array $line)
     {
-        $price = (int) ($line['price'] ?? null);
+        $price = (float) ($line['price'] ?? null);
         //====================================================================//
         // Line has no Discounts
         if (empty($line['discount_allocations']) || empty($price)) {
