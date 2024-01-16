@@ -34,7 +34,7 @@
         "php":                                          "^8.0",
         "ext-json":                                     "*",
         "splash/php-bundle":                            "dev-master",
-        "slince/shopify-api-php":                       "^3.0",
+        "slince/shopify-api-php":                       "^3.1.0",
         "knpuniversity/oauth2-client-bundle":           "~2.0",
         "nategood/httpful":                             "@stable"
     },
