@@ -21,7 +21,14 @@ include:
   - remote: 'https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/gitlab/php/connectors.yaml'
 
 #################################################################
-## Functional Tests
+# Quality Tests
+#################################################################
+
+quality:php-8.1:
+  when: manual
+
+#################################################################
+# Functional Tests
 #################################################################
 
 functional:php-8.1:
