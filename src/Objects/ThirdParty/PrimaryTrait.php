@@ -32,7 +32,7 @@ trait PrimaryTrait
         //====================================================================//
         // Add a Min Test delay in Phpunit Tests
         if (Splash::isTravisMode()) {
-            sleep(5);
+            sleep(10);
         }
         //====================================================================//
         // Safety Checks
