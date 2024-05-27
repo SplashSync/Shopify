@@ -41,6 +41,7 @@ class Order extends AbstractStandaloneObject implements PrimaryKeysAwareInterfac
     // Shopify Core Traits
     use Core\DatesTrait;
     use Core\MetadataTrait;
+    use Core\OriginTrait;
 
     // Shopify Orders Traits
     use Order\CRUDTrait;
@@ -56,6 +57,7 @@ class Order extends AbstractStandaloneObject implements PrimaryKeysAwareInterfac
     use Order\ShippingTrait;
     use Order\FulfillmentTrait;
     use Order\LogisticModeTrait;
+    use Order\TotalsTrait;
 
     //====================================================================//
     // Object Definition Parameters

@@ -19,14 +19,12 @@
 ################################################################################
 # Docker Compose File
 #
-# This Docker File intend to Create a Complete Dev Envirenement 
+# This Docker File intend to Create a Complete Dev Environment
 # for Splash Modules
 # 
 # 172.115.0.100       toolkit.shopify.local
 #
 ################################################################################
-
-version: "3.2"
 
 services:
     ################################################################################

@@ -40,6 +40,7 @@ class Invoice extends AbstractObject implements PrimaryKeysAwareInterface
     // Shopify Core Traits
     use Core\DatesTrait;
     use Core\MetadataTrait;
+    use Core\OriginTrait;
 
     // Shopify Orders Traits
     use Order\CRUDTrait;
