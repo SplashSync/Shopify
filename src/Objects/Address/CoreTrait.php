@@ -15,7 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects\Address;
 
-use Splash\Core\SplashCore  as Splash;
+use Splash\Core\SplashCore as Splash;
 
 /**
  * Shopify ThirdParty Address Core Fields (Required)

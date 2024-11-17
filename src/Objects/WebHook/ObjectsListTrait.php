@@ -13,7 +13,7 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\WebHook;
+namespace Splash\Connectors\Shopify\Objects\WebHook;
 
 use DateTime;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;

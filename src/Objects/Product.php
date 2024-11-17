@@ -18,7 +18,7 @@ namespace Splash\Connectors\Shopify\Objects;
 use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects;
 
 /**

@@ -17,7 +17,7 @@ namespace Splash\Connectors\Shopify\Widgets;
 
 use Splash\Bundle\Models\AbstractStandaloneWidget;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 
 /**
  * Shopify Config SelfTest

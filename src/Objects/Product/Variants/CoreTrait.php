@@ -15,7 +15,7 @@
 
 namespace Splash\Connectors\Shopify\Objects\Product\Variants;
 
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 
 /**
  * Prestashop Product Variant Core Data Access
