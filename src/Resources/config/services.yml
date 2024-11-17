@@ -18,6 +18,10 @@ services:
         alias: splash.connectors.shopify
 
     ################################################################################
+    # SPLASH Shopify MetaFields Manager
+    Splash\Connectors\Shopify\Services\MetaFieldsManager: ~
+
+    ################################################################################
     # SPLASH Shopify Scopes Manager
     Splash\Connectors\Shopify\Services\ScopesManagers: ~
 

@@ -26,6 +26,7 @@ use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
 use Splash\Connectors\Shopify\Controller as Actions;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
+use Splash\Connectors\Shopify\Models\ConnectorMetaFieldsTrait;
 use Splash\Connectors\Shopify\Models\ConnectorScopesTrait;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
@@ -47,6 +48,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     use GenericWidgetMapperTrait;
     use ConnectorConfigurationsTrait;
     use ConnectorScopesTrait;
+    use ConnectorMetaFieldsTrait;
 
     /**
      * Objects Type Class Map
@@ -89,6 +91,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         string $cacheDir,
         protected WebhooksManager $webhooksManager,
         protected ScopesManagers $scopesManagers,
+        protected MetaFieldsManager $metaFieldsManager,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
@@ -128,6 +131,53 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         if (!API::connect()) {
             return false;
         }
+
+        dump($this->metaFieldsManager->getList("PRODUCT"));
+
+        dump(API::post("graphql", array(
+            "query" => "query { 
+                metafieldDefinitions(first: 1, ownerType: PRODUCT) { 
+                    nodes {
+                        id
+                        key
+                        namespace
+                        description
+                        type { name, valueType }
+                        validations { type }
+                    }
+                    pageInfo {
+                      endCursor
+                      hasNextPage
+                      hasPreviousPage
+                      startCursor
+                    }
+                }
+            }"
+        ), "data"));
+
+        dump(API::post("graphql", array(
+            "query" => 'query { 
+                metafieldDefinitions(first: 250, after: "eyJsYXN0X2lkIjoyNzQ2Nzc0MzI4NSwibGFzdF92YWx1ZSI6IjI3NDY3NzQzMjg1In0=", ownerType: PRODUCT) { 
+                    nodes {
+                        id
+                        key
+                        namespace
+                        description
+                        type { name, valueType }
+                        validations { type }
+                    }
+                    pageInfo {
+                      endCursor
+                      hasNextPage
+                      hasPreviousPage
+                      startCursor
+                    }
+                }
+            }'
+        ), "data"));
+
+        dd(Splash::log()->getRawLog());
+
         //====================================================================//
         // Get Shop Informations
         if (!$this->fetchShopInformations()) {
