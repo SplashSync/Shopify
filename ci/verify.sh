@@ -19,7 +19,7 @@
 ################################################################################
 # Start Docker Compose Stack
 echo '===> Start Docker Stack'
-docker-compose up -d
+docker compose up -d
 
 ################################################################################
 # Docker Compose Container you want to check
@@ -27,7 +27,7 @@ CONTAINERS="php-8.2,php-8.1"
 ################################################################################
 # Start Docker Compose Stack
 echo '===> Start Docker Stack'
-docker-compose up -d
+docker compose up -d
 
 ######################################
 # Run Grumphp Test Suites Locally
@@ -39,7 +39,7 @@ for ID in $(echo $CONTAINERS | tr "," "\n")
 do
     echo "===> Checks $ID"
     # Run Composer Update
-    docker-compose exec $ID composer update -q || composer update
+    docker compose exec $ID composer update -q || composer update
     # Run Grumphp Test Suites
-    docker-compose exec $ID wall-e grumphp:full
+    docker compose exec $ID wall-e grumphp:full
 done
