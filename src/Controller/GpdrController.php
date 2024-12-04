@@ -42,7 +42,7 @@ class GpdrController extends AbstractController
 
     public function __construct(
         private ClientRegistry $clientRegistry,
-        private MailerInterface $mailer
+        private ?MailerInterface $mailer = null
     ) {
     }
 
@@ -150,7 +150,7 @@ class GpdrController extends AbstractController
         ;
 
         try {
-            $this->mailer->send($message);
+            $this->mailer?->send($message);
         } catch (TransportExceptionInterface $e) {
             return;
         }
