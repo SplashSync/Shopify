@@ -36,7 +36,7 @@ class ShopifyHelper
     /**
      * API Version to Use
      */
-    const API_VERSION = "2024-01";
+    const API_VERSION = "2024-10";
 
     /**
      * @var string
