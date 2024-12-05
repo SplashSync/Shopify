@@ -124,12 +124,6 @@ trait CRUDTrait
         // Default Setup for New Product Variant
         $this->setSimple("inventory_management", "shopify", "variant");
 
-        //====================================================================//
-        // Take Time in Tests Phases
-        if (Splash::isTravisMode()) {
-            sleep(1);
-        }
-
         return $this->object;
     }
 
@@ -177,7 +171,7 @@ trait CRUDTrait
         //====================================================================//
         // Take Time in Tests Phases
         if (Splash::isTravisMode()) {
-            sleep(1);
+            $this->ensureTitleUpdate();
         }
 
         return $objectId;
@@ -249,5 +243,31 @@ trait CRUDTrait
         }
 
         return $baseUri;
+    }
+
+    /**
+     * During Intensive Tests, Title is NOT Always Updated
+     * This awful, but the most efficient solution...
+     */
+    private function ensureTitleUpdate(): void
+    {
+        //====================================================================//
+        // Ensure Title is Updated
+        for ($i = 0; $i < 10; $i++) {
+            //====================================================================//
+            // Get Product from Api
+            $product = API::get(self::getUri($this->productId), null, array(), "product");
+            if ($product && ($product['title'] == $this->object->title)) {
+                return;
+            }
+            //====================================================================//
+            // Set Product with Another Title
+            API::put(self::getUri($this->productId), array("product" => array(
+                "title" => $this->object->title."Alt",
+            )));
+            //====================================================================//
+            // Redo Set Product with Expected Title
+            API::put(self::getUri($this->productId), array("product" => $this->object));
+        }
     }
 }
