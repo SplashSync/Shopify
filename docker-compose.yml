@@ -30,8 +30,8 @@ services:
     ################################################################################
     # Splash Toolkit Container   
     shopify:
-        image: 'splashsync/toolkit:alpine'
-        container_name: toolkit.shopify.local
+        image:              'splashsync/toolkit'
+        container_name:     toolkit.shopify.local
         volumes:
             # Specify Local Configuration Files
             - ./.env:/app/.env:ro
