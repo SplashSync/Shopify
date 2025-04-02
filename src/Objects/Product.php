@@ -18,7 +18,7 @@ namespace Splash\Connectors\Shopify\Objects;
 use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects;
 
 /**
@@ -44,6 +44,7 @@ class Product extends AbstractStandaloneObject
     use Product\CoreTrait;
     use Product\ImagesTrait;
     use Product\TagsTrait;
+    use Product\ProductMetaFieldsTrait;
     use Product\VariantsTrait;
     use Product\Variants\MainTrait;
     use Product\Variants\StockTrait;
