@@ -16,7 +16,7 @@
 namespace Splash\Connectors\Shopify\Objects\Order;
 
 use DateTimeInterface;
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects\Order\Status;
 
 /**

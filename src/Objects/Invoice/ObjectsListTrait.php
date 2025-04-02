@@ -13,7 +13,7 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\Invoice;
+namespace Splash\Connectors\Shopify\Objects\Invoice;
 
 use Exception;
 use Slince\Shopify\Model\Orders\Order;

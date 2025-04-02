@@ -13,7 +13,7 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\ThirdParty;
+namespace Splash\Connectors\Shopify\Objects\ThirdParty;
 
 use Slince\Shopify\Model\Customers\Customer;
 use Splash\Client\Splash;

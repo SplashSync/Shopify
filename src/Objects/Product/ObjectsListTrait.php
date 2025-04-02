@@ -13,7 +13,7 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\Product;
+namespace Splash\Connectors\Shopify\Objects\Product;
 
 use Exception;
 use Slince\Shopify\Model\Products\Product;

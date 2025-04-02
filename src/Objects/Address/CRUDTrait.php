@@ -18,7 +18,7 @@ namespace Splash\Connectors\Shopify\Objects\Address;
 use ArrayObject;
 use Splash\Connectors\Shopify\Helpers\OrderAddressHelper;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 
 /**
  * Shopify Contacts Address CRUD Functions

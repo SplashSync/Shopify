@@ -13,7 +13,7 @@
  *  file that was distributed with this source code.
  */
 
-namespace   Splash\Connectors\Shopify\Objects\Address;
+namespace Splash\Connectors\Shopify\Objects\Address;
 
 use Slince\Shopify\Model\Customers\Customer;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;

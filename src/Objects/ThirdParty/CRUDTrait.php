@@ -17,7 +17,7 @@ namespace Splash\Connectors\Shopify\Objects\ThirdParty;
 
 use ArrayObject;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
-use Splash\Core\SplashCore      as Splash;
+use Splash\Core\SplashCore as Splash;
 
 /**
  * Shopify Customer CRUD Functions
