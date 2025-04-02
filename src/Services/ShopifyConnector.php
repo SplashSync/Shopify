@@ -131,53 +131,6 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         if (!API::connect()) {
             return false;
         }
-
-        dump($this->metaFieldsManager->getList("PRODUCT"));
-
-        dump(API::post("graphql", array(
-            "query" => "query { 
-                metafieldDefinitions(first: 1, ownerType: PRODUCT) { 
-                    nodes {
-                        id
-                        key
-                        namespace
-                        description
-                        type { name, valueType }
-                        validations { type }
-                    }
-                    pageInfo {
-                      endCursor
-                      hasNextPage
-                      hasPreviousPage
-                      startCursor
-                    }
-                }
-            }"
-        ), "data"));
-
-        dump(API::post("graphql", array(
-            "query" => 'query { 
-                metafieldDefinitions(first: 250, after: "eyJsYXN0X2lkIjoyNzQ2Nzc0MzI4NSwibGFzdF92YWx1ZSI6IjI3NDY3NzQzMjg1In0=", ownerType: PRODUCT) { 
-                    nodes {
-                        id
-                        key
-                        namespace
-                        description
-                        type { name, valueType }
-                        validations { type }
-                    }
-                    pageInfo {
-                      endCursor
-                      hasNextPage
-                      hasPreviousPage
-                      startCursor
-                    }
-                }
-            }'
-        ), "data"));
-
-        dd(Splash::log()->getRawLog());
-
         //====================================================================//
         // Get Shop Informations
         if (!$this->fetchShopInformations()) {
@@ -198,7 +151,11 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         if (!$this->fetchLocationsLists()) {
             return false;
         }
-
+        //====================================================================//
+        // Get List of Available MetaFields
+        if (!$this->fetchMetaFieldsLists()) {
+            return false;
+        }
         //====================================================================//
         // Update Connector Settings
         $this->updateConfiguration();
