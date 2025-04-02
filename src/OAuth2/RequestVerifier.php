@@ -91,12 +91,9 @@ class RequestVerifier
             http_build_query($queryValues),
             $clientSecret
         );
+
         //==============================================================================
         // Verify Request HMAC
-        if (empty($requestHmac)) {
-            return false;
-        }
-
         return hash_equals($requestHmac, $queryHmac);
     }
 
