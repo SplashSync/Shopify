@@ -15,6 +15,8 @@
 
 namespace Splash\Connectors\Shopify\Models;
 
+use Splash\Client\Splash;
+
 trait ConnectorConfigurationsTrait
 {
     /**
@@ -121,5 +123,17 @@ trait ConnectorConfigurationsTrait
     public function hasMondialRelayPlugin(): bool
     {
         return !empty($this->getParameter("MondialRelay", false));
+    }
+
+    /**
+     * Check if MetaFields Feature is Enabled.
+     *
+     * @return bool
+     */
+    public function hasMetaFieldsFeature(): bool
+    {
+        return Splash::isDebugMode()
+            || !empty($this->getParameter("MetaFields", false))
+        ;
     }
 }

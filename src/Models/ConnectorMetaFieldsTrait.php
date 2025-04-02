@@ -15,35 +15,39 @@
 
 namespace Splash\Connectors\Shopify\Models;
 
+use Splash\Connectors\Shopify\Services\MetaFieldsManager;
+
 trait ConnectorMetaFieldsTrait
 {
     /**
-     * Get Shopify MetaFields from GraphQl API
+     * Get Shopify MetaFields Manager
+     */
+    public function getMetaFieldsManager(): MetaFieldsManager
+    {
+        return $this->metaFieldsManager;
+    }
+
+    /**
+     * Get List of Shopify MetaFields
      *
      * @return bool
      */
-    public function fetchMetaFields(): bool
+    private function fetchMetaFieldsLists(): bool
     {
-        return $this->metaFieldsManager->getList($this);
-    }
+        //====================================================================//
+        // Check if MetaFields feature is Active
+        $isActive = $this->hasMetaFieldsFeature();
+        //====================================================================//
+        // Collect Products MetaFields
+        $this->setParameter(
+            "MetaFieldsProducts",
+            $isActive ? $this->metaFieldsManager->getList("PRODUCT") : array()
+        );
+        $this->setParameter(
+            "MetaFieldsProductsVariants",
+            $isActive ? $this->metaFieldsManager->getList("PRODUCTVARIANT") : array()
+        );
 
-//    /**
-//     * Get Shopify Access Scope from Parameters
-//     *
-//     * @return string[]
-//     */
-//    public function getAccessScopes(): array
-//    {
-//        return $this->scopesManagers->getAccessScopes($this);
-//    }
-//
-//    /**
-//     * Get List of Missing Access Scopes.
-//     *
-//     * @return string[]
-//     */
-//    public function getMissingScopes() : array
-//    {
-//        return $this->scopesManagers->getMissingScopes($this);
-//    }
+        return true;
+    }
 }
