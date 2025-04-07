@@ -26,6 +26,7 @@ use Splash\Bundle\Models\Connectors\GenericWidgetMapperTrait;
 use Splash\Connectors\Shopify\Controller as Actions;
 use Splash\Connectors\Shopify\Form\ExtendedEditFormType;
 use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
+use Splash\Connectors\Shopify\Models\ConnectorMetaFieldsTrait;
 use Splash\Connectors\Shopify\Models\ConnectorScopesTrait;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
 use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
@@ -47,6 +48,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
     use GenericWidgetMapperTrait;
     use ConnectorConfigurationsTrait;
     use ConnectorScopesTrait;
+    use ConnectorMetaFieldsTrait;
 
     /**
      * Objects Type Class Map
@@ -89,6 +91,7 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         string $cacheDir,
         protected WebhooksManager $webhooksManager,
         protected ScopesManagers $scopesManagers,
+        protected MetaFieldsManager $metaFieldsManager,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger
     ) {
@@ -148,7 +151,11 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         if (!$this->fetchLocationsLists()) {
             return false;
         }
-
+        //====================================================================//
+        // Get List of Available MetaFields
+        if (!$this->fetchMetaFieldsLists()) {
+            return false;
+        }
         //====================================================================//
         // Update Connector Settings
         $this->updateConfiguration();
