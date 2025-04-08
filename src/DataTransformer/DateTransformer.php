@@ -15,8 +15,8 @@
 
 namespace Splash\Connectors\Shopify\DataTransformer;
 
-use DateMalformedStringException;
 use DateTime;
+use Exception;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class DateTransformer implements DataTransformerInterface
@@ -32,7 +32,7 @@ class DateTransformer implements DataTransformerInterface
 
         try {
             $dateTime = new DateTime($value);
-        } catch (DateMalformedStringException $e) {
+        } catch (Exception $e) {
             return null;
         }
 
@@ -50,7 +50,7 @@ class DateTransformer implements DataTransformerInterface
 
         try {
             $dateTime = new DateTime($value);
-        } catch (DateMalformedStringException $e) {
+        } catch (Exception $e) {
             return null;
         }
 
