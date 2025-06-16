@@ -237,7 +237,7 @@ class ShopifyHelper
         //====================================================================//
         // Perform Request
         try {
-            $response = self::$client->createRequest('GET', self::$client->buildUrl($path, false), array(
+            $response = self::$client->createRequest('GET', self::$client->buildUrl($path, ""), array(
                 'query' => $query,
             ));
         } catch (ClientException $ex) {
