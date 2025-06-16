@@ -33,7 +33,7 @@
     "require": {
         "php":                                          "^8.1",
         "ext-json":                                     "*",
-        "splash/php-bundle":                            "dev-master",
+        "splash/php-bundle":                            "^2.0",
         "slince/shopify-api-php":                       "^3.1.0",
         "knpuniversity/oauth2-client-bundle":           "~2.0",
         "nategood/httpful":                             "@stable"
@@ -41,7 +41,7 @@
     
     "require-dev": {
         "badpixxel/php-sdk":                            "~2.0",
-        "splash/toolkit":                               "^3.0.x-dev"
+        "splash/toolkit":                               "^2.5.x-dev"
     },
 
     "scripts": {
