@@ -50,7 +50,7 @@ trait MetaFieldsMapperTrait
                 ->create($splashType, $fieldId)
                 ->name($name)
                 ->description($desc)
-                ->microData("http://meta.schema.org/additionalType", $fieldId)
+                ->microData(MetaFieldTransformer::getItemType($owner), $name)
                 ->group($group)
             ;
         }

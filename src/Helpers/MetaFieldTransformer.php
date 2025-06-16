@@ -96,6 +96,19 @@ class MetaFieldTransformer
     }
 
     /**
+     * Convert MetaField Owner to Field ItemType
+     */
+    public static function getItemType(string $owner) : string
+    {
+        Assert::stringNotEmpty($owner);
+
+        return match ($owner) {
+            "products" => "http://schema.org/Product",
+            default => "http://meta.schema.org/additionalType"
+        };
+    }
+
+    /**
      * Extract MetaField Data Value
      */
     public static function getValue(array $metaData) : null|bool|int|float|string|array
