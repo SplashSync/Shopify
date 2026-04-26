@@ -41,7 +41,8 @@
     
     "require-dev": {
         "badpixxel/php-sdk":                            "~2.0",
-        "splash/toolkit":                               "^2.5.x-dev"
+        "splash/toolkit":                               "^2.5.x-dev",
+        "splash/bridge-builder":                        "^3.0"
     },
 
     "scripts": {
@@ -57,6 +58,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "post-build-cmd": [
+            "php bin/console cache:clear --env=prod --no-debug",
+            "php bin/console assets:install  --env=prod --no-debug"
         ]
     },
 
@@ -66,12 +71,46 @@
 
     "config": {
         "allow-plugins": {
-            "phpro/grumphp":    true,
-            "symfony/runtime":  true
+            "phpro/grumphp": true,
+            "symfony/runtime": true,
+            "php-http/discovery": true,
+            "phpro/grumphp-shim": true
         }
     },
 
     "extra": {
-        "public-dir": "tests/public"
+        "public-dir": "tests/public",
+        "splash-bridge": {
+            "name":             "shopify",
+            "version":          "2.0",
+            "php-version":      "8.3.30",
+            "php-build":        "bulk",
+            "connector":        "Splash\\Connectors\\Shopify\\Services\\ShopifyConnector",
+            "sources": {
+                "connector/Shopify":                    "src",
+                "config":                               "stubs/config/"
+            },
+            "require": {
+                "ext-json":                             "*",
+                "splash/php-bundle":                    "2.0.x-dev",
+                "slince/shopify-api-php":               "3.1.0",
+                "knpuniversity/oauth2-client-bundle":   "~2.0",
+                "nategood/httpful":                     "^1.0",
+                "symfony/console":                      "^5.4",
+                "symfony/http-kernel":                  "^5.4",
+                "symfony/framework-bundle":             "^5.4",
+                "symfony/twig-bundle":                  "^5.4",
+                "symfony/translation":                  "^5.4",
+                "symfony/routing":                      "^5.4",
+                "symfony/form":                         "^5.4",
+                "symfony/yaml":                         "^5.4",
+                "symfony/runtime":                      "^5.4",
+                "symfony/validator":                    "^5.4",
+                "symfony/monolog-bundle":               "*",
+                "monolog/monolog":                      "^2.0|^3.0",
+                "doctrine/collections":                 "^2.0",
+                "doctrine/annotations":                 "^2.0"
+            }
+        }
     }
 }

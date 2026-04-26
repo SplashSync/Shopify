@@ -1,6 +1,7 @@
 
 ###> symfony/framework-bundle ###
 /.env
+/.claude
 /public/bundles/
 /var/
 /vendor/
@@ -21,3 +22,4 @@
 /.phpunit.result.cache
 /tests/.env
 /tests/public/bundles/
+/dist/

@@ -1,0 +1,10 @@
+# Framework Configuration
+framework:
+    secret:             "%env(string:APP_SECRET)%"
+    default_locale:     en
+    translator:
+        fallbacks:      [ en ]
+    form:               true
+    csrf_protection:    false
+    validation:         { enable_annotations: true }
+    property_access:    true

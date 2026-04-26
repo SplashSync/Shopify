@@ -98,6 +98,17 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         parent::__construct($eventDispatcher, $logger);
         $this->setSplashType("shopify");
         $this->cacheDir = $cacheDir;
+        //====================================================================//
+        // Safety Check => Ensure Cache Directory is Writable
+        // This is Required for Splash Bridge Connectors
+        if (!is_dir($this->cacheDir) || !is_writable($this->cacheDir)) {
+            $this->cacheDir = sprintf(
+                "%s/%s/%s",
+                sys_get_temp_dir(),
+                "splash/cache-shopify",
+                md5(__FILE__)
+            );
+        }
     }
 
     /**

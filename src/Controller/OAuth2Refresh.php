@@ -22,7 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Refresh Shopify OAuth2 Access Token
@@ -43,8 +43,11 @@ class OAuth2Refresh extends AbstractController
      *
      * @return Response
      */
-    public function __invoke(Request $request, AbstractConnector $connector): Response
-    {
+    public function __invoke(
+        Request $request,
+        AbstractConnector $connector,
+        TranslatorInterface $translator
+    ): Response {
         $result = false;
         //====================================================================//
         // Safety Check
@@ -59,8 +62,6 @@ class OAuth2Refresh extends AbstractController
         }
         //====================================================================//
         // Inform User
-        /** @var Translator $translator */
-        $translator = $this->get('translator');
         $this->addFlash(
             $result ? "success" : "danger",
             $translator->trans(

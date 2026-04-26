@@ -23,14 +23,17 @@
 # for Splash Modules
 # 
 # 172.115.0.100       toolkit.shopify.local
+# 172.115.0.101       toolkit-3.0.shopify.local
 #
 ################################################################################
+
+name: "splash-shopify-rest"
 
 services:
     ################################################################################
     # Splash Toolkit Container   
-    shopify:
-        image:              'splashsync/toolkit'
+    toolkit:
+        image:              'splashsync/toolkit:2.0'
         container_name:     toolkit.shopify.local
         volumes:
             # Specify Local Configuration Files
@@ -44,6 +47,22 @@ services:
         networks:
             shopify:        { ipv4_address: 172.115.0.100, aliases: [ toolkit.shopify.local ] }            
             splashsync:     { aliases: [ toolkit.shopify.local ] }            
+
+    ################################################################################
+    # Splash Toolkit 3.0 Container
+    toolkit-3.0:
+        image:              'splashsync/toolkit:3.0'
+        container_name:     toolkit-3.0.shopify.local
+        volumes:
+            # Specify Local Configuration File
+            - ./.env:/app/.env:ro
+            - ./config/packages/splash.yaml:/app/config/packages/splash.yaml:ro
+            # Inject Compiled Connector
+            - ./dist:/app/bridges/
+        hostname:           toolkit-3.0.shopify.local
+        networks:
+            shopify:        { ipv4_address: 172.115.0.103, aliases: [ toolkit-3.0.shopify.local ] }
+            splashsync:     { aliases: [ toolkit-3.0.shopify.local ] }
 
     ################################################################################
     # PHP 8.2

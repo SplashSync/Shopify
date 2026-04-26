@@ -20,6 +20,13 @@
 include:
   - remote: 'https://raw.githubusercontent.com/BadPixxel/Php-Sdk/main/gitlab/php/connectors.yaml'
 
+################################################################
+# Defined Pipeline Stages
+stages:
+  - Quality
+  - Builds
+  - Functional
+
 #################################################################
 # Quality Tests
 #################################################################
@@ -65,3 +72,24 @@ functional:orders:
         - functional:products
     variables:
         SPLASH_TYPES:   "Order,Invoice"
+
+################################################################
+# Build Bridge Connector via Bridge Builder
+# --publish uploads .splx/.phar to the GitLab Generic Package Registry
+# (skipped on scheduled pipelines, non-protected branches, or missing CI env)
+build:bridge:
+    image:          registry.gitlab.com/badpixxel-projects/php-sdk:php-8.3
+    stage:          Builds
+    tags:
+        - Dedicated
+    before_script:
+        - composer update
+    script:
+        # Build native variant (produces shopify.splx)
+        - php -d phar.readonly=0 vendor/bin/bridge-builder --native
+        # Build versioned variant (produces shopify-2.0.splx) and publish all dist/*.splx at once
+        - php -d phar.readonly=0 vendor/bin/bridge-builder --publish
+    artifacts:
+        paths:
+            - dist/
+        expire_in:  1 week
