@@ -21,9 +21,11 @@ use Httpful\Request;
 use Slince\Shopify\Client;
 use Slince\Shopify\CredentialInterface;
 use Slince\Shopify\Exception\ClientException;
+use Slince\Shopify\Middleware\MiddlewareChain;
 use Slince\Shopify\PrivateAppCredential;
 use Slince\Shopify\PublicAppCredential;
 use Splash\Connectors\Shopify\Helpers\CachedCursorPagination;
+use Splash\Connectors\Shopify\Middleware\ShopifyThrottleMiddleware;
 use Splash\Core\SplashCore as Splash;
 
 /**
@@ -79,6 +81,9 @@ class ShopifyHelper
             self::$client = new Client(self::$endpoint, self::$credential, array(
                 'meta_cache_dir' => $metaCacheDir,
                 'api_version' => self::API_VERSION,
+                'middlewares' => new MiddlewareChain(array(
+                    new ShopifyThrottleMiddleware(),
+                )),
             ));
         } catch (Exception $ex) {
             Splash::log()->err($ex->getMessage());
@@ -122,6 +127,9 @@ class ShopifyHelper
             self::$client = new Client(self::$endpoint, self::$credential, array(
                 'meta_cache_dir' => $metaCacheDir,
                 'api_version' => self::API_VERSION,
+                'middlewares' => new MiddlewareChain(array(
+                    new ShopifyThrottleMiddleware(),
+                )),
             ));
         } catch (Exception $ex) {
             Splash::log()->err($ex->getMessage());
