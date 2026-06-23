@@ -7,7 +7,9 @@
 #}
 {% if not connect and connector.hasValidShopifyHost%}
     <a
-            id="node-webhooks-btn" class="btn-lg btn-block btn-primary text-center"
+            id="node-webhooks-btn"
+            class="btn-lg btn-block btn-primary text-center"
+            target="_blank"
             href="{{ path('splash_connector_secured_action', {
                 "connectorName" :   connector.profile.name,
                 "webserviceId" :    connector.WebserviceId,
@@ -28,7 +30,9 @@
     </h4>
 
     <a
-            id="node-webhooks-btn" class="btn-lg btn-block btn-warning text-center"
+            id="node-webhooks-btn"
+            class="btn-lg btn-block btn-warning text-center"
+            target="_blank"
             href="{{ path('splash_connector_secured_action', {
                 "connectorName" :   connector.profile.name,
                 "webserviceId" :    connector.WebserviceId,
