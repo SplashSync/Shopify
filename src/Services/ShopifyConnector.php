@@ -29,7 +29,6 @@ use Splash\Connectors\Shopify\Models\ConnectorConfigurationsTrait;
 use Splash\Connectors\Shopify\Models\ConnectorMetaFieldsTrait;
 use Splash\Connectors\Shopify\Models\ConnectorScopesTrait;
 use Splash\Connectors\Shopify\Models\ShopifyHelper as API;
-use Splash\Connectors\Shopify\OAuth2\ShopifyAdapter;
 use Splash\Connectors\Shopify\Objects;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Helpers\ImagesHelper;
@@ -412,52 +411,12 @@ class ShopifyConnector extends AbstractConnector implements PrimaryKeysInterface
         return array(
             "connect" => Actions\OAuth2Connect::class,
             "webhooks" => Actions\SetupWebhooks::class,
-            "refresh" => Actions\OAuth2Refresh::class,
         );
     }
 
     //====================================================================//
     //  HIGH LEVEL WEBSERVICE CALLS
     //====================================================================//
-
-    /**
-     * Try Refresh of Shopify Access Token
-     *
-     * @param string $refreshToken
-     *
-     * @return bool
-     */
-    public function refreshAccessToken(string $refreshToken) : bool
-    {
-        //====================================================================//
-        // Safety Check => Verify Self test Pass
-        if (!$this->selfTest() || empty($refreshToken)) {
-            return false;
-        }
-        //====================================================================//
-        // Request a New Access Token
-        $authConfig = ShopifyAdapter::getConfig();
-        $clientConfig = $this->getConfiguration();
-        $query = array(
-            "client_id" => $authConfig["client_id"],
-            "client_secret" => $authConfig["client_secret"],
-            "refresh_token" => $refreshToken,
-            "access_token" => $clientConfig["Token"],
-        );
-        $response = API::postRaw("oauth/access_token", array('json' => $query));
-        //====================================================================//
-        // Store New Access Token
-        if ($response && isset($response['access_token'])) {
-            $this->setParameter("Token", $response['access_token']);
-            //====================================================================//
-            // Update Connector Settings
-            $this->updateConfiguration();
-
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Check & Update Shopify Api Account WebHooks.

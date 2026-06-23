@@ -46,4 +46,14 @@ trait ConnectorScopesTrait
     {
         return $this->scopesManagers->getMissingScopes($this);
     }
+
+    /**
+     * Get the Full List of Scopes Required by this Connector.
+     *
+     * @return string[]
+     */
+    public function getRequiredScopes() : array
+    {
+        return $this->scopesManagers->getRequiredScopes($this);
+    }
 }

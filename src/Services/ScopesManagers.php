@@ -31,7 +31,6 @@ class ScopesManagers
         'read_inventory', 'write_inventory',
         // Access to Order, Transaction and Fulfillment.
         'read_orders', 'write_orders',
-        'read_all_orders',
         // Access to Fulfillment
         'read_fulfillments', 'write_fulfillments',
     );
@@ -45,6 +44,51 @@ class ScopesManagers
         // Access to Fulfillment
         'read_assigned_fulfillment_orders', 'write_assigned_fulfillment_orders',
     );
+
+    /**
+     * Scopes for Full Order History Mode
+     *
+     * Restricted Shopify scope: 'read_orders' only exposes the last 60 days,
+     * 'read_all_orders' unlocks older orders but requires Shopify approval.
+     */
+    const ALL_ORDERS_SCOPES = array(
+        // Access to Orders older than 60 days
+        'read_all_orders',
+    );
+
+    /**
+     * @param bool $allOrdersApproved Deployment is approved by Shopify for the read_all_orders scope
+     */
+    public function __construct(
+        private readonly bool $allOrdersApproved = false,
+    ) {
+    }
+
+    /**
+     * Get the Full List of Scopes Required by this Connector.
+     *
+     * @param ShopifyConnector $connector
+     *
+     * @return string[]
+     */
+    public function getRequiredScopes(ShopifyConnector $connector): array
+    {
+        //====================================================================//
+        // Default Scopes
+        $scopes = self::DEFAULT_SCOPES;
+        //====================================================================//
+        // Logistic Mode Scopes
+        if ($connector->hasLogisticMode()) {
+            $scopes = array_merge($scopes, self::LOGISTIC_SCOPES);
+        }
+        //====================================================================//
+        // Full Order History Scope (restricted, gated by deployment context)
+        if ($this->hasAllOrders($connector)) {
+            $scopes = array_merge($scopes, self::ALL_ORDERS_SCOPES);
+        }
+
+        return $scopes;
+    }
 
     /**
      * Get Shopify Access Scope from APi
@@ -100,13 +144,27 @@ class ScopesManagers
      */
     public function getMissingScopes(ShopifyConnector $connector) : array
     {
-        //====================================================================//
-        // Build Required Scope List
-        $required = self::DEFAULT_SCOPES;
-        if ($connector->hasLogisticMode()) {
-            $required = array_merge($required, self::LOGISTIC_SCOPES);
-        }
+        return array_diff(
+            $this->getRequiredScopes($connector),
+            $this->getAccessScopes($connector)
+        );
+    }
 
-        return array_diff($required, $this->getAccessScopes($connector));
+    /**
+     * Check if the read_all_orders Scope (orders older than 60 days) is Allowed.
+     *
+     * Restricted Shopify scope: only requested when BOTH conditions hold:
+     *  - the deployment is approved by Shopify (validated cloud, ENV flag), AND
+     *  - the connector is NOT a Private/Custom App. Shopify does not allow a
+     *    self-hosted custom App to be created with this scope, so we never
+     *    request it there (it would break the Oauth2 authorization).
+     *
+     * @param ShopifyConnector $connector
+     *
+     * @return bool
+     */
+    private function hasAllOrders(ShopifyConnector $connector): bool
+    {
+        return $this->allOrdersApproved && !$connector->hasPrivateAppCredentials();
     }
 }

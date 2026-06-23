@@ -19,7 +19,6 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
-use Splash\Bundle\Models\AbstractConnector;
 use Splash\Connectors\Shopify\Models\ShopifyStore;
 use Splash\Connectors\Shopify\Services\ScopesManagers;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
@@ -31,6 +30,19 @@ use Symfony\Component\HttpFoundation\Request;
 class ShopifyAdapter extends AbstractProvider
 {
     const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
+
+    /**
+     * Registration Code of the Public App Shopify Oauth2 Client.
+     */
+    const CLIENT_CODE = "shopify";
+
+    /**
+     * Registration Code of the Private/Custom App Shopify Oauth2 Client.
+     *
+     * Same provider, but credentials are injected at runtime from the connector
+     * so the public client is never mutated.
+     */
+    const CLIENT_CODE_PRIVATE = "shopify_private";
 
     /**
      * @var string This will be prepended to the base uri.
@@ -47,23 +59,6 @@ class ShopifyAdapter extends AbstractProvider
     protected string $accessType;
 
     /**
-     * @var array
-     */
-    private static array $config = array(
-        // Shopify OAuth2 Provider
-        "type" => "generic",
-        "provider_class" => ShopifyAdapter::class,
-        // Shopify Public App Options!
-        "client_id" => "%env(resolve:SHOPIFY_API_KEY)%",
-        "client_secret" => "%env(resolve:SHOPIFY_API_SECRET)%",
-        // Shopify Redirect Route Definition
-        "redirect_route" => "splash_connector_action_master",
-        "redirect_params" => array(
-            "connectorName" => "shopify",
-        ),
-    );
-
-    /**
      * @var string[]
      */
     private array $accessScopes = ScopesManagers::DEFAULT_SCOPES;
@@ -75,18 +70,30 @@ class ShopifyAdapter extends AbstractProvider
      */
     public static function getConfig(): array
     {
-        return self::$config;
+        return array(
+            // Shopify OAuth2 Provider
+            "type" => "generic",
+            "provider_class" => ShopifyAdapter::class,
+            // Shopify Public App Options!
+            "client_id" => "%env(resolve:SHOPIFY_API_KEY)%",
+            "client_secret" => "%env(resolve:SHOPIFY_API_SECRET)%",
+            // Shopify Redirect Route Definition
+            "redirect_route" => "splash_connector_action_master",
+            "redirect_params" => array(
+                "connectorName" => "shopify",
+            ),
+        );
     }
 
     /**
      * Configure OAuth2 Client for User Connector
      *
-     * @param AbstractConnector $connector Shopify Connector
-     * @param null|string       $shop      Force Shop Url
+     * @param ShopifyConnector $connector Shopify Connector
+     * @param null|string      $shop      Force Shop Url
      *
      * @return $this
      */
-    public function configure(AbstractConnector $connector, string $shop = null): self
+    public function configure(ShopifyConnector $connector, string $shop = null): self
     {
         //==============================================================================
         // Configure Shopify Shop Url
@@ -94,16 +101,17 @@ class ShopifyAdapter extends AbstractProvider
         $shop = $shop ?? $connector->getParameter("WsHost");
         $this->shop = $shop;
         //==============================================================================
-        // Safety Check
-        if (!$connector instanceof ShopifyConnector) {
-            return $this;
+        // Inject Private/Custom App Credentials on the dedicated private client.
+        // The public client keeps its env credentials (never mutated).
+        $clientId = $connector->getParameter("apiKey");
+        $clientSecret = $connector->getParameter("apiSecret");
+        if (is_string($clientId) && $clientId && is_string($clientSecret) && $clientSecret) {
+            $this->clientId = $clientId;
+            $this->clientSecret = $clientSecret;
         }
         //==============================================================================
-        // Configure Access Scopes
-        $this->accessScopes = ScopesManagers::DEFAULT_SCOPES;
-        if ($connector->hasLogisticMode()) {
-            $this->accessScopes = array_merge($this->accessScopes, ScopesManagers::LOGISTIC_SCOPES);
-        }
+        // Configure Access Scopes (composition owned by the Scopes Manager)
+        $this->accessScopes = $connector->getRequiredScopes();
 
         return $this;
     }

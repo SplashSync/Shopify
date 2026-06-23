@@ -44,11 +44,17 @@ class ShopifyExtension extends Extension implements PrependExtensionInterface
     public function prepend(ContainerBuilder $container): void
     {
         //====================================================================//
-        // CONFIGURE Splash OAuth2 Shopify Client
+        // CONFIGURE Splash OAuth2 Shopify Clients
+        // Two clients share the same config: the public one keeps the env
+        // credentials, the private one gets the connector credentials injected
+        // at runtime (so the public client is never mutated).
         $container->prependExtensionConfig(
             "knpu_oauth2_client",
             array(
-                "clients" => array("shopify" => ShopifyAdapter::getConfig()),
+                "clients" => array(
+                    ShopifyAdapter::CLIENT_CODE => ShopifyAdapter::getConfig(),
+                    ShopifyAdapter::CLIENT_CODE_PRIVATE => ShopifyAdapter::getConfig(),
+                ),
             )
         );
     }
