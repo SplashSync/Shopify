@@ -3,17 +3,31 @@
 {% set selfTest = connector.selfTest %}
 {% set connect = connector.connect %}
 
-<div class="panel-group" id="accordion">
+<div class="panel-group accordion" id="accordion">
 
     <!-- Available OAuth2 Scopes Block -->
     <div class="panel panel-default card">
-        <div class="panel-heading card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false">
+        <div
+                class="panel-heading card-header collapsed"
+                data-toggle="collapse"
+                data-bs-toggle="collapse"
+                data-parent="#accordion"
+                href="#collapseOne"
+                data-bs-target="#collapseOne"
+                aria-expanded="false"
+                aria-controls="collapseOne"
+        >
             <h3 class="panel-title card-title text-primary">
                 <i class="fa fa-fw fa-key"></i>
                 {{ 'admin.scopes.title'|trans }}
             </h3>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false">
+        <div
+                id="collapseOne"
+                class="panel-collapse collapse"
+                data-bs-parent="#accordion"
+                aria-expanded="false"
+        >
             <div class="panel-body card-body">
                 {% include '@Shopify/Blocks/scopes.html.twig'  %}
             </div>
@@ -21,16 +35,29 @@
     </div>
     <!-- End Available OAuth2 Scopes Block -->
 
-
     <!-- Server Description Block -->
     <div class="panel panel-default card">
-        <div class="panel-heading card-header" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true">
+        <div
+                class="panel-heading card-header"
+                data-toggle="collapse"
+                data-bs-toggle="collapse"
+                data-parent="#accordion"
+                href="#collapseTwo"
+                data-bs-target="#collapseTwo"
+                aria-expanded="true"
+                aria-controls="collapseTwo"
+        >
             <h3 class="panel-title card-title text-primary">
                 <i class="fa fa-fw fa-info-circle"></i>
                 {{ 'admin.description.title'|trans }}
             </h3>
         </div>
-        <div id="collapseTwo" class="panel-collapse collapse show" aria-expanded="true">
+        <div
+                id="collapseTwo"
+                class="panel-collapse collapse in show"
+                data-bs-parent="#accordion"
+                aria-expanded="true"
+        >
             <div class="panel-body card-body">
                 {% include '@Shopify/Blocks/features.html.twig'  %}
             </div>
