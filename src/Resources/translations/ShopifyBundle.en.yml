@@ -66,3 +66,9 @@ admin:
         enabled:    Happy Commerce Colissimo Detection is Enabled
     mondial-relay:
         enabled:    Mondial Relay Detection is Enabled
+
+## Node OAuth2 Callback
+oauth2:
+    connected:
+        title:  Shop Connected
+        text:   "Your shop %shop% is now connected to Splash. You can close this window."
