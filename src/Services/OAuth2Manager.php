@@ -66,6 +66,10 @@ class OAuth2Manager
         if (!$client = $this->getConfiguredClient($connector, $shop)) {
             return null;
         }
+        //==============================================================================
+        // Mark Client as Stateless (Shopify uses Hmac, not Oauth2 state).
+        // Required in bridge mode (XML-RPC socket) where there is no HTTP session.
+        $client->setAsStateless();
 
         //==============================================================================
         // Redirect User to the Shopify Consent Screen
