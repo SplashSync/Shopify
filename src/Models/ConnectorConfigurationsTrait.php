@@ -90,7 +90,8 @@ trait ConnectorConfigurationsTrait
      */
     public function hasPrivateAppCredentials(): bool
     {
-        return !empty($this->getParameter("apiKey", false))
+        return !empty($this->getParameter("apiPrivate", false))
+            && !empty($this->getParameter("apiKey", false))
             && !empty($this->getParameter("apiSecret", false))
         ;
     }

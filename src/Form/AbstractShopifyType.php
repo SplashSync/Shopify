@@ -148,7 +148,7 @@ abstract class AbstractShopifyType extends AbstractType
                 'label' => 'var.api-private.label',
                 'help' => 'var.api-private.desc',
                 'translation_domain' => 'ShopifyBundle',
-                'required' => true,
+                'required' => false,
             ))
         ;
 

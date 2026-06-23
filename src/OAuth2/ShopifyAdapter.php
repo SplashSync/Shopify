@@ -103,11 +103,13 @@ class ShopifyAdapter extends AbstractProvider
         //==============================================================================
         // Inject Private/Custom App Credentials on the dedicated private client.
         // The public client keeps its env credentials (never mutated).
-        $clientId = $connector->getParameter("apiKey");
-        $clientSecret = $connector->getParameter("apiSecret");
-        if (is_string($clientId) && $clientId && is_string($clientSecret) && $clientSecret) {
-            $this->clientId = $clientId;
-            $this->clientSecret = $clientSecret;
+        if ($connector->hasPrivateAppCredentials()) {
+            $clientId = $connector->getParameter("apiKey");
+            $clientSecret = $connector->getParameter("apiSecret");
+            if (is_string($clientId) && $clientId && is_string($clientSecret) && $clientSecret) {
+                $this->clientId = $clientId;
+                $this->clientSecret = $clientSecret;
+            }
         }
         //==============================================================================
         // Configure Access Scopes (composition owned by the Scopes Manager)
