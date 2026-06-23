@@ -1,0 +1,24 @@
+################################################################################
+#
+#  This file is part of SplashSync Project.
+#
+#  Copyright (C) Splash Sync <www.splashsync.com>
+#
+#  DEV ONLY. Trust the reverse proxy (ngrok) so that Symfony honors the
+#  X-Forwarded-Proto: https header. Without this the OAuth2 redirect_uri is
+#  generated as http:// (the scheme seen by FrankenPHP behind ngrok), which
+#  Shopify rejects. In production traffic is always HTTPS, so this is not needed.
+#
+#  @author Bernard Paquier <contact@splashsync.com>
+#
+################################################################################
+
+framework:
+    # Trust the immediate client (ngrok agent) + local / private network
+    trusted_proxies:    '127.0.0.1,REMOTE_ADDR,172.115.0.0/24'
+    trusted_headers:
+        - 'x-forwarded-for'
+        - 'x-forwarded-host'
+        - 'x-forwarded-proto'
+        - 'x-forwarded-port'
+        - 'x-forwarded-prefix'

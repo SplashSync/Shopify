@@ -1,4 +1,3 @@
-
 ################################################################################
 #
 #  This file is part of SplashSync Project.
@@ -17,37 +16,29 @@
 ################################################################################
 
 ################################################################################
-# Docker Compose File
+# Ngrok Service
 #
-# This Docker File intend to Create a Complete Dev Environment
-# for Splash Modules
+# Exposes the Splash Toolkit (toolkit.shopify.local) on a public HTTPS URL so
+# that Shopify can reach local Webhooks / OAuth callbacks during development.
 #
-# Services are split by type under ./docker :
-#   - docker/toolkit.docker.yaml   Splash Toolkit (2.0 & 3.0) Shopify sandbox
-#   - docker/ngrok.docker.yaml     Public HTTPS tunnel to the Toolkit
-#
-# 172.115.0.100       toolkit.shopify.local
-# 172.115.0.103       toolkit-3.0.shopify.local
+# Requires NGROK_AUTHTOKEN to be set in the project .env file.
+# Web inspector available on http://localhost:4040
 #
 ################################################################################
 
-name: "splash-shopify-rest"
-
-include:
-    # Splash Toolkit Services
-    - docker/toolkit.docker.yaml
-    # Ngrok Tunnel Service
-    - docker/ngrok.docker.yaml
-
-networks:
+services:
     ################################################################################
-    # Default Private Network
-    shopify:
-        driver: bridge
-        ipam:
-            config:
-                - subnet: 172.115.0.0/24
-    ################################################################################
-    # External Splash Network
-    splashsync:
-        external: true
+    # Ngrok Tunnel Container
+    ngrok:
+        image:          ngrok/ngrok:latest
+        container_name: ngrok.shopify.local
+        command:          http toolkit:80 --url=lemur-touching-anchovy.ngrok-free.app
+        environment:
+            NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+        ports:
+            # Ngrok local web inspector
+            - "4040:4040"
+        depends_on:
+            - toolkit
+        networks:
+            shopify:        { aliases: [ ngrok.shopify.local ] }

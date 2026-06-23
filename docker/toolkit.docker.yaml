@@ -1,0 +1,60 @@
+################################################################################
+#
+#  This file is part of SplashSync Project.
+#
+#  Copyright (C) Splash Sync <www.splashsync.com>
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+#  For the full copyright and license information, please view the LICENSE
+#  file that was distributed with this source code.
+#
+#  @author Bernard Paquier <contact@splashsync.com>
+#
+################################################################################
+
+################################################################################
+# Splash Toolkit Services
+#
+# Runs the Shopify Connector inside the Splash Toolkit sandbox.
+#
+# 172.115.0.100       toolkit.shopify.local
+# 172.115.0.103       toolkit-3.0.shopify.local
+#
+################################################################################
+
+services:
+    ################################################################################
+    # Splash Toolkit Container
+    toolkit:
+        image:              registry.gitlab.com/badpixxel-projects/php-sdk:php-8.2
+        container_name:     toolkit.shopify.local
+        volumes:
+            - ${PWD}/:/var/www/html
+        hostname:           toolkit.shopify.local
+        environment:
+            SERVER_NAME:     http://toolkit.shopify.local http://lemur-touching-anchovy.ngrok-free.app
+            # FrankenPHP document root (Caddy) => tests public entrypoint
+            SERVER_ROOT:     /var/www/html/tests/public
+        tty: true
+        networks:
+            shopify:        { ipv4_address: 172.115.0.100, aliases: [ toolkit.shopify.local ] }
+            splashsync:     { aliases: [ toolkit.shopify.local ] }
+
+    ################################################################################
+    # Splash Toolkit 3.0 Container
+    toolkit-3.0:
+        image:              'splashsync/toolkit:3.0'
+        container_name:     toolkit-3.0.shopify.local
+        volumes:
+            # Specify Local Configuration File
+            - ${PWD}/.env:/app/.env:ro
+            - ${PWD}/config/packages/splash.yaml:/app/config/packages/splash.yaml:ro
+            # Inject Compiled Connector
+            - ${PWD}/dist:/app/bridges/
+        hostname:           toolkit-3.0.shopify.local
+        networks:
+            shopify:        { ipv4_address: 172.115.0.103, aliases: [ toolkit-3.0.shopify.local ] }
+            splashsync:     { aliases: [ toolkit-3.0.shopify.local ] }
