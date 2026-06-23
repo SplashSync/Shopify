@@ -48,7 +48,8 @@
 #}
 {% elseif connect %}
     <a
-        id="node-webhooks-btn" class="btn-lg btn-block btn-warning text-center"
+        id="node-webhooks-btn"
+        class="btn btn-lg btn-block btn-warning text-center"
         href="{{ path('splash_connector_secured_action', {
                 "connectorName" :   connector.profile.name,
                 "webserviceId" :    connector.WebserviceId,
