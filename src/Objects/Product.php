@@ -17,6 +17,7 @@ namespace Splash\Connectors\Shopify\Objects;
 
 use ArrayObject;
 use Splash\Bundle\Models\AbstractStandaloneObject;
+use Splash\Connectors\Shopify\Objects\Core\PresenceAwareTrait;
 use Splash\Connectors\Shopify\Services\ShopifyConnector;
 use Splash\Core\SplashCore as Splash;
 use Splash\Models\Objects;
@@ -37,6 +38,7 @@ class Product extends AbstractStandaloneObject
     // Shopify Core Traits
     use Core\DatesTrait;
     use Core\UnitConverterTrait;
+    use PresenceAwareTrait;
 
     // Shopify Products Traits
     use Product\CRUDTrait;
